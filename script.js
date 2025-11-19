@@ -20,11 +20,20 @@ function formatNumber(number, decimals = 2) {
     });
 }
 
+// Utility function to get current date in Mexico timezone
+function getMexicoDate() {
+    return new Date().toLocaleDateString('en-CA', {
+        timeZone: 'America/Mexico_City',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+}
+
 // Initialize app on page load
 document.addEventListener('DOMContentLoaded', async () => {
-    // Set current date
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('fecha').value = today;
+    // Set current date in Mexico timezone (America/Mexico_City)
+    document.getElementById('fecha').value = getMexicoDate();
 
     // Add event listeners for calculations
     setupCalculationListeners();
