@@ -412,39 +412,46 @@ async function actualGenerarPDF() {
 
         currentY += 10;
 
-        // Table header with better spacing
+        // Table header with better spacing and transparency
+        doc.setGState(new doc.GState({ opacity: 0.85 }));
         doc.setFillColor(45, 45, 45);
         doc.setDrawColor(45, 45, 45);
-        doc.roundedRect(15, currentY - 6, 180, 10, 1, 1, 'F');
+        doc.roundedRect(15, currentY - 6, 180, 14, 1, 1, 'F');
 
         doc.setTextColor(255, 255, 255);
-        doc.setFontSize(9);
+        doc.setFontSize(8);
         doc.setFont(undefined, 'bold');
-        doc.text('CANT.', 18, currentY);
-        doc.text('DESCRIPCIÓN', 40, currentY);
-        doc.text('P. UNITARIO', 130, currentY);
+        doc.text('CANTIDAD', 18, currentY);
+        doc.text('DESCRIPCIÓN', 50, currentY);
+
+        // Precio Unitario on 2 lines
+        doc.text('PRECIO', 130, currentY - 1);
+        doc.text('UNITARIO', 130, currentY + 3);
+
         doc.text('IMPORTE', 170, currentY);
 
-        currentY += 8;
+        currentY += 12;
 
-        // Table rows with alternating background
+        // Table rows with alternating background and transparency
         doc.setFont(undefined, 'normal');
         doc.setTextColor(60, 60, 60);
 
         let rowIndex = 0;
         data.conceptos.forEach(concepto => {
-            // Alternating row background
+            // Alternating row background with transparency
             if (rowIndex % 2 === 0) {
+                doc.setGState(new doc.GState({ opacity: 0.7 }));
                 doc.setFillColor(250, 250, 250);
                 doc.rect(15, currentY - 5, 180, 8, 'F');
+                doc.setGState(new doc.GState({ opacity: 1.0 }));
             }
 
             doc.text(formatNumber(concepto.cantidad, 2), 18, currentY);
 
             // Word wrap for long descriptions
-            const descMaxWidth = 85;
+            const descMaxWidth = 75;
             const descLines = doc.splitTextToSize(concepto.descripcion, descMaxWidth);
-            doc.text(descLines, 40, currentY);
+            doc.text(descLines, 50, currentY);
 
             doc.text(`$${formatNumber(concepto.pu)}`, 130, currentY);
             doc.text(`$${formatNumber(concepto.importe)}`, 170, currentY);
@@ -453,6 +460,9 @@ async function actualGenerarPDF() {
             currentY += lineHeight;
             rowIndex++;
         });
+
+        // Reset opacity for totals section
+        doc.setGState(new doc.GState({ opacity: 1.0 }));
 
         // Totals section
         currentY += 5;
