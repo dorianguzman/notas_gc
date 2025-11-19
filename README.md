@@ -1,166 +1,159 @@
-# Sistema de Notas de Remisión - Ganadería Catorce
+# Notas de Remisión - Ganadería Catorce
 
-Sistema web estático para generar notas de remisión con numeración automática, generación de PDF y envío por correo electrónico.
+Aplicación web simple para generar notas de remisión en formato PDF optimizada para uso móvil.
 
 ## Características
 
-- ✅ Generación de remisiones con numeración automática secuencial
-- 📄 Generación de PDF descargable
-- 📧 Envío de remisiones por correo electrónico
-- 💾 Historial completo de remisiones
-- 🔄 Sincronización automática con GitHub Actions
-- 🎨 Interfaz moderna y responsive
-- 📱 Optimizado para uso en teléfonos móviles
+- 📱 **Optimizado para móvil** - Diseño touch-first
+- 📄 **Generación de PDF** - Crea PDFs profesionales con logo
+- ✉️ **Envío por email** - Envía notas directamente por correo (opcional)
+- 🔢 **Numeración automática** - Secuencia automática de remisiones
+- 💾 **Sin base de datos** - Todo funciona en el navegador
+- 🎨 **Diseño limpio** - Interfaz minimalista gris/negro/blanco
+- 🇲🇽 **Zona horaria México** - Fechas en America/Mexico_City
+- 💵 **Formato de moneda** - Separador de miles con comas
 
 ## Estructura del Proyecto
 
 ```
 notas_gc/
-├── index.html              # Página principal
-├── style.css               # Estilos (optimizado para móvil)
-├── script.js               # Lógica de la aplicación
+├── index.html          # Aplicación principal
+├── script.js           # Lógica de la aplicación
+├── style.css           # Estilos
 ├── assets/
-│   └── logo.png           # Logo de Ganadería Catorce
-├── data/
-│   ├── secuencia.json     # Número de última remisión
-│   └── historial.json     # Historial de remisiones
-└── .github/
-    └── workflows/
-        ├── save-remision.yml    # Workflow para guardar remisiones
-        └── update-remision.yml  # Workflow de validación
+│   └── logo.png        # Logo de Ganadería Catorce
+└── README.md           # Este archivo
 ```
 
-## Configuración Inicial
+## 🚀 Instalación
 
-### 1. GitHub Actions
+### GitHub Pages (Recomendado)
 
-El sistema utiliza GitHub Actions para guardar las remisiones de forma segura. El token de GitHub se maneja automáticamente mediante `${{ secrets.GITHUB_TOKEN }}` en el workflow, por lo que **no necesitas configurar ningún token manualmente**.
+1. Fork o clona este repositorio
+2. Ve a Settings → Pages en tu repositorio
+3. Selecciona branch `main` → carpeta `/` (root)
+4. Guarda y espera el deployment
+5. Tu app estará en `https://tu-usuario.github.io/notas_gc`
 
-El workflow `save-remision.yml` se ejecuta automáticamente cuando:
-- Se guarda una remisión desde la interfaz web
-- El workflow actualiza la secuencia y el historial automáticamente
+### Local
 
-### 2. EmailJS (Opcional)
+```bash
+# Clonar repositorio
+git clone https://github.com/dorianguzman/notas_gc.git
+cd notas_gc
 
-Para enviar remisiones por correo:
+# Abrir en navegador
+open index.html
+```
+
+## ⚙️ Configuración de Email (Opcional)
+
+Para habilitar el envío de correos:
 
 1. Crea una cuenta en [EmailJS](https://www.emailjs.com/)
 2. Crea un servicio de email
-3. Crea un template con los siguientes parámetros:
+3. Crea una plantilla de email con estos parámetros:
    - `remision`: Número de remisión
    - `cliente`: Nombre del cliente
    - `fecha`: Fecha
-   - `total`: Total de la remisión
+   - `total`: Total
    - `pdf_attachment`: PDF en base64
+4. Edita `script.js` (líneas 3-7) y actualiza:
 
-En la consola del navegador, ejecuta:
 ```javascript
-setEmailJSConfig('SERVICE_ID', 'TEMPLATE_ID', 'PUBLIC_KEY');
+const CONFIG = {
+    emailjs: {
+        serviceId: 'tu_service_id',
+        templateId: 'tu_template_id',
+        publicKey: 'tu_public_key'
+    }
+};
 ```
 
-### 3. GitHub Pages
+## 💡 Uso
 
-1. Ve a Settings → Pages en tu repositorio
-2. Selecciona la rama `main` como source
-3. Guarda los cambios
-4. Tu sitio estará disponible en: `https://dorianguzman.github.io/notas_gc/`
-
-## Uso
-
-### Generar una Remisión
-
-1. La fecha y número de remisión se establecen automáticamente
-2. Ingresa el nombre del cliente y ciudad
-3. Agrega líneas de conceptos:
-   - Cantidad
-   - Descripción del concepto
-   - Precio unitario
-   - El importe se calcula automáticamente
-4. Ajusta el IVA si es necesario
-5. Usa los botones de acción:
-   - **Generar PDF**: Descarga el PDF de la remisión
-   - **Enviar por Correo**: Envía la remisión por email
-   - **Guardar Remisión**: Guarda en el historial y actualiza la secuencia
+1. **Abrir la aplicación** en tu navegador móvil o desktop
+2. **Llenar el formulario:**
+   - Fecha (auto-completa con fecha actual de México)
+   - Remisión (auto-incrementa automáticamente)
+   - Cliente y Ciudad
+   - Agregar conceptos con "+ Agregar línea":
+     - Cantidad
+     - Descripción
+     - Precio Unitario
+   - IVA (default 16%, editable)
+3. **Generar PDF** - Descarga la remisión como PDF
+4. **Enviar por Email** - Envía la nota por correo (requiere configuración)
 
 ### Gestión de Conceptos
 
 - **Agregar línea**: Click en "+ Agregar línea"
-- **Eliminar línea**: Click en el botón "✕" (debe haber al menos una línea)
-- Los cálculos se actualizan automáticamente
+- **Eliminar línea**: Click en "✕" (mínimo 1 línea requerida)
+- **Cálculos automáticos**: Importes, subtotal, IVA y total se actualizan en tiempo real
 
-## Workflows de GitHub Actions
+## 🛠️ Tecnología
 
-### save-remision.yml
-Workflow principal para guardar remisiones:
-- Se dispara mediante `workflow_dispatch` desde la interfaz web
-- Incrementa automáticamente el número de secuencia
-- Agrega la remisión al historial
-- Actualiza ambos archivos JSON
-- Realiza commit automático de los cambios
-- Utiliza `${{ secrets.GITHUB_TOKEN }}` automáticamente (no requiere configuración)
+- **100% Client-Side** - Sin backend, sin base de datos
+- **HTML5, CSS3, Vanilla JavaScript** - Sin frameworks pesados
+- **jsPDF** - Generación de PDFs en el navegador
+- **EmailJS** - Envío de correos (opcional)
+- **localStorage** - Persistencia de secuencia de remisiones
+- **GitHub Pages** - Hosting estático gratuito
 
-### update-remision.yml
-Workflow de validación:
-- Se ejecuta automáticamente cuando se modifican los archivos de datos
-- Valida que los archivos JSON sean correctos
-- No genera backups ni CSV
-- Solo valida, no modifica datos
+## 📱 Optimización Móvil
 
-## Archivos de Datos
+Diseñado específicamente para uso en teléfonos:
+- Botones grandes y fáciles de tocar
+- Font-size 16px+ en inputs (previene zoom en iOS)
+- Tabla optimizada sin scroll horizontal
+- Toast notifications para feedback
+- Touch targets adecuados (44px+)
+- Diseño responsivo adaptativo
 
-### secuencia.json
-```json
-{
-  "ultima": "00000001"
-}
-```
+## 🎯 Funcionalidades
 
-### historial.json
-```json
-[
-  {
-    "fecha": "2025-03-10",
-    "remision": "00000001",
-    "cliente": "Cliente Ejemplo",
-    "ciudad": "Querétaro",
-    "conceptos": [
-      {
-        "cantidad": 2,
-        "descripcion": "Producto X",
-        "pu": 100,
-        "importe": 200
-      }
-    ],
-    "subtotal": 200,
-    "iva": 32,
-    "total": 232
-  }
-]
-```
+### Generación de PDF
+- Logo personalizado de la empresa
+- Información completa de remisión
+- Tabla de conceptos profesional
+- Cálculos automáticos de subtotal, IVA y total
+- Formato de moneda con separadores de miles
 
-## Tecnologías Utilizadas
+### Numeración Automática
+- Inicia en 00000001
+- Se incrementa automáticamente después de generar PDF o enviar email
+- Persiste en localStorage del navegador
+- Cada dispositivo tiene su propia secuencia
 
-- **Frontend**: HTML5, CSS3, JavaScript
-- **PDF**: jsPDF
-- **Email**: EmailJS
-- **Almacenamiento**: GitHub API
-- **CI/CD**: GitHub Actions
-- **Hosting**: GitHub Pages
+### Cálculos en Tiempo Real
+- Actualización instantánea de importes
+- IVA configurable (default 16%)
+- Formato de moneda con separador de miles (1,234.56)
+- Precisión de 2 decimales
 
-## Optimización Móvil
+## 📝 Notas
 
-El sistema está optimizado para uso en teléfonos:
-- Botones de ancho completo en móvil para facilitar el toque
-- Tabla con scroll horizontal para mostrar todos los datos
-- Tamaño de fuente de 16px en inputs (previene zoom automático en iOS)
-- Padding y espaciado reducido para aprovechar espacio de pantalla
-- Touch targets adecuados para dedos
-- Diseño responsive que se adapta a diferentes tamaños de pantalla
+- **No requiere conexión** después de cargar (excepto para enviar emails)
+- **No guarda historial** - Solo genera PDFs y envía emails
+- **Secuencia local** - Cada dispositivo/navegador tiene su propia secuencia
+- **Resetear secuencia** - Limpia localStorage del navegador para reiniciar
 
-## Contribuir
+## 🔒 Privacidad
 
-Este es un proyecto privado de Ganadería Catorce.
+- Todo el procesamiento es local en el navegador
+- No se envían datos a servidores externos (excepto EmailJS si configuras)
+- No hay tracking ni analytics
+- Los PDFs se generan completamente en el cliente
+- Sin cookies, sin rastreo
 
-## Licencia
+## 🤝 Contribuciones
 
-Todos los derechos reservados - Ganadería Catorce
+Proyecto privado - Ganadería Catorce
+
+## 📄 Licencia
+
+Uso privado - Ganadería Catorce
+
+---
+
+**Desarrollado con ❤️ para Ganadería Catorce**

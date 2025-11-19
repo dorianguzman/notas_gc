@@ -1,16 +1,5 @@
 // Configuration
 const CONFIG = {
-    github: {
-        owner: 'dorianguzman',
-        repo: 'notas_gc',
-        branch: 'main'
-    },
-    api: {
-        // Use localhost for local development, production URL for deployed version
-        baseUrl: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? 'http://localhost:8788'  // Wrangler dev server
-            : ''  // Same origin on Cloudflare Pages
-    },
     emailjs: {
         serviceId: '', // To be configured
         templateId: '', // To be configured
@@ -37,123 +26,28 @@ function getMexicoDate() {
 }
 
 // Initialize app on page load
-document.addEventListener('DOMContentLoaded', async () => {
-    // Set current date in Mexico timezone (America/Mexico_City)
+document.addEventListener('DOMContentLoaded', () => {
+    // Set current date in Mexico timezone
     document.getElementById('fecha').value = getMexicoDate();
+
+    // Load next remision number from localStorage
+    loadNextRemision();
 
     // Add event listeners for calculations
     setupCalculationListeners();
-
-    // Initialize status monitoring
-    updateOnlineStatus();
-    window.addEventListener('online', updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
 });
 
-// API Functions
-async function getSequenceAPI() {
-    try {
-        const url = `${CONFIG.api.baseUrl}/api/get-sequence`;
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(`Error fetching sequence: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error getting sequence:', error);
-        return null;
-    }
+// Sequence Management (localStorage)
+function loadNextRemision() {
+    const lastRemision = localStorage.getItem('lastRemision') || '00000000';
+    const nextRemision = String(parseInt(lastRemision) + 1).padStart(8, '0');
+    document.getElementById('remision').value = nextRemision;
 }
 
-async function getHistoryAPI() {
-    try {
-        const url = `${CONFIG.api.baseUrl}/api/get-history`;
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(`Error fetching history: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error getting history:', error);
-        return null;
-    }
-}
-
-async function saveRemisionAPI(remisionData) {
-    try {
-        const url = `${CONFIG.api.baseUrl}/api/save-remision`;
-
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(remisionData)
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `Failed to save remision: ${response.status}`);
-        }
-
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        console.error('Error saving remision:', error);
-        throw error;
-    }
-}
-
-async function updateRemisionAPI(remisionNumber, deleted) {
-    try {
-        const url = `${CONFIG.api.baseUrl}/api/update-remision`;
-
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                remisionNumber,
-                deleted
-            })
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `Failed to update remision: ${response.status}`);
-        }
-
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        console.error('Error updating remision:', error);
-        throw error;
-    }
-}
-
-// Sequence Management
-async function loadNextRemision() {
-    try {
-        const result = await getSequenceAPI();
-        if (result && result.next) {
-            document.getElementById('remision').value = result.next;
-            updateDataStatus(true, 'Secuencia cargada');
-        } else {
-            document.getElementById('remision').value = '00000001';
-            updateDataStatus(true, 'Secuencia inicial');
-        }
-    } catch (error) {
-        console.error('Error loading sequence:', error);
-        document.getElementById('remision').value = '00000001';
-        updateDataStatus(false, 'Error de secuencia');
-    }
+function incrementRemision() {
+    const currentRemision = document.getElementById('remision').value;
+    localStorage.setItem('lastRemision', currentRemision);
+    loadNextRemision();
 }
 
 // Table Management
@@ -253,9 +147,9 @@ function getRemisionData() {
         }
     });
 
-    const subtotal = parseFloat(document.getElementById('subtotal').textContent.replace('$', ''));
-    const iva = parseFloat(document.getElementById('ivaAmount').textContent.replace('$', ''));
-    const total = parseFloat(document.getElementById('total').textContent.replace('$', ''));
+    const subtotalText = document.getElementById('subtotal').textContent.replace(/[$,]/g, '');
+    const ivaText = document.getElementById('ivaAmount').textContent.replace(/[$,]/g, '');
+    const totalText = document.getElementById('total').textContent.replace(/[$,]/g, '');
 
     return {
         fecha,
@@ -263,10 +157,9 @@ function getRemisionData() {
         cliente,
         ciudad,
         conceptos,
-        subtotal,
-        iva,
-        total,
-        deleted: false
+        subtotal: parseFloat(subtotalText),
+        iva: parseFloat(ivaText),
+        total: parseFloat(totalText)
     };
 }
 
@@ -300,113 +193,94 @@ function validateForm() {
     return true;
 }
 
-// Main Functions
-async function guardarRemision() {
-    if (!validateForm()) return;
-
-    try {
-        showToast('Guardando remisión...', 'info');
-
-        const data = getRemisionData();
-
-        // Call Cloudflare Function to save remision
-        const result = await saveRemisionAPI(data);
-
-        if (result.success) {
-            showToast(`Remisión ${result.remision} guardada exitosamente`, 'success');
-
-            // Update UI with new remision number
-            document.getElementById('remision').value = result.remision;
-
-            // Reload next sequence for next remision
-            await loadNextRemision();
-        } else {
-            throw new Error('Failed to save remision');
-        }
-
-    } catch (error) {
-        console.error('Error saving remision:', error);
-        showToast('Error al guardar la remisión: ' + error.message, 'error');
-    }
-}
-
+// PDF Generation
 async function generarPDF() {
     if (!validateForm()) return;
 
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    const data = getRemisionData();
-
-    // Add logo
     try {
-        const img = new Image();
-        img.src = 'assets/logo.png';
-        await new Promise((resolve) => {
-            img.onload = () => {
-                doc.addImage(img, 'PNG', 15, 10, 40, 40);
-                resolve();
-            };
-            img.onerror = resolve; // Continue even if logo fails
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const data = getRemisionData();
+
+        // Add logo
+        try {
+            const img = new Image();
+            img.src = 'assets/logo.png';
+            await new Promise((resolve) => {
+                img.onload = () => {
+                    doc.addImage(img, 'PNG', 15, 10, 40, 40);
+                    resolve();
+                };
+                img.onerror = resolve;
+            });
+        } catch (e) {
+            console.warn('Logo not loaded');
+        }
+
+        // Title
+        doc.setFontSize(20);
+        doc.text('Nota de Remisión', 105, 30, { align: 'center' });
+
+        // Header info
+        doc.setFontSize(12);
+        doc.text(`Fecha: ${data.fecha}`, 15, 60);
+        doc.text(`Remisión: ${data.remision}`, 150, 60);
+        doc.text(`Cliente: ${data.cliente}`, 15, 70);
+        doc.text(`Ciudad: ${data.ciudad}`, 15, 80);
+
+        // Table
+        doc.setFontSize(10);
+        let y = 95;
+
+        // Table header
+        doc.setFillColor(45, 45, 45);
+        doc.setTextColor(255, 255, 255);
+        doc.rect(15, y, 180, 8, 'F');
+        doc.text('Cantidad', 20, y + 6);
+        doc.text('Concepto', 50, y + 6);
+        doc.text('Precio Unitario', 115, y + 6);
+        doc.text('Importe', 165, y + 6);
+
+        // Table rows
+        doc.setTextColor(0, 0, 0);
+        y += 10;
+
+        data.conceptos.forEach(concepto => {
+            doc.text(formatNumber(concepto.cantidad, 0), 20, y);
+            doc.text(concepto.descripcion, 50, y);
+            doc.text(`$${formatNumber(concepto.pu)}`, 115, y);
+            doc.text(`$${formatNumber(concepto.importe)}`, 165, y);
+            y += 7;
         });
-    } catch (e) {
-        console.warn('Logo not loaded');
-    }
 
-    // Title
-    doc.setFontSize(20);
-    doc.text('Nota de Remisión', 105, 30, { align: 'center' });
-
-    // Header info
-    doc.setFontSize(12);
-    doc.text(`Fecha: ${data.fecha}`, 15, 60);
-    doc.text(`Remisión: ${data.remision}`, 150, 60);
-    doc.text(`Cliente: ${data.cliente}`, 15, 70);
-    doc.text(`Ciudad: ${data.ciudad}`, 15, 80);
-
-    // Table
-    doc.setFontSize(10);
-    let y = 95;
-
-    // Table header
-    doc.setFillColor(102, 126, 234);
-    doc.setTextColor(255, 255, 255);
-    doc.rect(15, y, 180, 8, 'F');
-    doc.text('Cantidad', 20, y + 6);
-    doc.text('Concepto', 50, y + 6);
-    doc.text('Precio Unitario', 115, y + 6);
-    doc.text('Importe', 165, y + 6);
-
-    // Table rows
-    doc.setTextColor(0, 0, 0);
-    y += 10;
-
-    data.conceptos.forEach(concepto => {
-        doc.text(formatNumber(concepto.cantidad, 0), 20, y);
-        doc.text(concepto.descripcion, 50, y);
-        doc.text(`$${formatNumber(concepto.pu)}`, 130, y);
-        doc.text(`$${formatNumber(concepto.importe)}`, 165, y);
+        // Totals
+        y += 10;
+        doc.text(`Subtotal:`, 130, y);
+        doc.text(`$${formatNumber(data.subtotal)}`, 165, y);
         y += 7;
-    });
+        doc.text(`IVA:`, 130, y);
+        doc.text(`$${formatNumber(data.iva)}`, 165, y);
+        y += 7;
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'bold');
+        doc.text(`Total:`, 130, y);
+        doc.text(`$${formatNumber(data.total)}`, 165, y);
 
-    // Totals
-    y += 10;
-    doc.text(`Subtotal:`, 130, y);
-    doc.text(`$${formatNumber(data.subtotal)}`, 165, y);
-    y += 7;
-    doc.text(`IVA:`, 130, y);
-    doc.text(`$${formatNumber(data.iva)}`, 165, y);
-    y += 7;
-    doc.setFontSize(12);
-    doc.setFont(undefined, 'bold');
-    doc.text(`Total:`, 130, y);
-    doc.text(`$${formatNumber(data.total)}`, 165, y);
+        // Save PDF
+        doc.save(`Remision_${data.remision}.pdf`);
+        showToast('PDF generado exitosamente', 'success');
 
-    // Save PDF
-    doc.save(`Remision_${data.remision}.pdf`);
-    showToast('PDF generado exitosamente', 'success');
+        // Increment remision number for next time
+        incrementRemision();
+
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        showToast('Error al generar el PDF: ' + error.message, 'error');
+    }
 }
 
+// Email Sending
 async function enviarCorreo() {
     if (!validateForm()) return;
 
@@ -423,7 +297,14 @@ async function enviarCorreo() {
         // Generate PDF as base64
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        // ... (same PDF generation logic as above)
+
+        // (Same PDF generation as above - simplified for email)
+        doc.setFontSize(20);
+        doc.text('Nota de Remisión', 105, 30, { align: 'center' });
+        doc.setFontSize(12);
+        doc.text(`Remisión: ${data.remision}`, 15, 50);
+        doc.text(`Cliente: ${data.cliente}`, 15, 60);
+        doc.text(`Total: $${formatNumber(data.total)}`, 15, 70);
 
         const pdfBase64 = doc.output('datauristring').split(',')[1];
 
@@ -444,370 +325,14 @@ async function enviarCorreo() {
         );
 
         showToast('Correo enviado exitosamente', 'success');
+
+        // Increment remision number for next time
+        incrementRemision();
+
     } catch (error) {
         console.error('Error sending email:', error);
         showToast('Error al enviar el correo: ' + error.message, 'error');
     }
-}
-
-// Screen Navigation
-function showScreen(screenId) {
-    // Hide all screens
-    const screens = document.querySelectorAll('.screen');
-    screens.forEach(screen => {
-        screen.style.display = 'none';
-    });
-
-    // Show selected screen
-    const selectedScreen = document.getElementById(screenId);
-    if (selectedScreen) {
-        selectedScreen.style.display = 'block';
-    }
-
-    // Load data if needed
-    if (screenId === 'formScreen') {
-        loadNextRemision();
-    } else if (screenId === 'historyScreen') {
-        loadHistory();
-    }
-}
-
-// Global variable to store history data
-let historyData = [];
-let currentFilter = 'all';
-
-// Status Management
-function updateOnlineStatus() {
-    const statusEl = document.getElementById('onlineStatus');
-    const isOnline = navigator.onLine;
-
-    statusEl.classList.remove('online', 'offline', 'checking');
-
-    if (isOnline) {
-        statusEl.classList.add('online');
-        statusEl.querySelector('.status-text').textContent = 'En línea';
-    } else {
-        statusEl.classList.add('offline');
-        statusEl.querySelector('.status-text').textContent = 'Sin conexión';
-    }
-}
-
-function updateDataStatus(success, message = '') {
-    const statusEl = document.getElementById('dataStatus');
-    statusEl.style.display = 'flex';
-
-    statusEl.classList.remove('data-success', 'data-error');
-
-    if (success) {
-        statusEl.classList.add('data-success');
-        statusEl.querySelector('.status-text').textContent = message || 'Sincronizado';
-    } else {
-        statusEl.classList.add('data-error');
-        statusEl.querySelector('.status-text').textContent = message || 'Error de datos';
-    }
-}
-
-// History Management
-async function loadHistory() {
-    const historyContent = document.getElementById('historyContent');
-
-    try {
-        historyContent.innerHTML = '<p class="loading">Cargando historial...</p>';
-
-        const result = await getHistoryAPI();
-
-        if (!result || result.length === 0) {
-            historyContent.innerHTML = '<p class="history-empty">No hay remisiones en el historial.</p>';
-            updateDataStatus(true, 'Sin datos');
-            return;
-        }
-
-        // Store history data (already sorted by remision DESC from API)
-        historyData = result;
-
-        // Render with current filter
-        renderHistory();
-
-        // Update status indicator
-        updateDataStatus(true, `${historyData.length} remisiones`);
-
-    } catch (error) {
-        console.error('Error loading history:', error);
-        historyContent.innerHTML = '<p class="history-empty">Error al cargar el historial.</p>';
-        updateDataStatus(false, 'Error al cargar');
-    }
-}
-
-function filterHistory(filter) {
-    currentFilter = filter;
-
-    // Update active button
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
-
-    // Re-render history
-    renderHistory();
-}
-
-function renderHistory() {
-    const historyContent = document.getElementById('historyContent');
-
-    // Filter data based on current filter
-    let filteredData = historyData;
-    if (currentFilter === 'active') {
-        filteredData = historyData.filter(item => !item.deleted);
-    } else if (currentFilter === 'deleted') {
-        filteredData = historyData.filter(item => item.deleted);
-    }
-
-    if (filteredData.length === 0) {
-        historyContent.innerHTML = '<p class="history-empty">No hay remisiones para mostrar.</p>';
-        return;
-    }
-
-    // Generate history items
-    let html = '';
-    filteredData.forEach(item => {
-        const statusClass = item.deleted ? 'status-deleted' : 'status-active';
-        const statusText = item.deleted ? 'Eliminada' : 'Activa';
-
-        html += `
-            <div class="history-item" onclick="showDetailModal('${item.remision}')">
-                <div class="history-item-header">
-                    <div class="history-item-title-row">
-                        <div class="history-item-remision">Remisión #${item.remision}</div>
-                        <span class="status-badge ${statusClass}">${statusText}</span>
-                    </div>
-                    <div class="history-item-date">${item.fecha}</div>
-                </div>
-                <div class="history-item-info">
-                    <span class="history-item-label">Cliente:</span>
-                    <span class="history-item-value">${item.cliente}</span>
-                </div>
-                <div class="history-item-total">
-                    Total: $${formatNumber(item.total)}
-                </div>
-            </div>
-        `;
-    });
-
-    historyContent.innerHTML = html;
-}
-
-// Modal Management
-function showDetailModal(remisionNumber) {
-    const item = historyData.find(h => h.remision === remisionNumber);
-    if (!item) return;
-
-    const modal = document.getElementById('detailModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalBody = document.getElementById('modalBody');
-
-    const statusClass = item.deleted ? 'status-deleted' : 'status-active';
-    const statusText = item.deleted ? 'Eliminada' : 'Activa';
-
-    // Build conceptos table
-    let conceptosHtml = '';
-    item.conceptos.forEach(concepto => {
-        conceptosHtml += `
-            <tr>
-                <td>${formatNumber(concepto.cantidad, 0)}</td>
-                <td>${concepto.descripcion}</td>
-                <td>$${formatNumber(concepto.pu)}</td>
-                <td>$${formatNumber(concepto.importe)}</td>
-            </tr>
-        `;
-    });
-
-    modalTitle.innerHTML = `
-        Remisión #${item.remision}
-        <span class="status-badge ${statusClass}">${statusText}</span>
-    `;
-
-    modalBody.innerHTML = `
-        <div class="modal-section">
-            <div class="modal-info-row">
-                <span class="modal-label">Fecha:</span>
-                <span class="modal-value">${item.fecha}</span>
-            </div>
-            <div class="modal-info-row">
-                <span class="modal-label">Cliente:</span>
-                <span class="modal-value">${item.cliente}</span>
-            </div>
-            <div class="modal-info-row">
-                <span class="modal-label">Ciudad:</span>
-                <span class="modal-value">${item.ciudad}</span>
-            </div>
-        </div>
-
-        <div class="modal-section">
-            <h4>Conceptos</h4>
-            <table class="modal-table">
-                <thead>
-                    <tr>
-                        <th>Cant.</th>
-                        <th>Descripción</th>
-                        <th>Precio<br>Unitario</th>
-                        <th>Importe</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${conceptosHtml}
-                </tbody>
-            </table>
-        </div>
-
-        <div class="modal-section modal-totals">
-            <div class="modal-total-row">
-                <span>Subtotal:</span>
-                <span>$${formatNumber(item.subtotal)}</span>
-            </div>
-            <div class="modal-total-row">
-                <span>IVA:</span>
-                <span>$${formatNumber(item.iva)}</span>
-            </div>
-            <div class="modal-total-row modal-total-final">
-                <span>Total:</span>
-                <span>$${formatNumber(item.total)}</span>
-            </div>
-        </div>
-
-        <div class="modal-actions">
-            ${item.deleted
-                ? `<button type="button" class="btn-modal btn-restore" onclick="toggleDeleteRemision('${item.remision}', false)">
-                    <svg class="icon-inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 3h18v18H3z"></path>
-                        <path d="M9 9h6v6H9z"></path>
-                    </svg>
-                    Restaurar
-                   </button>`
-                : `<button type="button" class="btn-modal btn-delete" onclick="toggleDeleteRemision('${item.remision}', true)">
-                    <svg class="icon-inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    </svg>
-                    Eliminar
-                   </button>`
-            }
-        </div>
-    `;
-
-    modal.style.display = 'flex';
-}
-
-function closeModal() {
-    document.getElementById('detailModal').style.display = 'none';
-}
-
-function closeModalOnBackdrop(event) {
-    if (event.target.id === 'detailModal') {
-        closeModal();
-    }
-}
-
-function toggleDeleteRemision(remisionNumber, setDeleted) {
-    if (setDeleted) {
-        // Delete confirmation
-        showConfirm({
-            title: 'Eliminar Remisión',
-            message: `¿Estás seguro de eliminar la remisión #${remisionNumber}? Esta acción marcará la nota como eliminada.`,
-            type: 'danger',
-            confirmText: 'Eliminar',
-            onConfirm: () => {
-                performDeleteToggle(remisionNumber, true);
-            }
-        });
-    } else {
-        // Restore confirmation
-        showConfirm({
-            title: 'Restaurar Remisión',
-            message: `¿Deseas restaurar la remisión #${remisionNumber}?`,
-            type: 'success',
-            confirmText: 'Restaurar',
-            onConfirm: () => {
-                performDeleteToggle(remisionNumber, false);
-            }
-        });
-    }
-}
-
-async function performDeleteToggle(remisionNumber, setDeleted) {
-    try {
-        showToast(setDeleted ? 'Eliminando remisión...' : 'Restaurando remisión...', 'info');
-
-        // Call Cloudflare Function to update D1 database
-        await updateRemisionAPI(remisionNumber, setDeleted);
-
-        // Update local data for immediate UI feedback
-        const item = historyData.find(h => h.remision === remisionNumber);
-        if (item) {
-            item.deleted = setDeleted;
-        }
-
-        showToast(
-            setDeleted
-                ? `Remisión #${remisionNumber} eliminada`
-                : `Remisión #${remisionNumber} restaurada`,
-            'success'
-        );
-
-        // Close detail modal and refresh history view
-        closeModal();
-        renderHistory();
-
-    } catch (error) {
-        console.error('Error toggling delete:', error);
-        showToast('Error al actualizar la remisión: ' + error.message, 'error');
-    }
-}
-
-// Confirmation Modal
-function showConfirm({ title, message, type = 'danger', confirmText = 'Confirmar', onConfirm }) {
-    const modal = document.getElementById('confirmModal');
-    const iconEl = document.getElementById('confirmIcon');
-    const titleEl = document.getElementById('confirmTitle');
-    const messageEl = document.getElementById('confirmMessage');
-    const actionBtn = document.getElementById('confirmActionBtn');
-
-    // Set content
-    titleEl.textContent = title;
-    messageEl.textContent = message;
-    actionBtn.textContent = confirmText;
-
-    // Set icon
-    iconEl.className = `confirm-icon icon-${type}`;
-    if (type === 'danger') {
-        iconEl.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-        `;
-        actionBtn.className = 'btn-confirm-action danger';
-    } else {
-        iconEl.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
-        `;
-        actionBtn.className = 'btn-confirm-action success';
-    }
-
-    // Set action
-    actionBtn.onclick = () => {
-        closeConfirmModal();
-        if (onConfirm) onConfirm();
-    };
-
-    modal.style.display = 'flex';
-}
-
-function closeConfirmModal() {
-    document.getElementById('confirmModal').style.display = 'none';
 }
 
 // Toast Notifications
@@ -857,28 +382,8 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-// Configuration helper (to be called from console if needed)
-function setEmailJSConfig(serviceId, templateId, publicKey) {
-    CONFIG.emailjs.serviceId = serviceId;
-    CONFIG.emailjs.templateId = templateId;
-    CONFIG.emailjs.publicKey = publicKey;
-    console.log('EmailJS configured');
-}
-
 // Expose functions globally
 window.addRow = addRow;
 window.removeRow = removeRow;
-window.guardarRemision = guardarRemision;
 window.generarPDF = generarPDF;
 window.enviarCorreo = enviarCorreo;
-window.setEmailJSConfig = setEmailJSConfig;
-window.showScreen = showScreen;
-window.filterHistory = filterHistory;
-window.showDetailModal = showDetailModal;
-window.closeModal = closeModal;
-window.closeModalOnBackdrop = closeModalOnBackdrop;
-window.toggleDeleteRemision = toggleDeleteRemision;
-window.performDeleteToggle = performDeleteToggle;
-window.showConfirm = showConfirm;
-window.closeConfirmModal = closeConfirmModal;
-window.showToast = showToast;
