@@ -356,16 +356,22 @@ async function actualGenerarPDF() {
 
         let currentY = 20;
 
-        // Main title: Nota de Remisión
+        // Main title: Ganadería Catorce
         doc.setFontSize(24);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(45, 45, 45);
-        doc.text('NOTA DE REMISIÓN', 105, currentY, { align: 'center' });
+        doc.text('GANADERÍA CATORCE', 105, currentY, { align: 'center' });
+
+        // Subtitle: Nota de Remisión
+        currentY += 10;
+        doc.setFontSize(16);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(80, 80, 80);
+        doc.text('Nota de Remisión', 105, currentY, { align: 'center' });
 
         // Remision number and date
-        currentY += 12;
+        currentY += 10;
         doc.setFontSize(10);
-        doc.setFont(undefined, 'normal');
         doc.setTextColor(100, 100, 100);
         doc.text(`Remisión: ${data.remision}`, 105, currentY, { align: 'center' });
 
@@ -421,16 +427,18 @@ async function actualGenerarPDF() {
 
         currentY += 8;
 
-        // Table rows with alternating background - no transparency
+        // Table rows with alternating background and transparency
         doc.setFont(undefined, 'normal');
         doc.setTextColor(60, 60, 60);
 
         let rowIndex = 0;
         data.conceptos.forEach(concepto => {
-            // Alternating row background
+            // Alternating row background with transparency
             if (rowIndex % 2 === 0) {
+                doc.setGState(new doc.GState({ opacity: 0.5 }));
                 doc.setFillColor(250, 250, 250);
                 doc.rect(15, currentY - 5, 180, 8, 'F');
+                doc.setGState(new doc.GState({ opacity: 1.0 }));
             }
 
             doc.text(formatNumber(concepto.cantidad, 2), 18, currentY);
