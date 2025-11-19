@@ -1,10 +1,6 @@
 // Configuration
 const CONFIG = {
-    emailjs: {
-        serviceId: '', // To be configured
-        templateId: '', // To be configured
-        publicKey: '' // To be configured
-    }
+    googleAppsScriptUrl: '' // Add your Google Apps Script Web App URL here
 };
 
 // Utility function to format numbers with comma separators
@@ -534,55 +530,247 @@ async function actualGenerarPDF() {
     }
 }
 
-// Email Sending
+// Email Sending via Google Apps Script
 async function enviarCorreo() {
     if (!validateForm()) return;
 
-    if (!CONFIG.emailjs.serviceId || !CONFIG.emailjs.templateId || !CONFIG.emailjs.publicKey) {
-        showToast('Configure EmailJS primero', 'error');
+    // Check if email is provided
+    const clienteEmail = document.getElementById('clienteEmail').value.trim();
+    if (!clienteEmail) {
+        showToast('Debe ingresar un email para enviar', 'error');
+        return;
+    }
+
+    if (!CONFIG.googleAppsScriptUrl) {
+        showToast('Configure Google Apps Script URL primero', 'error');
         return;
     }
 
     try {
-        showToast('Enviando correo...', 'info');
+        showToast('Generando PDF y enviando correo...', 'info');
 
         const data = getRemisionData();
 
-        // Generate PDF as base64
+        // Generate the full PDF (reuse the same code from actualGenerarPDF)
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        // (Same PDF generation as above - simplified for email)
-        doc.setFontSize(20);
-        doc.text('Nota de Remisión', 105, 30, { align: 'center' });
-        doc.setFontSize(12);
-        doc.text(`Remisión: ${data.remision}`, 15, 50);
-        doc.text(`Cliente: ${data.cliente}`, 15, 60);
-        doc.text(`Total: $${formatNumber(data.total)}`, 15, 70);
+        // Add logo as centered watermark in background
+        try {
+            const img = new Image();
+            img.src = 'assets/logo.png';
+            await new Promise((resolve) => {
+                img.onload = () => {
+                    const maxWidth = 120;
+                    const maxHeight = 120;
+                    const imgRatio = img.width / img.height;
 
+                    let logoWidth = maxWidth;
+                    let logoHeight = maxWidth / imgRatio;
+
+                    if (logoHeight > maxHeight) {
+                        logoHeight = maxHeight;
+                        logoWidth = maxHeight * imgRatio;
+                    }
+
+                    const pageWidth = 210;
+                    const pageHeight = 297;
+                    const xPos = (pageWidth - logoWidth) / 2;
+                    const yPos = (pageHeight - logoHeight) / 2;
+
+                    doc.setGState(new doc.GState({ opacity: 0.15 }));
+                    doc.addImage(img, 'PNG', xPos, yPos, logoWidth, logoHeight);
+                    doc.setGState(new doc.GState({ opacity: 1.0 }));
+
+                    resolve();
+                };
+                img.onerror = resolve;
+            });
+        } catch (e) {
+            console.warn('Logo not loaded for email');
+        }
+
+        // Build the same PDF as actualGenerarPDF but get base64
+        let currentY = 20;
+
+        // Main title: Ganadería Catorce
+        doc.setFontSize(24);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(45, 45, 45);
+        doc.text('GANADERÍA CATORCE', 105, currentY, { align: 'center' });
+
+        currentY += 10;
+        doc.setFontSize(16);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(80, 80, 80);
+        doc.text('Nota de Remisión', 105, currentY, { align: 'center' });
+
+        currentY += 10;
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Remisión: ${data.remision}`, 105, currentY, { align: 'center' });
+
+        currentY += 5;
+        doc.text(`Fecha: ${data.fecha}`, 105, currentY, { align: 'center' });
+
+        // Client section
+        currentY += 15;
+        doc.setDrawColor(220, 220, 220);
+        doc.line(15, currentY, 195, currentY);
+
+        currentY += 8;
+        doc.setFontSize(11);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(45, 45, 45);
+        doc.text('CLIENTE', 15, currentY);
+
+        currentY += 7;
+        doc.setFont(undefined, 'normal');
+        doc.setFontSize(10);
+        doc.setTextColor(60, 60, 60);
+        doc.text(data.cliente, 15, currentY);
+
+        currentY += 5;
+        if (data.clienteEmail) {
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Email: ${data.clienteEmail}`, 15, currentY);
+            currentY += 5;
+        }
+
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Ciudad: ${data.ciudad}`, 15, currentY);
+
+        // Table
+        currentY += 12;
+        doc.setDrawColor(220, 220, 220);
+        doc.line(15, currentY, 195, currentY);
+
+        currentY += 10;
+
+        // Table header
+        doc.setFillColor(45, 45, 45);
+        doc.setDrawColor(45, 45, 45);
+        doc.roundedRect(15, currentY - 6, 180, 10, 1, 1, 'F');
+
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(8);
+        doc.setFont(undefined, 'bold');
+        doc.text('CANTIDAD', 18, currentY);
+        doc.text('DESCRIPCIÓN', 50, currentY);
+        doc.text('PRECIO UNITARIO', 130, currentY);
+        doc.text('IMPORTE', 170, currentY);
+
+        currentY += 8;
+
+        // Table rows
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(60, 60, 60);
+
+        let rowIndex = 0;
+        data.conceptos.forEach(concepto => {
+            if (rowIndex % 2 === 0) {
+                doc.setGState(new doc.GState({ opacity: 0.5 }));
+                doc.setFillColor(250, 250, 250);
+                doc.rect(15, currentY - 5, 180, 8, 'F');
+                doc.setGState(new doc.GState({ opacity: 1.0 }));
+            }
+
+            doc.text(formatNumber(concepto.cantidad, 2), 18, currentY);
+
+            const descMaxWidth = 75;
+            const descLines = doc.splitTextToSize(concepto.descripcion, descMaxWidth);
+            doc.text(descLines, 50, currentY);
+
+            doc.text(`$${formatNumber(concepto.pu)}`, 130, currentY);
+            doc.text(`$${formatNumber(concepto.importe)}`, 170, currentY);
+
+            const lineHeight = descLines.length > 1 ? descLines.length * 5 : 8;
+            currentY += lineHeight;
+            rowIndex++;
+        });
+
+        // Totals
+        currentY += 5;
+        doc.setDrawColor(220, 220, 220);
+        doc.line(120, currentY, 195, currentY);
+
+        currentY += 8;
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(80, 80, 80);
+
+        if (data.iva > 0) {
+            doc.text('Subtotal:', 130, currentY);
+            doc.text(`$${formatNumber(data.subtotal)}`, 195, currentY, { align: 'right' });
+
+            currentY += 6;
+            doc.text('IVA:', 130, currentY);
+            doc.text(`$${formatNumber(data.iva)}`, 195, currentY, { align: 'right' });
+
+            currentY += 8;
+        } else {
+            currentY += 2;
+        }
+
+        doc.setDrawColor(45, 45, 45);
+        doc.setLineWidth(0.5);
+        doc.line(120, currentY - 2, 195, currentY - 2);
+
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(45, 45, 45);
+        doc.text('TOTAL:', 130, currentY + 2);
+        doc.text(`$${formatNumber(data.total)}`, 195, currentY + 2, { align: 'right' });
+
+        // Footer
+        const footerY = 270;
+        doc.setDrawColor(200, 200, 200);
+        doc.setLineWidth(0.3);
+        doc.line(40, footerY, 170, footerY);
+
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(100, 100, 100);
+        doc.text('GANADERÍA CATORCE', 105, footerY + 5, { align: 'center' });
+
+        doc.setFontSize(8);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(130, 130, 130);
+        doc.text('Querétaro, México', 105, footerY + 10, { align: 'center' });
+
+        doc.setFontSize(7.5);
+        doc.setTextColor(130, 130, 130);
+        doc.text('Tel: +52 446 106 0320  |  Email: ganaderiacatorce@gmail.com', 105, footerY + 15, { align: 'center' });
+
+        doc.setFontSize(7);
+        doc.setTextColor(150, 150, 150);
+        doc.text('Gracias por su preferencia', 105, footerY + 19, { align: 'center' });
+
+        // Get PDF as base64
         const pdfBase64 = doc.output('datauristring').split(',')[1];
 
-        // Send email via EmailJS
-        const templateParams = {
-            remision: data.remision,
-            cliente: data.cliente,
-            cliente_email: data.clienteEmail || '',
-            fecha: data.fecha,
-            total: formatNumber(data.total),
-            pdf_attachment: pdfBase64
-        };
+        // Send to Google Apps Script
+        const response = await fetch(CONFIG.googleAppsScriptUrl, {
+            method: 'POST',
+            body: JSON.stringify({
+                remision: data.remision,
+                cliente: data.cliente,
+                clienteEmail: data.clienteEmail,
+                fecha: data.fecha,
+                total: formatNumber(data.total),
+                pdfBase64: pdfBase64
+            })
+        });
 
-        await emailjs.send(
-            CONFIG.emailjs.serviceId,
-            CONFIG.emailjs.templateId,
-            templateParams,
-            CONFIG.emailjs.publicKey
-        );
+        const result = await response.json();
 
-        showToast('Correo enviado exitosamente', 'success');
-
-        // Scroll to top smoothly
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (result.success) {
+            showToast('Correo enviado exitosamente', 'success');
+            // Scroll to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            throw new Error(result.message || 'Error al enviar correo');
+        }
 
     } catch (error) {
         console.error('Error sending email:', error);

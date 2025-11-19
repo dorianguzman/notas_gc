@@ -48,25 +48,77 @@ open index.html
 
 ## ⚙️ Configuración de Email (Opcional)
 
-Para habilitar el envío de correos:
+Para habilitar el envío de correos vía Google Apps Script:
 
-1. Crea una cuenta en [EmailJS](https://www.emailjs.com/)
-2. Crea un servicio de email
-3. Crea una plantilla de email con estos parámetros:
-   - `remision`: Número de remisión
-   - `cliente`: Nombre del cliente
-   - `fecha`: Fecha
-   - `total`: Total
-   - `pdf_attachment`: PDF en base64
-4. Edita `script.js` (líneas 3-7) y actualiza:
+### Paso 1: Crear Google Apps Script
+
+1. Ve a https://script.google.com
+2. Crea un nuevo proyecto
+3. Pega el siguiente código:
+
+```javascript
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+
+    const recipient = data.clienteEmail;
+    const subject = `Nota de Remisión #${data.remision} - Ganadería Catorce`;
+
+    const body = `
+Estimado/a ${data.cliente},
+
+Adjunto encontrará la Nota de Remisión #${data.remision}.
+
+Detalles:
+- Fecha: ${data.fecha}
+- Total: $${data.total}
+
+Gracias por su preferencia.
+
+---
+Ganadería Catorce
+Querétaro, México
+Tel: +52 446 106 0320
+Email: ganaderiacatorce@gmail.com
+    `;
+
+    const pdfBlob = Utilities.newBlob(
+      Utilities.base64Decode(data.pdfBase64),
+      'application/pdf',
+      `Remision_${data.remision}.pdf`
+    );
+
+    GmailApp.sendEmail(recipient, subject, body, {
+      attachments: [pdfBlob],
+      name: 'Ganadería Catorce'
+    });
+
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      message: 'Email enviado exitosamente'
+    })).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      message: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+```
+
+4. Deploy → New deployment → Web app
+5. Execute as: **Your account**
+6. Who has access: **Anyone**
+7. Copia el Web App URL
+
+### Paso 2: Configurar la App
+
+Edita `script.js` (línea 3) y agrega tu URL:
 
 ```javascript
 const CONFIG = {
-    emailjs: {
-        serviceId: 'tu_service_id',
-        templateId: 'tu_template_id',
-        publicKey: 'tu_public_key'
-    }
+    googleAppsScriptUrl: 'TU_WEB_APP_URL_AQUI'
 };
 ```
 
@@ -76,14 +128,14 @@ const CONFIG = {
 2. **Llenar el formulario:**
    - Fecha (auto-completa con fecha actual de México)
    - Remisión (timestamp automático YYYYMMDD-HHMM)
-   - Cliente y Ciudad
-   - Agregar conceptos con "+ Agregar línea":
+   - Cliente, Email (opcional) y Ciudad
+   - Agregar conceptos con "+ Agregar Concepto":
      - Cantidad
      - Descripción
      - Precio Unitario
-   - IVA (default 16%, editable)
-3. **Generar PDF** - Descarga la remisión como PDF
-4. **Enviar por Email** - Envía la nota por correo (requiere configuración)
+   - IVA (default 0%, editable)
+3. **Generar PDF** - Descarga la remisión como PDF con watermark
+4. **Enviar por Email** - Envía la nota por correo (requiere configuración y email del cliente)
 
 ### Gestión de Conceptos
 
@@ -96,7 +148,7 @@ const CONFIG = {
 - **100% Client-Side** - Sin backend, sin base de datos
 - **HTML5, CSS3, Vanilla JavaScript** - Sin frameworks pesados
 - **jsPDF** - Generación de PDFs en el navegador
-- **EmailJS** - Envío de correos (opcional)
+- **Google Apps Script** - Envío de correos vía Gmail (opcional)
 - **GitHub Pages** - Hosting estático gratuito
 
 ## 📱 Optimización Móvil
