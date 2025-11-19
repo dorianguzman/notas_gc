@@ -542,13 +542,25 @@ td input {
     color: #333;
 }
 
+.history-item-amounts {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 2px solid #e5e5e5;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.history-item-subtotal {
+    font-size: 16px;
+    font-weight: 600;
+    color: #555;
+}
+
 .history-item-total {
     font-size: 20px;
     font-weight: 700;
     color: #1a1a1a;
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 2px solid #e5e5e5;
 }
 
 .history-empty {
@@ -1213,7 +1225,11 @@ td input {
         font-size: 15px;
     }
 
+    .history-item-subtotal {
+        font-size: 15px;
+    }
+
     .history-item-total {
-        font-size: 22px;
+        font-size: 20px;
     }
 }
