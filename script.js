@@ -100,16 +100,38 @@ function addCard() {
     setupCalculationListeners();
 }
 
+// Global variable to store card pending deletion
+let cardToDelete = null;
+
 function removeCard(button) {
     const card = button.closest('.concepto-card');
     const container = document.getElementById('conceptosContainer');
 
-    if (container.children.length > 1) {
-        card.remove();
-        calculateTotals();
-    } else {
+    // Check if this is the last card
+    if (container.children.length <= 1) {
         showToast('Debe haber al menos un concepto', 'error');
+        return;
     }
+
+    // Store reference to card and show confirmation modal
+    cardToDelete = card;
+    const modal = document.getElementById('deleteModal');
+    modal.style.display = 'flex';
+}
+
+function confirmDelete() {
+    if (cardToDelete) {
+        cardToDelete.remove();
+        calculateTotals();
+        showToast('Concepto eliminado', 'success');
+    }
+    cancelDelete();
+}
+
+function cancelDelete() {
+    cardToDelete = null;
+    const modal = document.getElementById('deleteModal');
+    modal.style.display = 'none';
 }
 
 // Calculations
@@ -483,6 +505,8 @@ function showToast(message, type = 'success') {
 // Expose functions globally
 window.addCard = addCard;
 window.removeCard = removeCard;
+window.confirmDelete = confirmDelete;
+window.cancelDelete = cancelDelete;
 window.generarPDF = generarPDF;
 window.enviarCorreo = enviarCorreo;
 window.nuevaNota = nuevaNota;

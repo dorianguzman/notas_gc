@@ -1172,6 +1172,121 @@ input[readonly] {
     stroke: #0891b2;
 }
 
+/* Delete Confirmation Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    backdrop-filter: blur(2px);
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.modal-icon.warning {
+    background-color: #fef2f2;
+    color: #ff4757;
+}
+
+.modal-icon svg {
+    width: 32px;
+    height: 32px;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.modal-message {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.btn-modal-cancel,
+.btn-modal-delete {
+    flex: 1;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid;
+}
+
+.btn-modal-cancel {
+    background-color: transparent;
+    color: #666;
+    border-color: #ddd;
+}
+
+.btn-modal-cancel:hover {
+    background-color: #f5f5f5;
+    border-color: #999;
+}
+
+.btn-modal-delete {
+    background-color: #ff4757;
+    color: white;
+    border-color: #ff4757;
+}
+
+.btn-modal-delete:hover {
+    background-color: #e84118;
+    border-color: #e84118;
+}
+
+.btn-modal-cancel:active,
+.btn-modal-delete:active {
+    transform: scale(0.98);
+}
+
 .loading {
     text-align: center;
     padding: 40px 20px;
@@ -1278,6 +1393,38 @@ input[readonly] {
         min-width: 0;
         max-width: 100%;
         padding: 14px 16px;
+    }
+
+    /* Modal mobile optimization */
+    .modal-content {
+        padding: 25px 20px;
+        width: 85%;
+    }
+
+    .modal-icon {
+        width: 56px;
+        height: 56px;
+        margin-bottom: 16px;
+    }
+
+    .modal-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .modal-title {
+        font-size: 18px;
+    }
+
+    .modal-message {
+        font-size: 14px;
+    }
+
+    .btn-modal-cancel,
+    .btn-modal-delete {
+        padding: 14px 20px;
+        font-size: 16px;
+        min-height: 44px;
     }
 
     .toast-icon {
