@@ -13,6 +13,40 @@
             <h1>Nota de Remisión</h1>
         </header>
 
+        <!-- Start Screen -->
+        <div id="startScreen" class="screen">
+            <div class="start-buttons">
+                <button type="button" class="btn-large btn-primary" onclick="showScreen('formScreen')">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                    </svg>
+                    <span class="btn-text">Nueva Remisión</span>
+                </button>
+                <button type="button" class="btn-large btn-secondary" onclick="showScreen('historyScreen')">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                        <line x1="9" y1="12" x2="15" y2="12"></line>
+                        <line x1="9" y1="16" x2="15" y2="16"></line>
+                    </svg>
+                    <span class="btn-text">Ver Historial</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Form Screen -->
+        <div id="formScreen" class="screen" style="display: none;">
+            <button type="button" class="btn-back" onclick="showScreen('startScreen')">
+                <svg class="icon-inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Volver
+            </button>
+
         <div class="form-section">
             <div class="form-row">
                 <div class="form-group">
@@ -82,12 +116,49 @@
         </div>
 
         <div class="actions-section">
-            <button type="button" class="btn-primary" onclick="generarPDF()">📄 Generar PDF</button>
-            <button type="button" class="btn-secondary" onclick="enviarCorreo()">📧 Enviar por Correo</button>
-            <button type="button" class="btn-success" onclick="guardarRemision()">💾 Guardar Remisión</button>
+            <button type="button" class="btn-primary" onclick="generarPDF()">
+                <svg class="icon-inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                Generar PDF
+            </button>
+            <button type="button" class="btn-secondary" onclick="enviarCorreo()">
+                <svg class="icon-inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                Enviar por Correo
+            </button>
+            <button type="button" class="btn-success" onclick="guardarRemision()">
+                <svg class="icon-inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                Guardar Remisión
+            </button>
         </div>
 
         <div id="status" class="status-message"></div>
+        </div>
+        <!-- End Form Screen -->
+
+        <!-- History Screen -->
+        <div id="historyScreen" class="screen" style="display: none;">
+            <button type="button" class="btn-back" onclick="showScreen('startScreen')">
+                <svg class="icon-inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Volver
+            </button>
+            <h2>Historial de Remisiones</h2>
+            <div id="historyContent" class="history-content">
+                <p class="loading">Cargando historial...</p>
+            </div>
+        </div>
+
     </div>
 
     <!-- External Libraries -->

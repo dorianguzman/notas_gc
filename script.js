@@ -18,14 +18,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('fecha').value = today;
 
-    // Load sequence and set next remision number
-    await loadNextRemision();
-
     // Add event listeners for calculations
     setupCalculationListeners();
-
-    // Show info message
-    showStatus('Sistema cargado y listo para usar.', 'info');
 });
 
 // GitHub Workflow Functions
@@ -425,6 +419,83 @@ function showStatus(message, type) {
     }, 5000);
 }
 
+// Screen Navigation
+function showScreen(screenId) {
+    // Hide all screens
+    const screens = document.querySelectorAll('.screen');
+    screens.forEach(screen => {
+        screen.style.display = 'none';
+    });
+
+    // Show selected screen
+    const selectedScreen = document.getElementById(screenId);
+    if (selectedScreen) {
+        selectedScreen.style.display = 'block';
+    }
+
+    // Load data if needed
+    if (screenId === 'formScreen') {
+        loadNextRemision();
+    } else if (screenId === 'historyScreen') {
+        loadHistory();
+    }
+}
+
+// History Management
+async function loadHistory() {
+    const historyContent = document.getElementById('historyContent');
+
+    try {
+        historyContent.innerHTML = '<p class="loading">Cargando historial...</p>';
+
+        const result = await getFileContent('data/historial.json');
+
+        if (!result || !result.content || result.content.length === 0) {
+            historyContent.innerHTML = '<p class="history-empty">No hay remisiones en el historial.</p>';
+            return;
+        }
+
+        // Sort by remision number (newest first)
+        const history = result.content.sort((a, b) => {
+            return b.remision.localeCompare(a.remision);
+        });
+
+        // Generate history items
+        let html = '';
+        history.forEach(item => {
+            html += `
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div class="history-item-remision">Remisión #${item.remision}</div>
+                        <div class="history-item-date">${item.fecha}</div>
+                    </div>
+                    <div class="history-item-info">
+                        <span class="history-item-label">Cliente:</span>
+                        <span class="history-item-value">${item.cliente}</span>
+                    </div>
+                    <div class="history-item-info">
+                        <span class="history-item-label">Ciudad:</span>
+                        <span class="history-item-value">${item.ciudad}</span>
+                    </div>
+                    <div class="history-item-info">
+                        <span class="history-item-label">Conceptos:</span>
+                        <span class="history-item-value">${item.conceptos.length} item(s)</span>
+                    </div>
+                    <div class="history-item-total">
+                        Total: $${item.total.toFixed(2)}
+                    </div>
+                </div>
+            `;
+        });
+
+        historyContent.innerHTML = html;
+
+    } catch (error) {
+        console.error('Error loading history:', error);
+        historyContent.innerHTML = '<p class="history-empty">Error al cargar el historial.</p>';
+    }
+}
+
 // Configuration helper (to be called from console if needed)
 function setEmailJSConfig(serviceId, templateId, publicKey) {
     CONFIG.emailjs.serviceId = serviceId;
@@ -440,3 +511,4 @@ window.guardarRemision = guardarRemision;
 window.generarPDF = generarPDF;
 window.enviarCorreo = enviarCorreo;
 window.setEmailJSConfig = setEmailJSConfig;
+window.showScreen = showScreen;
