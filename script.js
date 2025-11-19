@@ -12,6 +12,14 @@ const CONFIG = {
     }
 };
 
+// Utility function to format numbers with comma separators
+function formatNumber(number, decimals = 2) {
+    return number.toLocaleString('en-US', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+    });
+}
+
 // Initialize app on page load
 document.addEventListener('DOMContentLoaded', async () => {
     // Set current date
@@ -165,7 +173,7 @@ function updateRowImporte(row) {
     const cantidad = parseFloat(row.querySelector('.cantidad').value) || 0;
     const precioUnitario = parseFloat(row.querySelector('.precio-unitario').value) || 0;
     const importe = cantidad * precioUnitario;
-    row.querySelector('.importe').textContent = `$${importe.toFixed(2)}`;
+    row.querySelector('.importe').textContent = `$${formatNumber(importe)}`;
 }
 
 function calculateTotals() {
@@ -182,9 +190,9 @@ function calculateTotals() {
     const ivaAmount = subtotal * (ivaPercent / 100);
     const total = subtotal + ivaAmount;
 
-    document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
-    document.getElementById('ivaAmount').textContent = `$${ivaAmount.toFixed(2)}`;
-    document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+    document.getElementById('subtotal').textContent = `$${formatNumber(subtotal)}`;
+    document.getElementById('ivaAmount').textContent = `$${formatNumber(ivaAmount)}`;
+    document.getElementById('total').textContent = `$${formatNumber(total)}`;
 }
 
 // Data Collection
@@ -345,25 +353,25 @@ async function generarPDF() {
     y += 10;
 
     data.conceptos.forEach(concepto => {
-        doc.text(concepto.cantidad.toString(), 20, y);
+        doc.text(formatNumber(concepto.cantidad, 0), 20, y);
         doc.text(concepto.descripcion, 50, y);
-        doc.text(`$${concepto.pu.toFixed(2)}`, 130, y);
-        doc.text(`$${concepto.importe.toFixed(2)}`, 165, y);
+        doc.text(`$${formatNumber(concepto.pu)}`, 130, y);
+        doc.text(`$${formatNumber(concepto.importe)}`, 165, y);
         y += 7;
     });
 
     // Totals
     y += 10;
     doc.text(`Subtotal:`, 130, y);
-    doc.text(`$${data.subtotal.toFixed(2)}`, 165, y);
+    doc.text(`$${formatNumber(data.subtotal)}`, 165, y);
     y += 7;
     doc.text(`IVA:`, 130, y);
-    doc.text(`$${data.iva.toFixed(2)}`, 165, y);
+    doc.text(`$${formatNumber(data.iva)}`, 165, y);
     y += 7;
     doc.setFontSize(12);
     doc.setFont(undefined, 'bold');
     doc.text(`Total:`, 130, y);
-    doc.text(`$${data.total.toFixed(2)}`, 165, y);
+    doc.text(`$${formatNumber(data.total)}`, 165, y);
 
     // Save PDF
     doc.save(`Remision_${data.remision}.pdf`);
@@ -395,7 +403,7 @@ async function enviarCorreo() {
             remision: data.remision,
             cliente: data.cliente,
             fecha: data.fecha,
-            total: data.total.toFixed(2),
+            total: formatNumber(data.total),
             pdf_attachment: pdfBase64
         };
 
@@ -527,7 +535,7 @@ function renderHistory() {
                     <span class="history-item-value">${item.cliente}</span>
                 </div>
                 <div class="history-item-total">
-                    Total: $${item.total.toFixed(2)}
+                    Total: $${formatNumber(item.total)}
                 </div>
             </div>
         `;
@@ -553,10 +561,10 @@ function showDetailModal(remisionNumber) {
     item.conceptos.forEach(concepto => {
         conceptosHtml += `
             <tr>
-                <td>${concepto.cantidad}</td>
+                <td>${formatNumber(concepto.cantidad, 0)}</td>
                 <td>${concepto.descripcion}</td>
-                <td>$${concepto.pu.toFixed(2)}</td>
-                <td>$${concepto.importe.toFixed(2)}</td>
+                <td>$${formatNumber(concepto.pu)}</td>
+                <td>$${formatNumber(concepto.importe)}</td>
             </tr>
         `;
     });
@@ -602,15 +610,15 @@ function showDetailModal(remisionNumber) {
         <div class="modal-section modal-totals">
             <div class="modal-total-row">
                 <span>Subtotal:</span>
-                <span>$${item.subtotal.toFixed(2)}</span>
+                <span>$${formatNumber(item.subtotal)}</span>
             </div>
             <div class="modal-total-row">
                 <span>IVA:</span>
-                <span>$${item.iva.toFixed(2)}</span>
+                <span>$${formatNumber(item.iva)}</span>
             </div>
             <div class="modal-total-row modal-total-final">
                 <span>Total:</span>
-                <span>$${item.total.toFixed(2)}</span>
+                <span>$${formatNumber(item.total)}</span>
             </div>
         </div>
 
