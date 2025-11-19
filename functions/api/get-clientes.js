@@ -1,6 +1,6 @@
 /**
- * Cloudflare Pages Function: Get History
- * GET /api/get-history - Get all remisions
+ * Cloudflare Pages Function: Get Clientes
+ * GET /api/get-clientes - Get all clients
  */
 
 export async function onRequest(context) {
@@ -31,29 +31,19 @@ export async function onRequest(context) {
     try {
         const db = env.DB;
 
-        // Get all remisiones with client names, ordered by remision number (newest first)
+        // Get all clients ordered by name
         const result = await db.prepare(`
-            SELECT
-                r.remision, r.fecha, c.nombre as cliente, r.ciudad, r.conceptos,
-                r.subtotal, r.iva, r.total, r.deleted
-            FROM remisiones r
-            JOIN clientes c ON r.cliente_id = c.id
-            ORDER BY r.remision DESC
+            SELECT nombre, ciudad
+            FROM clientes
+            ORDER BY nombre ASC
         `).all();
 
-        // Parse conceptos JSON for each remision
-        const remisiones = result.results.map(item => ({
-            ...item,
-            conceptos: JSON.parse(item.conceptos),
-            deleted: item.deleted === 1
-        }));
-
-        return new Response(JSON.stringify(remisiones), {
+        return new Response(JSON.stringify(result.results), {
             headers: corsHeaders
         });
 
     } catch (error) {
-        console.error('Get history error:', error);
+        console.error('Get clientes error:', error);
         return new Response(JSON.stringify({
             error: error.message
         }), {
