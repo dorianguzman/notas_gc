@@ -50,25 +50,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.addEventListener('offline', updateOnlineStatus);
 });
 
-// GitHub Workflow Functions
-async function getFileContent(path) {
+// API Functions
+async function getSequenceAPI() {
     try {
-        // Use local path for localhost, GitHub raw URL for production
-        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const url = isLocalhost
-            ? `/${path}`
-            : `https://raw.githubusercontent.com/${CONFIG.github.owner}/${CONFIG.github.repo}/${CONFIG.github.branch}/${path}`;
-
+        const url = `${CONFIG.api.baseUrl}/api/get-sequence`;
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error(`Error fetching file: ${response.status}`);
+            throw new Error(`Error fetching sequence: ${response.status}`);
         }
 
-        const content = await response.json();
-        return { content };
+        const data = await response.json();
+        return data;
     } catch (error) {
-        console.error(`Error getting file ${path}:`, error);
+        console.error('Error getting sequence:', error);
+        return null;
+    }
+}
+
+async function getHistoryAPI() {
+    try {
+        const url = `${CONFIG.api.baseUrl}/api/get-history`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`Error fetching history: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error getting history:', error);
         return null;
     }
 }
@@ -129,11 +141,9 @@ async function updateRemisionAPI(remisionNumber, deleted) {
 // Sequence Management
 async function loadNextRemision() {
     try {
-        const result = await getFileContent('data/secuencia.json');
-        if (result) {
-            const currentNum = parseInt(result.content.ultima);
-            const nextNum = String(currentNum + 1).padStart(8, '0');
-            document.getElementById('remision').value = nextNum;
+        const result = await getSequenceAPI();
+        if (result && result.next) {
+            document.getElementById('remision').value = result.next;
             updateDataStatus(true, 'Secuencia cargada');
         } else {
             document.getElementById('remision').value = '00000001';
@@ -145,8 +155,6 @@ async function loadNextRemision() {
         updateDataStatus(false, 'Error de secuencia');
     }
 }
-
-// Sequence increment is now handled by the workflow
 
 // Table Management
 function addRow() {
@@ -506,21 +514,16 @@ async function loadHistory() {
     try {
         historyContent.innerHTML = '<p class="loading">Cargando historial...</p>';
 
-        const result = await getFileContent('data/historial.json');
+        const result = await getHistoryAPI();
 
-        if (!result || !result.content || result.content.length === 0) {
+        if (!result || result.length === 0) {
             historyContent.innerHTML = '<p class="history-empty">No hay remisiones en el historial.</p>';
             updateDataStatus(true, 'Sin datos');
             return;
         }
 
-        // Store and sort by remision number (newest first)
-        historyData = result.content.sort((a, b) => {
-            return b.remision.localeCompare(a.remision);
-        });
-
-        // Apply localStorage overrides (for local testing)
-        applyLocalStorageOverrides();
+        // Store history data (already sorted by remision DESC from API)
+        historyData = result;
 
         // Render with current filter
         renderHistory();
@@ -533,24 +536,6 @@ async function loadHistory() {
         historyContent.innerHTML = '<p class="history-empty">Error al cargar el historial.</p>';
         updateDataStatus(false, 'Error al cargar');
     }
-}
-
-function applyLocalStorageOverrides() {
-    // Load deleted states from localStorage
-    const deletedStates = JSON.parse(localStorage.getItem('deletedStates') || '{}');
-
-    // Apply to historyData
-    historyData.forEach(item => {
-        if (deletedStates.hasOwnProperty(item.remision)) {
-            item.deleted = deletedStates[item.remision];
-        }
-    });
-}
-
-function saveDeletedStateToLocalStorage(remisionNumber, deleted) {
-    const deletedStates = JSON.parse(localStorage.getItem('deletedStates') || '{}');
-    deletedStates[remisionNumber] = deleted;
-    localStorage.setItem('deletedStates', JSON.stringify(deletedStates));
 }
 
 function filterHistory(filter) {
@@ -752,25 +737,13 @@ async function performDeleteToggle(remisionNumber, setDeleted) {
     try {
         showToast(setDeleted ? 'Eliminando remisión...' : 'Restaurando remisión...', 'info');
 
-        // Update local data first for immediate UI feedback
+        // Call Cloudflare Function to update D1 database
+        await updateRemisionAPI(remisionNumber, setDeleted);
+
+        // Update local data for immediate UI feedback
         const item = historyData.find(h => h.remision === remisionNumber);
-        if (!item) {
-            showToast('No se encontró la remisión', 'error');
-            return;
-        }
-
-        item.deleted = setDeleted;
-
-        // Save to localStorage for persistence across page loads
-        saveDeletedStateToLocalStorage(remisionNumber, setDeleted);
-
-        // Call Cloudflare Function to update GitHub
-        try {
-            await updateRemisionAPI(remisionNumber, setDeleted);
-        } catch (apiError) {
-            // If API call fails, show warning but keep local change
-            console.warn('Failed to sync with server:', apiError);
-            showToast('Cambio guardado localmente. Sincronización con servidor pendiente.', 'info');
+        if (item) {
+            item.deleted = setDeleted;
         }
 
         showToast(
@@ -786,7 +759,7 @@ async function performDeleteToggle(remisionNumber, setDeleted) {
 
     } catch (error) {
         console.error('Error toggling delete:', error);
-        showToast('Error al actualizar la remisión', 'error');
+        showToast('Error al actualizar la remisión: ' + error.message, 'error');
     }
 }
 

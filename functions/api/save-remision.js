@@ -32,114 +32,39 @@ export async function onRequest(context) {
         // Get remision data from request
         const remisionData = await request.json();
 
-        // GitHub configuration
-        const GITHUB_OWNER = 'dorianguzman';
-        const GITHUB_REPO = 'notas_gc';
-        const GITHUB_BRANCH = 'main';
-        const GITHUB_TOKEN = env.GITHUB_TOKEN;
+        // Start transaction
+        const db = env.DB;
 
-        if (!GITHUB_TOKEN) {
-            throw new Error('GITHUB_TOKEN not configured');
-        }
+        // 1. Get and increment sequence
+        const sequenceResult = await db.prepare(
+            'SELECT ultima FROM secuencia WHERE id = 1'
+        ).first();
 
-        // 1. Get current sequence
-        const sequenceResponse = await fetch(
-            `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/data/secuencia.json?ref=${GITHUB_BRANCH}`,
-            {
-                headers: {
-                    'Authorization': `Bearer ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            }
-        );
-
-        if (!sequenceResponse.ok) {
-            throw new Error(`Failed to fetch sequence: ${sequenceResponse.status}`);
-        }
-
-        const sequenceFile = await sequenceResponse.json();
-        const sequenceContent = JSON.parse(atob(sequenceFile.content));
-        const currentSequence = sequenceContent.ultima;
+        const currentSequence = sequenceResult.ultima;
         const nextSequence = String(parseInt(currentSequence) + 1).padStart(8, '0');
 
-        // 2. Get current history
-        const historyResponse = await fetch(
-            `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/data/historial.json?ref=${GITHUB_BRANCH}`,
-            {
-                headers: {
-                    'Authorization': `Bearer ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            }
-        );
+        // 2. Update sequence
+        await db.prepare(
+            'UPDATE secuencia SET ultima = ?, updated_at = ? WHERE id = 1'
+        ).bind(nextSequence, Date.now()).run();
 
-        if (!historyResponse.ok) {
-            throw new Error(`Failed to fetch history: ${historyResponse.status}`);
-        }
-
-        const historyFile = await historyResponse.json();
-        const historyContent = JSON.parse(atob(historyFile.content));
-
-        // 3. Add new remision to history (at the beginning)
-        const newRemision = {
-            fecha: remisionData.fecha,
-            remision: nextSequence,
-            cliente: remisionData.cliente,
-            ciudad: remisionData.ciudad,
-            conceptos: remisionData.conceptos,
-            subtotal: remisionData.subtotal,
-            iva: remisionData.iva,
-            total: remisionData.total,
-            deleted: false
-        };
-
-        historyContent.unshift(newRemision);
-
-        // 4. Update sequence file
-        const updateSequenceResponse = await fetch(
-            `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/data/secuencia.json`,
-            {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: `Update sequence to ${nextSequence}`,
-                    content: btoa(JSON.stringify({ ultima: nextSequence }, null, 2)),
-                    sha: sequenceFile.sha,
-                    branch: GITHUB_BRANCH
-                })
-            }
-        );
-
-        if (!updateSequenceResponse.ok) {
-            throw new Error(`Failed to update sequence: ${updateSequenceResponse.status}`);
-        }
-
-        // 5. Update history file
-        const updateHistoryResponse = await fetch(
-            `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/data/historial.json`,
-            {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: `Add remision ${nextSequence}`,
-                    content: btoa(JSON.stringify(historyContent, null, 2)),
-                    sha: historyFile.sha,
-                    branch: GITHUB_BRANCH
-                })
-            }
-        );
-
-        if (!updateHistoryResponse.ok) {
-            throw new Error(`Failed to update history: ${updateHistoryResponse.status}`);
-        }
+        // 3. Insert new remision
+        await db.prepare(`
+            INSERT INTO remisiones (
+                remision, fecha, cliente, ciudad, conceptos,
+                subtotal, iva, total, deleted, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?)
+        `).bind(
+            nextSequence,
+            remisionData.fecha,
+            remisionData.cliente,
+            remisionData.ciudad,
+            JSON.stringify(remisionData.conceptos),
+            remisionData.subtotal,
+            remisionData.iva,
+            remisionData.total,
+            Date.now()
+        ).run();
 
         return new Response(JSON.stringify({
             success: true,

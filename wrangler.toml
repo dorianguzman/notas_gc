@@ -2,8 +2,11 @@
 name = "notas-gc"
 compatibility_date = "2024-01-01"
 
-# Environment variables will be configured in Cloudflare Pages dashboard
-# Required: GITHUB_TOKEN (set as secret in Cloudflare Pages)
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "notas-gc-db"
+database_id = "ea92ae0c-60ac-439f-859d-c938668ee95e"
 
 [env.production]
 # Production environment settings

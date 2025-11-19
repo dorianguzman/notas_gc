@@ -1,6 +1,6 @@
 /**
- * Cloudflare Pages Function: Update Remision
- * POST /api/update-remision - Update remision (delete/restore)
+ * Cloudflare Pages Function: Get Sequence
+ * GET /api/get-sequence - Get next remision number
  */
 
 export async function onRequest(context) {
@@ -10,7 +10,7 @@ export async function onRequest(context) {
     // CORS headers
     const corsHeaders = {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
         'Content-Type': 'application/json'
     };
@@ -20,8 +20,8 @@ export async function onRequest(context) {
         return new Response(null, { headers: corsHeaders });
     }
 
-    // Only allow POST
-    if (method !== 'POST') {
+    // Only allow GET
+    if (method !== 'GET') {
         return new Response(JSON.stringify({ error: 'Method not allowed' }), {
             status: 405,
             headers: corsHeaders
@@ -29,34 +29,25 @@ export async function onRequest(context) {
     }
 
     try {
-        // Get update data from request
-        const { remisionNumber, deleted } = await request.json();
-
-        if (!remisionNumber || typeof deleted !== 'boolean') {
-            throw new Error('Invalid request: remisionNumber and deleted fields required');
-        }
-
         const db = env.DB;
 
-        // Update the remision's deleted status
+        // Get current sequence
         const result = await db.prepare(
-            'UPDATE remisiones SET deleted = ? WHERE remision = ?'
-        ).bind(deleted ? 1 : 0, remisionNumber).run();
+            'SELECT ultima FROM secuencia WHERE id = 1'
+        ).first();
 
-        if (result.meta.changes === 0) {
-            throw new Error(`Remision ${remisionNumber} not found`);
-        }
+        const currentSequence = result.ultima;
+        const nextSequence = String(parseInt(currentSequence) + 1).padStart(8, '0');
 
         return new Response(JSON.stringify({
-            success: true,
-            remisionNumber,
-            deleted
+            ultima: currentSequence,
+            next: nextSequence
         }), {
             headers: corsHeaders
         });
 
     } catch (error) {
-        console.error('Update remision error:', error);
+        console.error('Get sequence error:', error);
         return new Response(JSON.stringify({
             error: error.message
         }), {
