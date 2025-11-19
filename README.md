@@ -48,82 +48,17 @@ open index.html
 
 ## ⚙️ Configuración de Email (Opcional)
 
-Para habilitar el envío de correos vía Google Apps Script:
+Para habilitar el envío de correos vía Google Apps Script, sigue las instrucciones detalladas en:
 
-### Paso 1: Crear Google Apps Script
+📄 **[google-apps-script.md](google-apps-script.md)**
 
-1. Ve a https://script.google.com
-2. Crea un nuevo proyecto
-3. Pega el siguiente código:
-
-```javascript
-function doPost(e) {
-  try {
-    const data = JSON.parse(e.postData.contents);
-
-    const recipient = data.clienteEmail;
-    const subject = `Nota de Remisión #${data.remision} - Ganadería Catorce`;
-
-    const body = `
-Estimado/a ${data.cliente},
-
-Adjunto encontrará la Nota de Remisión #${data.remision}.
-
-Detalles:
-- Fecha: ${data.fecha}
-- Total: $${data.total}
-
-Gracias por su preferencia.
-
----
-Ganadería Catorce
-Querétaro, México
-Tel: +52 446 106 0320
-Email: ganaderiacatorce@gmail.com
-    `;
-
-    const pdfBlob = Utilities.newBlob(
-      Utilities.base64Decode(data.pdfBase64),
-      'application/pdf',
-      `Remision_${data.remision}.pdf`
-    );
-
-    GmailApp.sendEmail(recipient, subject, body, {
-      attachments: [pdfBlob],
-      name: 'Ganadería Catorce',
-      cc: 'ganaderiacatorce@gmail.com'
-    });
-
-    return ContentService.createTextOutput(JSON.stringify({
-      success: true,
-      message: 'Email enviado exitosamente'
-    })).setMimeType(ContentService.MimeType.JSON);
-
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({
-      success: false,
-      message: error.toString()
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-```
-
-4. Deploy → New deployment → Web app
-5. Execute as: **Your account**
-6. Who has access: **Anyone**
-7. Copia el Web App URL
+El archivo incluye:
+- Código completo de Google Apps Script con manejo de errores mejorado
+- Instrucciones paso a paso para crear y desplegar el Web App
+- Configuración de permisos
+- Límites de Gmail y troubleshooting
 
 **Nota:** El script enviará automáticamente una copia (CC) a ganaderiacatorce@gmail.com de cada email enviado.
-
-### Paso 2: Configurar la App
-
-Edita `script.js` (línea 3) y agrega tu URL:
-
-```javascript
-const CONFIG = {
-    googleAppsScriptUrl: 'TU_WEB_APP_URL_AQUI'
-};
-```
 
 ## 💡 Uso
 

@@ -308,40 +308,30 @@ async function actualGenerarPDF() {
 
         const data = getRemisionData();
 
-        // Add logo as centered watermark in background
+        // Add small logo at the top
         try {
             const img = new Image();
             img.src = 'assets/logo.png';
             await new Promise((resolve) => {
                 img.onload = () => {
-                    // Calculate aspect ratio to maintain logo proportions
-                    const maxWidth = 120;
-                    const maxHeight = 120;
+                    // Small logo dimensions
+                    const maxWidth = 30;
+                    const maxHeight = 30;
                     const imgRatio = img.width / img.height;
 
                     let logoWidth = maxWidth;
                     let logoHeight = maxWidth / imgRatio;
 
-                    // If height is too large, scale by height instead
                     if (logoHeight > maxHeight) {
                         logoHeight = maxHeight;
                         logoWidth = maxHeight * imgRatio;
                     }
 
-                    // Center the logo on the page
-                    // A4 page: 210mm wide x 297mm tall
-                    const pageWidth = 210;
-                    const pageHeight = 297;
-                    const xPos = (pageWidth - logoWidth) / 2;
-                    const yPos = (pageHeight - logoHeight) / 2;
+                    // Position logo in top-left
+                    const xPos = 15;
+                    const yPos = 12;
 
-                    // Set opacity for watermark effect
-                    doc.setGState(new doc.GState({ opacity: 0.15 }));
                     doc.addImage(img, 'PNG', xPos, yPos, logoWidth, logoHeight);
-
-                    // Reset opacity for rest of content
-                    doc.setGState(new doc.GState({ opacity: 1.0 }));
-
                     resolve();
                 };
                 img.onerror = resolve;
@@ -352,17 +342,10 @@ async function actualGenerarPDF() {
 
         let currentY = 20;
 
-        // Main title: Ganadería Catorce
-        doc.setFontSize(24);
+        // Main title: Nota de Remisión
+        doc.setFontSize(18);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(45, 45, 45);
-        doc.text('GANADERÍA CATORCE', 105, currentY, { align: 'center' });
-
-        // Subtitle: Nota de Remisión
-        currentY += 10;
-        doc.setFontSize(16);
-        doc.setFont(undefined, 'normal');
-        doc.setTextColor(80, 80, 80);
         doc.text('Nota de Remisión', 105, currentY, { align: 'center' });
 
         // Remision number and date
@@ -423,18 +406,16 @@ async function actualGenerarPDF() {
 
         currentY += 8;
 
-        // Table rows with alternating background and transparency
+        // Table rows with alternating background
         doc.setFont(undefined, 'normal');
         doc.setTextColor(60, 60, 60);
 
         let rowIndex = 0;
         data.conceptos.forEach(concepto => {
-            // Alternating row background with transparency
+            // Alternating row background
             if (rowIndex % 2 === 0) {
-                doc.setGState(new doc.GState({ opacity: 0.5 }));
                 doc.setFillColor(250, 250, 250);
                 doc.rect(15, currentY - 5, 180, 8, 'F');
-                doc.setGState(new doc.GState({ opacity: 1.0 }));
             }
 
             doc.text(formatNumber(concepto.cantidad, 2), 18, currentY);
@@ -555,14 +536,15 @@ async function enviarCorreo() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        // Add logo as centered watermark in background
+        // Add small logo at the top
         try {
             const img = new Image();
             img.src = 'assets/logo.png';
             await new Promise((resolve) => {
                 img.onload = () => {
-                    const maxWidth = 120;
-                    const maxHeight = 120;
+                    // Small logo dimensions
+                    const maxWidth = 30;
+                    const maxHeight = 30;
                     const imgRatio = img.width / img.height;
 
                     let logoWidth = maxWidth;
@@ -573,15 +555,11 @@ async function enviarCorreo() {
                         logoWidth = maxHeight * imgRatio;
                     }
 
-                    const pageWidth = 210;
-                    const pageHeight = 297;
-                    const xPos = (pageWidth - logoWidth) / 2;
-                    const yPos = (pageHeight - logoHeight) / 2;
+                    // Position logo in top-left
+                    const xPos = 15;
+                    const yPos = 12;
 
-                    doc.setGState(new doc.GState({ opacity: 0.15 }));
                     doc.addImage(img, 'PNG', xPos, yPos, logoWidth, logoHeight);
-                    doc.setGState(new doc.GState({ opacity: 1.0 }));
-
                     resolve();
                 };
                 img.onerror = resolve;
@@ -593,16 +571,10 @@ async function enviarCorreo() {
         // Build the same PDF as actualGenerarPDF but get base64
         let currentY = 20;
 
-        // Main title: Ganadería Catorce
-        doc.setFontSize(24);
+        // Main title: Nota de Remisión
+        doc.setFontSize(18);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(45, 45, 45);
-        doc.text('GANADERÍA CATORCE', 105, currentY, { align: 'center' });
-
-        currentY += 10;
-        doc.setFontSize(16);
-        doc.setFont(undefined, 'normal');
-        doc.setTextColor(80, 80, 80);
         doc.text('Nota de Remisión', 105, currentY, { align: 'center' });
 
         currentY += 10;
@@ -669,10 +641,8 @@ async function enviarCorreo() {
         let rowIndex = 0;
         data.conceptos.forEach(concepto => {
             if (rowIndex % 2 === 0) {
-                doc.setGState(new doc.GState({ opacity: 0.5 }));
                 doc.setFillColor(250, 250, 250);
                 doc.rect(15, currentY - 5, 180, 8, 'F');
-                doc.setGState(new doc.GState({ opacity: 1.0 }));
             }
 
             doc.text(formatNumber(concepto.cantidad, 2), 18, currentY);
