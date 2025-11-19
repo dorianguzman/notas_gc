@@ -328,10 +328,10 @@ async function actualGenerarPDF() {
                     }
 
                     // Position logo centered vertically in header section
-                    // Header section spans from Y=20 (title) to Y=50 (client separator)
+                    // Header section spans from Y=20 (title) to Y=35 (end of fecha)
                     const xPos = 15;
                     const headerTop = 20;
-                    const headerBottom = 50;
+                    const headerBottom = 35;
                     const yPos = headerTop + (headerBottom - headerTop - logoHeight) / 2;
 
                     doc.addImage(img, 'PNG', xPos, yPos, logoWidth, logoHeight);
@@ -559,10 +559,10 @@ async function enviarCorreo() {
                     }
 
                     // Position logo centered vertically in header section
-                    // Header section spans from Y=20 (title) to Y=50 (client separator)
+                    // Header section spans from Y=20 (title) to Y=35 (end of fecha)
                     const xPos = 15;
                     const headerTop = 20;
-                    const headerBottom = 50;
+                    const headerBottom = 35;
                     const yPos = headerTop + (headerBottom - headerTop - logoHeight) / 2;
 
                     doc.addImage(img, 'PNG', xPos, yPos, logoWidth, logoHeight);
