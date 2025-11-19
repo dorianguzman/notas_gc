@@ -515,6 +515,9 @@ async function loadHistory() {
             return b.remision.localeCompare(a.remision);
         });
 
+        // Apply localStorage overrides (for local testing)
+        applyLocalStorageOverrides();
+
         // Render with current filter
         renderHistory();
 
@@ -526,6 +529,24 @@ async function loadHistory() {
         historyContent.innerHTML = '<p class="history-empty">Error al cargar el historial.</p>';
         updateDataStatus(false, 'Error al cargar');
     }
+}
+
+function applyLocalStorageOverrides() {
+    // Load deleted states from localStorage
+    const deletedStates = JSON.parse(localStorage.getItem('deletedStates') || '{}');
+
+    // Apply to historyData
+    historyData.forEach(item => {
+        if (deletedStates.hasOwnProperty(item.remision)) {
+            item.deleted = deletedStates[item.remision];
+        }
+    });
+}
+
+function saveDeletedStateToLocalStorage(remisionNumber, deleted) {
+    const deletedStates = JSON.parse(localStorage.getItem('deletedStates') || '{}');
+    deletedStates[remisionNumber] = deleted;
+    localStorage.setItem('deletedStates', JSON.stringify(deletedStates));
 }
 
 function filterHistory(filter) {
@@ -736,8 +757,11 @@ async function performDeleteToggle(remisionNumber, setDeleted) {
 
         item.deleted = setDeleted;
 
-        // TODO: Send update to GitHub workflow to update historial.json
-        // For now, just update locally
+        // Save to localStorage for local testing
+        saveDeletedStateToLocalStorage(remisionNumber, setDeleted);
+
+        // TODO: In production, trigger GitHub workflow to update historial.json
+
         showToast(
             setDeleted
                 ? `Remisión #${remisionNumber} eliminada`
@@ -748,9 +772,6 @@ async function performDeleteToggle(remisionNumber, setDeleted) {
         // Close detail modal and refresh history view
         closeModal();
         renderHistory();
-
-        // Note: In production, you would trigger a workflow to update the JSON file
-        // For now, changes are only in memory and will be lost on refresh
 
     } catch (error) {
         console.error('Error toggling delete:', error);
