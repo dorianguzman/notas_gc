@@ -37,6 +37,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Add event listeners for calculations
     setupCalculationListeners();
+
+    // Initialize status monitoring
+    updateOnlineStatus();
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
 });
 
 // GitHub Workflow Functions
@@ -121,12 +126,15 @@ async function loadNextRemision() {
             const currentNum = parseInt(result.content.ultima);
             const nextNum = String(currentNum + 1).padStart(8, '0');
             document.getElementById('remision').value = nextNum;
+            updateDataStatus(true, 'Secuencia cargada');
         } else {
             document.getElementById('remision').value = '00000001';
+            updateDataStatus(true, 'Secuencia inicial');
         }
     } catch (error) {
         console.error('Error loading sequence:', error);
         document.getElementById('remision').value = '00000001';
+        updateDataStatus(false, 'Error de secuencia');
     }
 }
 
@@ -467,6 +475,37 @@ function showScreen(screenId) {
 let historyData = [];
 let currentFilter = 'all';
 
+// Status Management
+function updateOnlineStatus() {
+    const statusEl = document.getElementById('onlineStatus');
+    const isOnline = navigator.onLine;
+
+    statusEl.classList.remove('online', 'offline', 'checking');
+
+    if (isOnline) {
+        statusEl.classList.add('online');
+        statusEl.querySelector('.status-text').textContent = 'En línea';
+    } else {
+        statusEl.classList.add('offline');
+        statusEl.querySelector('.status-text').textContent = 'Sin conexión';
+    }
+}
+
+function updateDataStatus(success, message = '') {
+    const statusEl = document.getElementById('dataStatus');
+    statusEl.style.display = 'flex';
+
+    statusEl.classList.remove('data-success', 'data-error');
+
+    if (success) {
+        statusEl.classList.add('data-success');
+        statusEl.querySelector('.status-text').textContent = message || 'Sincronizado';
+    } else {
+        statusEl.classList.add('data-error');
+        statusEl.querySelector('.status-text').textContent = message || 'Error de datos';
+    }
+}
+
 // History Management
 async function loadHistory() {
     const historyContent = document.getElementById('historyContent');
@@ -478,6 +517,7 @@ async function loadHistory() {
 
         if (!result || !result.content || result.content.length === 0) {
             historyContent.innerHTML = '<p class="history-empty">No hay remisiones en el historial.</p>';
+            updateDataStatus(true, 'Sin datos');
             return;
         }
 
@@ -489,9 +529,13 @@ async function loadHistory() {
         // Render with current filter
         renderHistory();
 
+        // Update status indicator
+        updateDataStatus(true, `${historyData.length} remisiones`);
+
     } catch (error) {
         console.error('Error loading history:', error);
         historyContent.innerHTML = '<p class="history-empty">Error al cargar el historial.</p>';
+        updateDataStatus(false, 'Error al cargar');
     }
 }
 
