@@ -362,7 +362,7 @@ async function generarPDF() {
     doc.rect(15, y, 180, 8, 'F');
     doc.text('Cantidad', 20, y + 6);
     doc.text('Concepto', 50, y + 6);
-    doc.text('P.U.', 130, y + 6);
+    doc.text('Precio Unitario', 115, y + 6);
     doc.text('Importe', 165, y + 6);
 
     // Table rows
@@ -660,7 +660,7 @@ function showDetailModal(remisionNumber) {
                     <tr>
                         <th>Cant.</th>
                         <th>Descripción</th>
-                        <th>P.U.</th>
+                        <th>Precio<br>Unitario</th>
                         <th>Importe</th>
                     </tr>
                 </thead>
