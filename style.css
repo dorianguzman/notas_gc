@@ -37,7 +37,7 @@ header {
 }
 
 .logo {
-    max-width: 80px;
+    max-width: 120px;
     height: auto;
 }
 
@@ -80,8 +80,8 @@ h1 {
 }
 
 .status-dot {
-    width: 10px;
-    height: 10px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     background-color: #9ca3af;
     transition: all 0.3s ease;
@@ -1112,7 +1112,7 @@ td input {
     }
 
     .logo {
-        max-width: 60px;
+        max-width: 100px;
     }
 
     .btn-new {
