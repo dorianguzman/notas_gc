@@ -340,7 +340,7 @@ async function actualGenerarPDF() {
                     const yPos = (pageHeight - logoHeight) / 2;
 
                     // Set opacity for watermark effect
-                    doc.setGState(new doc.GState({ opacity: 0.08 }));
+                    doc.setGState(new doc.GState({ opacity: 0.15 }));
                     doc.addImage(img, 'PNG', xPos, yPos, logoWidth, logoHeight);
 
                     // Reset opacity for rest of content
@@ -356,22 +356,16 @@ async function actualGenerarPDF() {
 
         let currentY = 20;
 
-        // Main title: Ganadería Catorce
+        // Main title: Nota de Remisión
         doc.setFontSize(24);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(45, 45, 45);
-        doc.text('GANADERÍA CATORCE', 105, currentY, { align: 'center' });
-
-        // Subtitle: Nota de Remisión
-        currentY += 10;
-        doc.setFontSize(16);
-        doc.setFont(undefined, 'normal');
-        doc.setTextColor(80, 80, 80);
-        doc.text('Nota de Remisión', 105, currentY, { align: 'center' });
+        doc.text('NOTA DE REMISIÓN', 105, currentY, { align: 'center' });
 
         // Remision number and date
-        currentY += 10;
+        currentY += 12;
         doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
         doc.setTextColor(100, 100, 100);
         doc.text(`Remisión: ${data.remision}`, 105, currentY, { align: 'center' });
 
@@ -412,8 +406,7 @@ async function actualGenerarPDF() {
 
         currentY += 10;
 
-        // Table header with better spacing and transparency
-        doc.setGState(new doc.GState({ opacity: 0.6 }));
+        // Table header - no transparency
         doc.setFillColor(45, 45, 45);
         doc.setDrawColor(45, 45, 45);
         doc.roundedRect(15, currentY - 6, 180, 10, 1, 1, 'F');
@@ -428,18 +421,16 @@ async function actualGenerarPDF() {
 
         currentY += 8;
 
-        // Table rows with alternating background and transparency
+        // Table rows with alternating background - no transparency
         doc.setFont(undefined, 'normal');
         doc.setTextColor(60, 60, 60);
 
         let rowIndex = 0;
         data.conceptos.forEach(concepto => {
-            // Alternating row background with transparency
+            // Alternating row background
             if (rowIndex % 2 === 0) {
-                doc.setGState(new doc.GState({ opacity: 0.5 }));
                 doc.setFillColor(250, 250, 250);
                 doc.rect(15, currentY - 5, 180, 8, 'F');
-                doc.setGState(new doc.GState({ opacity: 1.0 }));
             }
 
             doc.text(formatNumber(concepto.cantidad, 2), 18, currentY);
@@ -456,9 +447,6 @@ async function actualGenerarPDF() {
             currentY += lineHeight;
             rowIndex++;
         });
-
-        // Reset opacity for totals section
-        doc.setGState(new doc.GState({ opacity: 1.0 }));
 
         // Totals section
         currentY += 5;
