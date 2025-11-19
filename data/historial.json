@@ -1,7 +1,7 @@
 [
   {
     "fecha": "2025-11-19",
-    "remision": "00000001",
+    "remision": "00000002",
     "cliente": "Juan Pérez García",
     "ciudad": "Querétaro",
     "conceptos": [
@@ -22,5 +22,23 @@
     "iva": 34400,
     "total": 249400,
     "deleted": false
+  },
+  {
+    "fecha": "2025-11-18",
+    "remision": "00000001",
+    "cliente": "María López Fernández",
+    "ciudad": "San Juan del Río",
+    "conceptos": [
+      {
+        "cantidad": 8,
+        "descripcion": "Novillos Angus",
+        "pu": 15000,
+        "importe": 120000
+      }
+    ],
+    "subtotal": 120000,
+    "iva": 19200,
+    "total": 139200,
+    "deleted": true
   }
 ]

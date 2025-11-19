@@ -387,17 +387,45 @@ td input {
 
 .history-item-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 8px;
     margin-bottom: 15px;
     padding-bottom: 15px;
     border-bottom: 2px solid #f0f0f0;
+}
+
+.history-item-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
 }
 
 .history-item-remision {
     font-size: 18px;
     font-weight: 700;
     color: #2d2d2d;
+    flex: 1;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-active {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.status-deleted {
+    background-color: #fee2e2;
+    color: #991b1b;
 }
 
 .history-item-date {
@@ -561,14 +589,18 @@ td input {
         margin-bottom: 12px;
     }
 
-    .history-item-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
+    .history-item-title-row {
+        flex-wrap: wrap;
+        gap: 8px;
     }
 
     .history-item-remision {
-        font-size: 20px;
+        font-size: 18px;
+    }
+
+    .status-badge {
+        font-size: 11px;
+        padding: 3px 10px;
     }
 
     .history-item-date {

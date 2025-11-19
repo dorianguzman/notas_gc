@@ -460,12 +460,10 @@ async function loadHistory() {
             return;
         }
 
-        // Filter out deleted notes and sort by remision number (newest first)
-        const history = result.content
-            .filter(item => !item.deleted)
-            .sort((a, b) => {
-                return b.remision.localeCompare(a.remision);
-            });
+        // Sort by remision number (newest first) - show all notes
+        const history = result.content.sort((a, b) => {
+            return b.remision.localeCompare(a.remision);
+        });
 
         if (history.length === 0) {
             historyContent.innerHTML = '<p class="history-empty">No hay remisiones en el historial.</p>';
@@ -475,10 +473,16 @@ async function loadHistory() {
         // Generate history items
         let html = '';
         history.forEach(item => {
+            const statusClass = item.deleted ? 'status-deleted' : 'status-active';
+            const statusText = item.deleted ? 'Eliminada' : 'Activa';
+
             html += `
                 <div class="history-item">
                     <div class="history-item-header">
-                        <div class="history-item-remision">Remisión #${item.remision}</div>
+                        <div class="history-item-title-row">
+                            <div class="history-item-remision">Remisión #${item.remision}</div>
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </div>
                         <div class="history-item-date">${item.fecha}</div>
                     </div>
                     <div class="history-item-info">
