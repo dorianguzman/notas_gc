@@ -258,10 +258,29 @@ function validateForm() {
     return true;
 }
 
-// PDF Generation
-async function generarPDF() {
+// PDF Generation - Show confirmation modal
+function generarPDF() {
     if (!validateForm()) return;
 
+    // Show confirmation modal
+    const modal = document.getElementById('pdfModal');
+    modal.style.display = 'flex';
+}
+
+function confirmPDF() {
+    // Hide modal
+    cancelPDF();
+    // Generate PDF
+    actualGenerarPDF();
+}
+
+function cancelPDF() {
+    const modal = document.getElementById('pdfModal');
+    modal.style.display = 'none';
+}
+
+// Actual PDF Generation
+async function actualGenerarPDF() {
     try {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
@@ -331,9 +350,14 @@ async function generarPDF() {
         doc.text(`Subtotal:`, 130, y);
         doc.text(`$${formatNumber(data.subtotal)}`, 165, y);
         y += 7;
-        doc.text(`IVA:`, 130, y);
-        doc.text(`$${formatNumber(data.iva)}`, 165, y);
-        y += 7;
+
+        // Only show IVA if it's greater than 0
+        if (data.iva > 0) {
+            doc.text(`IVA:`, 130, y);
+            doc.text(`$${formatNumber(data.iva)}`, 165, y);
+            y += 7;
+        }
+
         doc.setFontSize(12);
         doc.setFont(undefined, 'bold');
         doc.text(`Total:`, 130, y);
@@ -456,7 +480,7 @@ function nuevaNota() {
     `;
 
     // Reset IVA to default
-    document.getElementById('iva').value = '16';
+    document.getElementById('iva').value = '0';
 
     // Recalculate totals (will show $0.00)
     setupCalculationListeners();
@@ -519,5 +543,7 @@ window.removeCard = removeCard;
 window.confirmDelete = confirmDelete;
 window.cancelDelete = cancelDelete;
 window.generarPDF = generarPDF;
+window.confirmPDF = confirmPDF;
+window.cancelPDF = cancelPDF;
 window.enviarCorreo = enviarCorreo;
 window.nuevaNota = nuevaNota;

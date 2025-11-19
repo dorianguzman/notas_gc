@@ -1278,6 +1278,11 @@ input[readonly] {
     color: #ff4757;
 }
 
+.modal-icon.success {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
 .modal-icon svg {
     width: 34px;
     height: 34px;
@@ -1305,7 +1310,8 @@ input[readonly] {
 }
 
 .btn-modal-cancel,
-.btn-modal-delete {
+.btn-modal-delete,
+.btn-modal-confirm {
     flex: 1;
     padding: 14px 24px;
     border-radius: 10px;
@@ -1341,8 +1347,21 @@ input[readonly] {
     box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3);
 }
 
+.btn-modal-confirm {
+    background-color: #2d2d2d;
+    color: white;
+    border-color: #2d2d2d;
+}
+
+.btn-modal-confirm:hover {
+    background-color: #1a1a1a;
+    border-color: #1a1a1a;
+    box-shadow: 0 2px 8px rgba(45, 45, 45, 0.3);
+}
+
 .btn-modal-cancel:active,
-.btn-modal-delete:active {
+.btn-modal-delete:active,
+.btn-modal-confirm:active {
     transform: scale(0.98);
 }
 
@@ -1483,10 +1502,11 @@ input[readonly] {
     }
 
     .btn-modal-cancel,
-    .btn-modal-delete {
+    .btn-modal-delete,
+    .btn-modal-confirm {
         padding: 14px 20px;
         font-size: 16px;
-        min-height: 44px;
+        min-height: 48px;
     }
 
     .toast-icon {
