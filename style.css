@@ -746,28 +746,18 @@ td input {
 }
 
 .btn-modal {
-    flex: 1;
-    padding: 16px 20px;
+    width: 100%;
+    padding: 18px 20px;
     border: 2px solid #2d2d2d;
-    border-radius: 10px;
-    font-size: 16px;
+    border-radius: 12px;
+    font-size: 17px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-}
-
-.btn-edit {
-    background-color: #2d2d2d;
-    color: white;
-}
-
-.btn-edit:active {
-    background-color: #1a1a1a;
-    transform: scale(0.98);
+    gap: 10px;
 }
 
 .btn-delete {

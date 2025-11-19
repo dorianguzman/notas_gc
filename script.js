@@ -676,16 +676,21 @@ function showDetailModal(remisionNumber) {
         </div>
 
         <div class="modal-actions">
-            <button type="button" class="btn-modal btn-edit" onclick="editRemision('${item.remision}')">
-                <svg class="icon-inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                </svg>
-                Editar
-            </button>
             ${item.deleted
-                ? `<button type="button" class="btn-modal btn-restore" onclick="toggleDeleteRemision('${item.remision}', false)">Restaurar</button>`
-                : `<button type="button" class="btn-modal btn-delete" onclick="toggleDeleteRemision('${item.remision}', true)">Eliminar</button>`
+                ? `<button type="button" class="btn-modal btn-restore" onclick="toggleDeleteRemision('${item.remision}', false)">
+                    <svg class="icon-inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 3h18v18H3z"></path>
+                        <path d="M9 9h6v6H9z"></path>
+                    </svg>
+                    Restaurar
+                   </button>`
+                : `<button type="button" class="btn-modal btn-delete" onclick="toggleDeleteRemision('${item.remision}', true)">
+                    <svg class="icon-inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    Eliminar
+                   </button>`
             }
         </div>
     `;
@@ -701,11 +706,6 @@ function closeModalOnBackdrop(event) {
     if (event.target.id === 'detailModal') {
         closeModal();
     }
-}
-
-function editRemision(remisionNumber) {
-    alert('Función de editar en desarrollo');
-    // TODO: Implement edit functionality
 }
 
 function toggleDeleteRemision(remisionNumber, deleted) {
@@ -733,5 +733,4 @@ window.filterHistory = filterHistory;
 window.showDetailModal = showDetailModal;
 window.closeModal = closeModal;
 window.closeModalOnBackdrop = closeModalOnBackdrop;
-window.editRemision = editRemision;
 window.toggleDeleteRemision = toggleDeleteRemision;
