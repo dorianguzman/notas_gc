@@ -1,6 +1,6 @@
 // Configuration
 const CONFIG = {
-    googleAppsScriptUrl: '' // Add your Google Apps Script Web App URL here
+    googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbxggnk7le4uSWEz05JJpgo_GURh7IDUYbzGZgaCg8pi9SNVipSI4guWmtvnHq9xWLEX/exec'
 };
 
 // Utility function to format numbers with comma separators
@@ -761,6 +761,11 @@ async function enviarCorreo() {
                 pdfBase64: pdfBase64
             })
         });
+
+        // Check HTTP status before parsing JSON
+        if (!response.ok) {
+            throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+        }
 
         const result = await response.json();
 
