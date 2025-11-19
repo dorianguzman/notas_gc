@@ -3,7 +3,6 @@ const CONFIG = {
     github: {
         owner: 'dorianguzman',
         repo: 'notas_gc',
-        token: '', // Will be set from GitHub Pages environment or user input
         branch: 'main'
     },
     emailjs: {
@@ -26,64 +25,77 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupCalculationListeners();
 
     // Show info message
-    showStatus('Sistema cargado. Configure el token de GitHub en la consola si es necesario.', 'info');
+    showStatus('Sistema cargado y listo para usar.', 'info');
 });
 
-// GitHub API Functions
-async function githubFetch(path, method = 'GET', body = null) {
-    const url = `https://api.github.com/repos/${CONFIG.github.owner}/${CONFIG.github.repo}/contents/${path}`;
-
-    const headers = {
-        'Authorization': `Bearer ${CONFIG.github.token}`,
-        'Accept': 'application/vnd.github.v3+json'
-    };
-
-    const options = {
-        method,
-        headers
-    };
-
-    if (body) {
-        options.body = JSON.stringify(body);
-    }
-
-    try {
-        const response = await fetch(url, options);
-        if (!response.ok) {
-            throw new Error(`GitHub API Error: ${response.status} ${response.statusText}`);
-        }
-        return await response.json();
-    } catch (error) {
-        console.error('GitHub fetch error:', error);
-        throw error;
-    }
-}
-
+// GitHub Workflow Functions
 async function getFileContent(path) {
     try {
-        const data = await githubFetch(path);
-        const content = atob(data.content);
-        return {
-            content: JSON.parse(content),
-            sha: data.sha
-        };
+        // Fetch file content from raw GitHub URL (no authentication needed)
+        const url = `https://raw.githubusercontent.com/${CONFIG.github.owner}/${CONFIG.github.repo}/${CONFIG.github.branch}/${path}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`Error fetching file: ${response.status}`);
+        }
+
+        const content = await response.json();
+        return { content };
     } catch (error) {
         console.error(`Error getting file ${path}:`, error);
         return null;
     }
 }
 
-async function updateFileContent(path, content, message, sha) {
-    const encodedContent = btoa(JSON.stringify(content, null, 2));
+async function triggerSaveWorkflow(remisionData) {
+    try {
+        // Trigger the save-remision workflow
+        const url = `https://api.github.com/repos/${CONFIG.github.owner}/${CONFIG.github.repo}/actions/workflows/save-remision.yml/dispatches`;
 
-    const body = {
-        message,
-        content: encodedContent,
-        sha,
-        branch: CONFIG.github.branch
-    };
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ref: CONFIG.github.branch,
+                inputs: {
+                    fecha: remisionData.fecha,
+                    cliente: remisionData.cliente,
+                    ciudad: remisionData.ciudad,
+                    conceptos: JSON.stringify(remisionData.conceptos),
+                    subtotal: remisionData.subtotal.toString(),
+                    iva: remisionData.iva.toString(),
+                    total: remisionData.total.toString()
+                }
+            })
+        });
 
-    return await githubFetch(path, 'PUT', body);
+        if (response.status === 204) {
+            // Workflow triggered successfully
+            return { success: true };
+        } else {
+            throw new Error(`Failed to trigger workflow: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Error triggering workflow:', error);
+        throw error;
+    }
+}
+
+async function waitForSequenceUpdate(currentSequence, maxAttempts = 30) {
+    // Wait for the workflow to complete and update the sequence
+    for (let i = 0; i < maxAttempts; i++) {
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+
+        const result = await getFileContent('data/secuencia.json');
+        if (result && result.content.ultima !== currentSequence) {
+            return result.content.ultima;
+        }
+    }
+
+    throw new Error('Timeout esperando actualización de secuencia');
 }
 
 // Sequence Management
@@ -103,25 +115,7 @@ async function loadNextRemision() {
     }
 }
 
-async function incrementSequence() {
-    try {
-        const result = await getFileContent('data/secuencia.json');
-        const currentNum = parseInt(result.content.ultima);
-        const nextNum = String(currentNum + 1).padStart(8, '0');
-
-        await updateFileContent(
-            'data/secuencia.json',
-            { ultima: nextNum },
-            `Actualizar secuencia a ${nextNum}`,
-            result.sha
-        );
-
-        return nextNum;
-    } catch (error) {
-        console.error('Error incrementing sequence:', error);
-        throw error;
-    }
-}
+// Sequence increment is now handled by the workflow
 
 // Table Management
 function addRow() {
@@ -270,41 +264,28 @@ function validateForm() {
 async function guardarRemision() {
     if (!validateForm()) return;
 
-    if (!CONFIG.github.token) {
-        showStatus('Configure el token de GitHub primero', 'error');
-        const token = prompt('Ingrese el token de GitHub:');
-        if (token) {
-            CONFIG.github.token = token;
-        } else {
-            return;
-        }
-    }
-
     try {
         showStatus('Guardando remisión...', 'info');
 
         const data = getRemisionData();
 
-        // Increment sequence
-        const newRemision = await incrementSequence();
+        // Get current sequence
+        const currentResult = await getFileContent('data/secuencia.json');
+        const currentSequence = currentResult.content.ultima;
+
+        // Trigger workflow to save remision
+        await triggerSaveWorkflow(data);
+
+        showStatus('Procesando remisión...', 'info');
+
+        // Wait for workflow to complete and sequence to update
+        const newRemision = await waitForSequenceUpdate(currentSequence);
+
+        // Update UI with new remision number
         document.getElementById('remision').value = newRemision;
-        data.remision = newRemision;
-
-        // Add to history
-        const historyResult = await getFileContent('data/historial.json');
-        const history = historyResult ? historyResult.content : [];
-        history.push(data);
-
-        await updateFileContent(
-            'data/historial.json',
-            history,
-            `Agregar remisión ${newRemision}`,
-            historyResult.sha
-        );
-
         showStatus(`Remisión ${newRemision} guardada exitosamente`, 'success');
 
-        // Reload next sequence
+        // Reload next sequence for next remision
         await loadNextRemision();
 
     } catch (error) {
@@ -445,11 +426,6 @@ function showStatus(message, type) {
 }
 
 // Configuration helper (to be called from console if needed)
-function setGitHubToken(token) {
-    CONFIG.github.token = token;
-    console.log('GitHub token configured');
-}
-
 function setEmailJSConfig(serviceId, templateId, publicKey) {
     CONFIG.emailjs.serviceId = serviceId;
     CONFIG.emailjs.templateId = templateId;
@@ -463,5 +439,4 @@ window.removeRow = removeRow;
 window.guardarRemision = guardarRemision;
 window.generarPDF = generarPDF;
 window.enviarCorreo = enviarCorreo;
-window.setGitHubToken = setGitHubToken;
 window.setEmailJSConfig = setEmailJSConfig;

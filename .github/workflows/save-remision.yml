@@ -1,0 +1,106 @@
+name: 💾 Guardar Remisión
+run-name: ${{ github.event_name == 'workflow_dispatch' && '📝 Guardar remisión manual' || '🔄 Actualización de remisión' }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      fecha:
+        description: 'Fecha de la remisión'
+        required: true
+        type: string
+      cliente:
+        description: 'Nombre del cliente'
+        required: true
+        type: string
+      ciudad:
+        description: 'Ciudad'
+        required: true
+        type: string
+      conceptos:
+        description: 'Conceptos en formato JSON'
+        required: true
+        type: string
+      subtotal:
+        description: 'Subtotal'
+        required: true
+        type: string
+      iva:
+        description: 'IVA'
+        required: true
+        type: string
+      total:
+        description: 'Total'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  save-remision:
+    name: 💾 Procesar y guardar remisión
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📦 Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 🔧 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    - name: 📝 Procesar y guardar remisión
+      id: save
+      run: |
+        # Read current sequence
+        CURRENT=$(jq -r '.ultima' data/secuencia.json)
+        echo "Current sequence: $CURRENT"
+
+        # Increment sequence
+        NEXT=$(printf "%08d" $((10#$CURRENT + 1)))
+        echo "Next sequence: $NEXT"
+
+        # Update sequence file
+        echo "{\"ultima\": \"$NEXT\"}" > data/secuencia.json
+
+        # Parse conceptos from JSON string
+        CONCEPTOS='${{ inputs.conceptos }}'
+
+        # Create remision entry
+        cat > /tmp/new_remision.json << EOF
+        {
+          "fecha": "${{ inputs.fecha }}",
+          "remision": "$NEXT",
+          "cliente": "${{ inputs.cliente }}",
+          "ciudad": "${{ inputs.ciudad }}",
+          "conceptos": $CONCEPTOS,
+          "subtotal": ${{ inputs.subtotal }},
+          "iva": ${{ inputs.iva }},
+          "total": ${{ inputs.total }}
+        }
+        EOF
+
+        # Add to historial
+        jq '. += [input]' data/historial.json /tmp/new_remision.json > /tmp/historial_updated.json
+        mv /tmp/historial_updated.json data/historial.json
+
+        # Set output for next remision number
+        echo "remision=$NEXT" >> $GITHUB_OUTPUT
+
+    - name: 💾 Commit cambios
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add data/secuencia.json data/historial.json
+        git commit -m "💾 Guardar remisión ${{ steps.save.outputs.remision }}"
+        git push
+
+    - name: ✅ Resumen
+      run: |
+        echo "✅ Remisión guardada exitosamente"
+        echo "📋 Número: ${{ steps.save.outputs.remision }}"
+        echo "👤 Cliente: ${{ inputs.cliente }}"
+        echo "💰 Total: \$${{ inputs.total }}"
