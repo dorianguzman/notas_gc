@@ -548,6 +548,33 @@ input[readonly] {
     transform: scale(0.98);
 }
 
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.btn-success:disabled,
+.btn-primary.disabled,
+.btn-secondary.disabled,
+.btn-success.disabled {
+    background-color: #e5e5e5;
+    border-color: #e5e5e5;
+    color: #999;
+    cursor: not-allowed;
+    opacity: 0.6;
+    box-shadow: none;
+}
+
+.btn-primary:disabled:hover,
+.btn-secondary:disabled:hover,
+.btn-success:disabled:hover,
+.btn-primary.disabled:hover,
+.btn-secondary.disabled:hover,
+.btn-success.disabled:hover {
+    background-color: #e5e5e5;
+    border-color: #e5e5e5;
+    color: #999;
+    transform: none;
+    box-shadow: none;
+}
+
 .status-message {
     text-align: center;
     padding: 15px;
@@ -1535,6 +1562,17 @@ input[readonly] {
         padding: 16px 20px;
         font-size: 16px;
         min-height: 52px;
+    }
+
+    .btn-primary:disabled,
+    .btn-secondary:disabled,
+    .btn-success:disabled,
+    .btn-primary.disabled,
+    .btn-secondary.disabled,
+    .btn-success.disabled {
+        background-color: #e5e5e5;
+        border-color: #e5e5e5;
+        color: #999;
     }
 
     /* Card layout mobile optimization */

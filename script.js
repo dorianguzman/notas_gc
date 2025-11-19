@@ -52,6 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add event listeners for calculations
     setupCalculationListeners();
 
+    // Add event listener for email button state
+    const emailInput = document.getElementById('clienteEmail');
+    emailInput.addEventListener('input', updateEmailButtonState);
+
+    // Set initial email button state
+    updateEmailButtonState();
+
     // Set status indicator to ready
     const statusDot = document.getElementById('statusDot');
     if (statusDot) {
@@ -59,6 +66,24 @@ document.addEventListener('DOMContentLoaded', () => {
         statusDot.setAttribute('title', 'Estado: Lista');
     }
 });
+
+// Email Button State Management
+function updateEmailButtonState() {
+    const emailInput = document.getElementById('clienteEmail');
+    const emailButton = document.getElementById('btnEnviarCorreo');
+
+    if (emailInput && emailButton) {
+        const hasEmail = emailInput.value.trim().length > 0;
+
+        if (hasEmail) {
+            emailButton.disabled = false;
+            emailButton.classList.remove('disabled');
+        } else {
+            emailButton.disabled = true;
+            emailButton.classList.add('disabled');
+        }
+    }
+}
 
 // Card Management
 function addCard() {
@@ -485,6 +510,9 @@ function nuevaNota() {
     // Recalculate totals (will show $0.00)
     setupCalculationListeners();
     calculateTotals();
+
+    // Update email button state (will be disabled since email is cleared)
+    updateEmailButtonState();
 
     // Show feedback
     showToast('Nueva nota lista', 'success');
