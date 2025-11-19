@@ -4,6 +4,31 @@
     box-sizing: border-box;
 }
 
+/* Custom Scrollbar - Match Theme */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2d2d2d;
+    border-radius: 6px;
+    border: 2px solid #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1a1a1a;
+}
+
+/* Firefox scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #2d2d2d #f5f5f5;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f5f5f5;
