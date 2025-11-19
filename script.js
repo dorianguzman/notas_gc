@@ -474,17 +474,21 @@ async function actualGenerarPDF() {
         doc.setFont(undefined, 'normal');
         doc.setTextColor(80, 80, 80);
 
-        doc.text('Subtotal:', 130, currentY);
-        doc.text(`$${formatNumber(data.subtotal)}`, 195, currentY, { align: 'right' });
-
-        // Only show IVA if it's greater than 0
+        // Only show Subtotal and IVA if IVA is greater than 0
         if (data.iva > 0) {
+            doc.text('Subtotal:', 130, currentY);
+            doc.text(`$${formatNumber(data.subtotal)}`, 195, currentY, { align: 'right' });
+
             currentY += 6;
             doc.text('IVA:', 130, currentY);
             doc.text(`$${formatNumber(data.iva)}`, 195, currentY, { align: 'right' });
+
+            currentY += 8;
+        } else {
+            // If no IVA, add minimal spacing before total
+            currentY += 2;
         }
 
-        currentY += 8;
         doc.setDrawColor(45, 45, 45);
         doc.setLineWidth(0.5);
         doc.line(120, currentY - 2, 195, currentY - 2);
