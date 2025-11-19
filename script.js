@@ -312,17 +312,15 @@ async function actualGenerarPDF() {
 
         const data = getRemisionData();
 
-        let currentY = 20;
-
-        // Add logo with proper aspect ratio
+        // Add logo as centered watermark in background
         try {
             const img = new Image();
             img.src = 'assets/logo.png';
             await new Promise((resolve) => {
                 img.onload = () => {
                     // Calculate aspect ratio to maintain logo proportions
-                    const maxWidth = 35;
-                    const maxHeight = 35;
+                    const maxWidth = 120;
+                    const maxHeight = 120;
                     const imgRatio = img.width / img.height;
 
                     let logoWidth = maxWidth;
@@ -334,7 +332,20 @@ async function actualGenerarPDF() {
                         logoWidth = maxHeight * imgRatio;
                     }
 
-                    doc.addImage(img, 'PNG', 15, currentY, logoWidth, logoHeight);
+                    // Center the logo on the page
+                    // A4 page: 210mm wide x 297mm tall
+                    const pageWidth = 210;
+                    const pageHeight = 297;
+                    const xPos = (pageWidth - logoWidth) / 2;
+                    const yPos = (pageHeight - logoHeight) / 2;
+
+                    // Set opacity for watermark effect
+                    doc.setGState(new doc.GState({ opacity: 0.08 }));
+                    doc.addImage(img, 'PNG', xPos, yPos, logoWidth, logoHeight);
+
+                    // Reset opacity for rest of content
+                    doc.setGState(new doc.GState({ opacity: 1.0 }));
+
                     resolve();
                 };
                 img.onerror = resolve;
@@ -343,20 +354,29 @@ async function actualGenerarPDF() {
             console.warn('Logo not loaded');
         }
 
-        // Title and header info in top right
-        doc.setFontSize(22);
+        let currentY = 20;
+
+        // Main title: Ganadería Catorce
+        doc.setFontSize(24);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(45, 45, 45);
-        doc.text('NOTA DE REMISIÓN', 195, currentY + 8, { align: 'right' });
+        doc.text('GANADERÍA CATORCE', 105, currentY, { align: 'center' });
 
-        currentY += 15;
-        doc.setFontSize(10);
+        // Subtitle: Nota de Remisión
+        currentY += 10;
+        doc.setFontSize(16);
         doc.setFont(undefined, 'normal');
+        doc.setTextColor(80, 80, 80);
+        doc.text('Nota de Remisión', 105, currentY, { align: 'center' });
+
+        // Remision number and date
+        currentY += 10;
+        doc.setFontSize(10);
         doc.setTextColor(100, 100, 100);
-        doc.text(`Remisión: ${data.remision}`, 195, currentY, { align: 'right' });
+        doc.text(`Remisión: ${data.remision}`, 105, currentY, { align: 'center' });
 
         currentY += 5;
-        doc.text(`Fecha: ${data.fecha}`, 195, currentY, { align: 'right' });
+        doc.text(`Fecha: ${data.fecha}`, 105, currentY, { align: 'center' });
 
         // Client information section
         currentY += 15;
