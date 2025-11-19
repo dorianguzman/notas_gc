@@ -304,6 +304,9 @@ async function generarPDF() {
         doc.save(`Remision_${data.remision}.pdf`);
         showToast('PDF generado exitosamente', 'success');
 
+        // Scroll to top smoothly
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
     } catch (error) {
         console.error('Error generating PDF:', error);
         showToast('Error al generar el PDF: ' + error.message, 'error');
@@ -355,6 +358,9 @@ async function enviarCorreo() {
         );
 
         showToast('Correo enviado exitosamente', 'success');
+
+        // Scroll to top smoothly
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
     } catch (error) {
         console.error('Error sending email:', error);
