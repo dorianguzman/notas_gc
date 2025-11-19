@@ -308,43 +308,6 @@ async function actualGenerarPDF() {
 
         const data = getRemisionData();
 
-        // TEMPORARILY DISABLED FOR TESTING - Add small logo at the top
-        /*
-        try {
-            const img = new Image();
-            img.src = 'assets/logo.png';
-            await new Promise((resolve) => {
-                img.onload = () => {
-                    // Small logo dimensions
-                    const maxWidth = 30;
-                    const maxHeight = 30;
-                    const imgRatio = img.width / img.height;
-
-                    let logoWidth = maxWidth;
-                    let logoHeight = maxWidth / imgRatio;
-
-                    if (logoHeight > maxHeight) {
-                        logoHeight = maxHeight;
-                        logoWidth = maxHeight * imgRatio;
-                    }
-
-                    // Position logo centered vertically in header section
-                    // Header section spans from Y=20 (title) to Y=35 (end of fecha)
-                    const xPos = 15;
-                    const headerTop = 20;
-                    const headerBottom = 35;
-                    const yPos = headerTop + (headerBottom - headerTop - logoHeight) / 2;
-
-                    doc.addImage(img, 'PNG', xPos, yPos, logoWidth, logoHeight);
-                    resolve();
-                };
-                img.onerror = resolve;
-            });
-        } catch (e) {
-            console.warn('Logo not loaded');
-        }
-        */
-
         let currentY = 20;
 
         // Main title: Nota de Remisión
@@ -541,44 +504,7 @@ async function enviarCorreo() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        // TEMPORARILY DISABLED FOR TESTING - Add small logo at the top
-        /*
-        try {
-            const img = new Image();
-            img.src = 'assets/logo.png';
-            await new Promise((resolve) => {
-                img.onload = () => {
-                    // Small logo dimensions
-                    const maxWidth = 30;
-                    const maxHeight = 30;
-                    const imgRatio = img.width / img.height;
-
-                    let logoWidth = maxWidth;
-                    let logoHeight = maxWidth / imgRatio;
-
-                    if (logoHeight > maxHeight) {
-                        logoHeight = maxHeight;
-                        logoWidth = maxHeight * imgRatio;
-                    }
-
-                    // Position logo centered vertically in header section
-                    // Header section spans from Y=20 (title) to Y=35 (end of fecha)
-                    const xPos = 15;
-                    const headerTop = 20;
-                    const headerBottom = 35;
-                    const yPos = headerTop + (headerBottom - headerTop - logoHeight) / 2;
-
-                    doc.addImage(img, 'PNG', xPos, yPos, logoWidth, logoHeight);
-                    resolve();
-                };
-                img.onerror = resolve;
-            });
-        } catch (e) {
-            console.warn('Logo not loaded for email');
-        }
-        */
-
-        // Build the same PDF as actualGenerarPDF but get base64
+        // Build the PDF without logo (keeps file size ~8KB vs 28MB with logo)
         let currentY = 20;
 
         // Main title: Nota de Remisión
