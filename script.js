@@ -5,6 +5,12 @@ const CONFIG = {
         repo: 'notas_gc',
         branch: 'main'
     },
+    api: {
+        // Use localhost for local development, production URL for deployed version
+        baseUrl: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:8788'  // Wrangler dev server
+            : ''  // Same origin on Cloudflare Pages
+    },
     emailjs: {
         serviceId: '', // To be configured
         templateId: '', // To be configured
@@ -67,55 +73,57 @@ async function getFileContent(path) {
     }
 }
 
-async function triggerSaveWorkflow(remisionData) {
+async function saveRemisionAPI(remisionData) {
     try {
-        // Trigger the save-remision workflow
-        const url = `https://api.github.com/repos/${CONFIG.github.owner}/${CONFIG.github.repo}/actions/workflows/save-remision.yml/dispatches`;
+        const url = `${CONFIG.api.baseUrl}/api/save-remision`;
 
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Accept': 'application/vnd.github.v3+json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                ref: CONFIG.github.branch,
-                inputs: {
-                    fecha: remisionData.fecha,
-                    cliente: remisionData.cliente,
-                    ciudad: remisionData.ciudad,
-                    conceptos: JSON.stringify(remisionData.conceptos),
-                    subtotal: remisionData.subtotal.toString(),
-                    iva: remisionData.iva.toString(),
-                    total: remisionData.total.toString()
-                }
-            })
+            body: JSON.stringify(remisionData)
         });
 
-        if (response.status === 204) {
-            // Workflow triggered successfully
-            return { success: true };
-        } else {
-            throw new Error(`Failed to trigger workflow: ${response.status}`);
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Failed to save remision: ${response.status}`);
         }
+
+        const result = await response.json();
+        return result;
     } catch (error) {
-        console.error('Error triggering workflow:', error);
+        console.error('Error saving remision:', error);
         throw error;
     }
 }
 
-async function waitForSequenceUpdate(currentSequence, maxAttempts = 30) {
-    // Wait for the workflow to complete and update the sequence
-    for (let i = 0; i < maxAttempts; i++) {
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+async function updateRemisionAPI(remisionNumber, deleted) {
+    try {
+        const url = `${CONFIG.api.baseUrl}/api/update-remision`;
 
-        const result = await getFileContent('data/secuencia.json');
-        if (result && result.content.ultima !== currentSequence) {
-            return result.content.ultima;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                remisionNumber,
+                deleted
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Failed to update remision: ${response.status}`);
         }
-    }
 
-    throw new Error('Timeout esperando actualización de secuencia');
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Error updating remision:', error);
+        throw error;
+    }
 }
 
 // Sequence Management
@@ -293,24 +301,20 @@ async function guardarRemision() {
 
         const data = getRemisionData();
 
-        // Get current sequence
-        const currentResult = await getFileContent('data/secuencia.json');
-        const currentSequence = currentResult.content.ultima;
+        // Call Cloudflare Function to save remision
+        const result = await saveRemisionAPI(data);
 
-        // Trigger workflow to save remision
-        await triggerSaveWorkflow(data);
+        if (result.success) {
+            showToast(`Remisión ${result.remision} guardada exitosamente`, 'success');
 
-        showToast('Procesando remisión...', 'info');
+            // Update UI with new remision number
+            document.getElementById('remision').value = result.remision;
 
-        // Wait for workflow to complete and sequence to update
-        const newRemision = await waitForSequenceUpdate(currentSequence);
-
-        // Update UI with new remision number
-        document.getElementById('remision').value = newRemision;
-        showToast(`Remisión ${newRemision} guardada exitosamente`, 'success');
-
-        // Reload next sequence for next remision
-        await loadNextRemision();
+            // Reload next sequence for next remision
+            await loadNextRemision();
+        } else {
+            throw new Error('Failed to save remision');
+        }
 
     } catch (error) {
         console.error('Error saving remision:', error);
@@ -748,7 +752,7 @@ async function performDeleteToggle(remisionNumber, setDeleted) {
     try {
         showToast(setDeleted ? 'Eliminando remisión...' : 'Restaurando remisión...', 'info');
 
-        // Update local data
+        // Update local data first for immediate UI feedback
         const item = historyData.find(h => h.remision === remisionNumber);
         if (!item) {
             showToast('No se encontró la remisión', 'error');
@@ -757,10 +761,17 @@ async function performDeleteToggle(remisionNumber, setDeleted) {
 
         item.deleted = setDeleted;
 
-        // Save to localStorage for local testing
+        // Save to localStorage for persistence across page loads
         saveDeletedStateToLocalStorage(remisionNumber, setDeleted);
 
-        // TODO: In production, trigger GitHub workflow to update historial.json
+        // Call Cloudflare Function to update GitHub
+        try {
+            await updateRemisionAPI(remisionNumber, setDeleted);
+        } catch (apiError) {
+            // If API call fails, show warning but keep local change
+            console.warn('Failed to sync with server:', apiError);
+            showToast('Cambio guardado localmente. Sincronización con servidor pendiente.', 'info');
+        }
 
         showToast(
             setDeleted
