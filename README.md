@@ -90,7 +90,8 @@ Email: ganaderiacatorce@gmail.com
 
     GmailApp.sendEmail(recipient, subject, body, {
       attachments: [pdfBlob],
-      name: 'Ganadería Catorce'
+      name: 'Ganadería Catorce',
+      cc: 'ganaderiacatorce@gmail.com'
     });
 
     return ContentService.createTextOutput(JSON.stringify({
@@ -111,6 +112,8 @@ Email: ganaderiacatorce@gmail.com
 5. Execute as: **Your account**
 6. Who has access: **Anyone**
 7. Copia el Web App URL
+
+**Nota:** El script enviará automáticamente una copia (CC) a ganaderiacatorce@gmail.com de cada email enviado.
 
 ### Paso 2: Configurar la App
 
