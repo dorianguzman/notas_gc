@@ -413,24 +413,20 @@ async function actualGenerarPDF() {
         currentY += 10;
 
         // Table header with better spacing and transparency
-        doc.setGState(new doc.GState({ opacity: 0.85 }));
+        doc.setGState(new doc.GState({ opacity: 0.6 }));
         doc.setFillColor(45, 45, 45);
         doc.setDrawColor(45, 45, 45);
-        doc.roundedRect(15, currentY - 6, 180, 14, 1, 1, 'F');
+        doc.roundedRect(15, currentY - 6, 180, 10, 1, 1, 'F');
 
         doc.setTextColor(255, 255, 255);
         doc.setFontSize(8);
         doc.setFont(undefined, 'bold');
         doc.text('CANTIDAD', 18, currentY);
         doc.text('DESCRIPCIÓN', 50, currentY);
-
-        // Precio Unitario on 2 lines
-        doc.text('PRECIO', 130, currentY - 1);
-        doc.text('UNITARIO', 130, currentY + 3);
-
+        doc.text('PRECIO UNITARIO', 130, currentY);
         doc.text('IMPORTE', 170, currentY);
 
-        currentY += 12;
+        currentY += 8;
 
         // Table rows with alternating background and transparency
         doc.setFont(undefined, 'normal');
@@ -440,7 +436,7 @@ async function actualGenerarPDF() {
         data.conceptos.forEach(concepto => {
             // Alternating row background with transparency
             if (rowIndex % 2 === 0) {
-                doc.setGState(new doc.GState({ opacity: 0.7 }));
+                doc.setGState(new doc.GState({ opacity: 0.5 }));
                 doc.setFillColor(250, 250, 250);
                 doc.rect(15, currentY - 5, 180, 8, 'F');
                 doc.setGState(new doc.GState({ opacity: 1.0 }));
