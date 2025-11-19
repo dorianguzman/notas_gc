@@ -21,23 +21,56 @@ body {
 }
 
 header {
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 30px;
     border-bottom: 2px solid #e5e5e5;
     padding-bottom: 20px;
+    gap: 20px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 .logo {
-    max-width: 150px;
+    max-width: 80px;
     height: auto;
-    margin-bottom: 15px;
+}
+
+.btn-new {
+    background-color: transparent;
+    color: #2d2d2d;
+    border: 2px solid #2d2d2d;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.btn-new:hover {
+    background-color: #2d2d2d;
+    color: white;
+}
+
+.btn-new:active {
+    transform: scale(0.98);
 }
 
 h1 {
     color: #333;
     font-size: 28px;
     font-weight: 600;
-    margin-bottom: 15px;
+    margin: 0;
 }
 
 /* Status Indicators */
@@ -1029,9 +1062,19 @@ td input {
         border-radius: 8px;
     }
 
+    header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .header-left {
+        justify-content: center;
+        gap: 15px;
+    }
+
     h1 {
         font-size: 22px;
-        margin-bottom: 12px;
     }
 
     h2 {
@@ -1039,7 +1082,14 @@ td input {
     }
 
     .logo {
-        max-width: 100px;
+        max-width: 60px;
+    }
+
+    .btn-new {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 20px;
+        font-size: 15px;
     }
 
     /* Status indicators mobile */

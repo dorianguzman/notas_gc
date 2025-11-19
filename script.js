@@ -274,9 +274,6 @@ async function generarPDF() {
         doc.save(`Remision_${data.remision}.pdf`);
         showToast('PDF generado exitosamente', 'success');
 
-        // Refresh remision number with new timestamp for next note
-        document.getElementById('remision').value = generateRemisionNumber();
-
     } catch (error) {
         console.error('Error generating PDF:', error);
         showToast('Error al generar el PDF: ' + error.message, 'error');
@@ -329,13 +326,43 @@ async function enviarCorreo() {
 
         showToast('Correo enviado exitosamente', 'success');
 
-        // Refresh remision number with new timestamp for next note
-        document.getElementById('remision').value = generateRemisionNumber();
-
     } catch (error) {
         console.error('Error sending email:', error);
         showToast('Error al enviar el correo: ' + error.message, 'error');
     }
+}
+
+// Nueva Nota - Clear form and start fresh
+function nuevaNota() {
+    // Clear form inputs
+    document.getElementById('cliente').value = '';
+    document.getElementById('ciudad').value = 'Querétaro';
+
+    // Reset date and remision with fresh timestamp
+    document.getElementById('fecha').value = getMexicoDate();
+    document.getElementById('remision').value = generateRemisionNumber();
+
+    // Clear all concept rows and add one empty row
+    const tbody = document.getElementById('conceptosBody');
+    tbody.innerHTML = `
+        <tr class="concepto-row">
+            <td><input type="number" class="cantidad" min="0" step="0.01" placeholder="0" required></td>
+            <td><input type="text" class="descripcion" placeholder="Descripción" required></td>
+            <td><input type="number" class="precio-unitario" min="0" step="0.01" placeholder="0.00" required></td>
+            <td class="importe">$0.00</td>
+            <td><button type="button" class="btn-remove" onclick="removeRow(this)">✕</button></td>
+        </tr>
+    `;
+
+    // Reset IVA to default
+    document.getElementById('iva').value = '16';
+
+    // Recalculate totals (will show $0.00)
+    setupCalculationListeners();
+    calculateTotals();
+
+    // Show feedback
+    showToast('Nueva nota lista', 'success');
 }
 
 // Toast Notifications
@@ -390,3 +417,4 @@ window.addRow = addRow;
 window.removeRow = removeRow;
 window.generarPDF = generarPDF;
 window.enviarCorreo = enviarCorreo;
+window.nuevaNota = nuevaNota;
