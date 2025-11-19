@@ -542,25 +542,13 @@ td input {
     color: #333;
 }
 
-.history-item-amounts {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 2px solid #e5e5e5;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.history-item-subtotal {
-    font-size: 16px;
-    font-weight: 600;
-    color: #555;
-}
-
 .history-item-total {
     font-size: 20px;
     font-weight: 700;
     color: #1a1a1a;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 2px solid #e5e5e5;
 }
 
 .history-empty {
@@ -714,19 +702,41 @@ td input {
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
+    table-layout: fixed;
 }
 
 .modal-table th {
     background-color: #f5f5f5;
     color: #2d2d2d;
-    padding: 10px 8px;
+    padding: 10px 6px;
     text-align: left;
-    font-size: 13px;
+    font-size: 12px;
+    line-height: 1.3;
+    word-wrap: break-word;
+}
+
+.modal-table th:nth-child(1) {
+    width: 15%;
+}
+
+.modal-table th:nth-child(2) {
+    width: 40%;
+}
+
+.modal-table th:nth-child(3) {
+    width: 22%;
+}
+
+.modal-table th:nth-child(4) {
+    width: 23%;
 }
 
 .modal-table td {
-    padding: 10px 8px;
+    padding: 10px 6px;
     border-bottom: 1px solid #f0f0f0;
+    font-size: 13px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .modal-totals {
@@ -1225,11 +1235,22 @@ td input {
         font-size: 15px;
     }
 
-    .history-item-subtotal {
-        font-size: 15px;
-    }
-
     .history-item-total {
         font-size: 20px;
+    }
+
+    /* Modal table mobile optimization */
+    .modal-table {
+        font-size: 12px;
+    }
+
+    .modal-table th {
+        padding: 8px 4px;
+        font-size: 11px;
+    }
+
+    .modal-table td {
+        padding: 8px 4px;
+        font-size: 12px;
     }
 }

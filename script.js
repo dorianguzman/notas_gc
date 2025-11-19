@@ -597,13 +597,8 @@ function renderHistory() {
                     <span class="history-item-label">Cliente:</span>
                     <span class="history-item-value">${item.cliente}</span>
                 </div>
-                <div class="history-item-amounts">
-                    <div class="history-item-subtotal">
-                        Importe: $${formatNumber(item.subtotal)}
-                    </div>
-                    <div class="history-item-total">
-                        Total: $${formatNumber(item.total)}
-                    </div>
+                <div class="history-item-total">
+                    Total: $${formatNumber(item.total)}
                 </div>
             </div>
         `;
