@@ -496,10 +496,29 @@ async function actualGenerarPDF() {
         doc.text(`$${formatNumber(data.total)}`, 195, currentY + 2, { align: 'right' });
 
         // Footer
+        const footerY = 275;
+
+        // Separator line
+        doc.setDrawColor(200, 200, 200);
+        doc.setLineWidth(0.3);
+        doc.line(50, footerY, 160, footerY);
+
+        // Company name
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(100, 100, 100);
+        doc.text('GANADERÍA CATORCE', 105, footerY + 5, { align: 'center' });
+
+        // Location
         doc.setFontSize(8);
         doc.setFont(undefined, 'normal');
+        doc.setTextColor(130, 130, 130);
+        doc.text('Querétaro, México', 105, footerY + 10, { align: 'center' });
+
+        // Thank you message
+        doc.setFontSize(7);
         doc.setTextColor(150, 150, 150);
-        doc.text('Ganadería Catorce', 105, 280, { align: 'center' });
+        doc.text('Gracias por su preferencia', 105, footerY + 14, { align: 'center' });
 
         // Save PDF
         doc.save(`Remision_${data.remision}.pdf`);
