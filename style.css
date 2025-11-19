@@ -786,6 +786,211 @@ td input {
     cursor: pointer;
 }
 
+/* Confirmation Modal */
+.modal-overlay {
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+}
+
+.confirm-content {
+    background: white;
+    border-radius: 20px;
+    padding: 30px 25px;
+    max-width: 90%;
+    width: 340px;
+    text-align: center;
+    animation: scaleIn 0.2s ease;
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.confirm-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.confirm-icon svg {
+    width: 32px;
+    height: 32px;
+    stroke-width: 2.5;
+}
+
+.confirm-icon.icon-danger {
+    background-color: #fee2e2;
+}
+
+.confirm-icon.icon-danger svg {
+    stroke: #dc2626;
+}
+
+.confirm-icon.icon-success {
+    background-color: #d1fae5;
+}
+
+.confirm-icon.icon-success svg {
+    stroke: #059669;
+}
+
+.confirm-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2d2d2d;
+    margin-bottom: 12px;
+}
+
+.confirm-message {
+    font-size: 15px;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 25px;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-confirm-cancel,
+.btn-confirm-action {
+    flex: 1;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid;
+}
+
+.btn-confirm-cancel {
+    background-color: white;
+    color: #666;
+    border-color: #e5e5e5;
+}
+
+.btn-confirm-cancel:active {
+    background-color: #f5f5f5;
+    transform: scale(0.98);
+}
+
+.btn-confirm-action {
+    background-color: #2d2d2d;
+    color: white;
+    border-color: #2d2d2d;
+}
+
+.btn-confirm-action:active {
+    background-color: #1a1a1a;
+    transform: scale(0.98);
+}
+
+.btn-confirm-action.danger {
+    background-color: #dc2626;
+    border-color: #dc2626;
+}
+
+.btn-confirm-action.danger:active {
+    background-color: #b91c1c;
+}
+
+.btn-confirm-action.success {
+    background-color: #059669;
+    border-color: #059669;
+}
+
+.btn-confirm-action.success:active {
+    background-color: #047857;
+}
+
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 90%;
+}
+
+.toast {
+    background: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 300px;
+    animation: slideDown 0.3s ease;
+    border-left: 4px solid;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.toast-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.toast-message {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 500;
+    color: #2d2d2d;
+}
+
+.toast.success {
+    border-left-color: #059669;
+}
+
+.toast.success .toast-icon {
+    stroke: #059669;
+}
+
+.toast.error {
+    border-left-color: #dc2626;
+}
+
+.toast.error .toast-icon {
+    stroke: #dc2626;
+}
+
+.toast.info {
+    border-left-color: #0891b2;
+}
+
+.toast.info .toast-icon {
+    stroke: #0891b2;
+}
+
 .loading {
     text-align: center;
     padding: 40px 20px;
@@ -833,6 +1038,57 @@ td input {
 
     .status-text {
         font-size: 11px;
+    }
+
+    /* Confirmation modal mobile */
+    .confirm-content {
+        padding: 25px 20px;
+        width: 85%;
+    }
+
+    .confirm-icon {
+        width: 50px;
+        height: 50px;
+    }
+
+    .confirm-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .confirm-title {
+        font-size: 20px;
+    }
+
+    .confirm-message {
+        font-size: 14px;
+    }
+
+    .btn-confirm-cancel,
+    .btn-confirm-action {
+        padding: 16px 20px;
+        font-size: 15px;
+    }
+
+    /* Toast mobile */
+    .toast-container {
+        top: 15px;
+        max-width: 95%;
+    }
+
+    .toast {
+        min-width: 0;
+        max-width: 100%;
+        padding: 14px 16px;
+    }
+
+    .toast-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .toast-message {
+        font-size: 14px;
     }
 
     .form-row {

@@ -163,7 +163,7 @@ function removeRow(button) {
         row.remove();
         calculateTotals();
     } else {
-        showStatus('Debe haber al menos una línea de concepto', 'error');
+        showToast('Debe haber al menos una línea de concepto', 'error');
     }
 }
 
@@ -258,7 +258,7 @@ function getRemisionData() {
 function validateForm() {
     const cliente = document.getElementById('cliente').value.trim();
     if (!cliente) {
-        showStatus('El campo Cliente es obligatorio', 'error');
+        showToast('El campo Cliente es obligatorio', 'error');
         return false;
     }
 
@@ -277,7 +277,7 @@ function validateForm() {
     }
 
     if (!hasValidRow) {
-        showStatus('Debe agregar al menos un concepto válido', 'error');
+        showToast('Debe agregar al menos un concepto válido', 'error');
         return false;
     }
 
@@ -289,7 +289,7 @@ async function guardarRemision() {
     if (!validateForm()) return;
 
     try {
-        showStatus('Guardando remisión...', 'info');
+        showToast('Guardando remisión...', 'info');
 
         const data = getRemisionData();
 
@@ -300,21 +300,21 @@ async function guardarRemision() {
         // Trigger workflow to save remision
         await triggerSaveWorkflow(data);
 
-        showStatus('Procesando remisión...', 'info');
+        showToast('Procesando remisión...', 'info');
 
         // Wait for workflow to complete and sequence to update
         const newRemision = await waitForSequenceUpdate(currentSequence);
 
         // Update UI with new remision number
         document.getElementById('remision').value = newRemision;
-        showStatus(`Remisión ${newRemision} guardada exitosamente`, 'success');
+        showToast(`Remisión ${newRemision} guardada exitosamente`, 'success');
 
         // Reload next sequence for next remision
         await loadNextRemision();
 
     } catch (error) {
         console.error('Error saving remision:', error);
-        showStatus('Error al guardar la remisión: ' + error.message, 'error');
+        showToast('Error al guardar la remisión: ' + error.message, 'error');
     }
 }
 
@@ -392,19 +392,19 @@ async function generarPDF() {
 
     // Save PDF
     doc.save(`Remision_${data.remision}.pdf`);
-    showStatus('PDF generado exitosamente', 'success');
+    showToast('PDF generado exitosamente', 'success');
 }
 
 async function enviarCorreo() {
     if (!validateForm()) return;
 
     if (!CONFIG.emailjs.serviceId || !CONFIG.emailjs.templateId || !CONFIG.emailjs.publicKey) {
-        showStatus('Configure EmailJS primero', 'error');
+        showToast('Configure EmailJS primero', 'error');
         return;
     }
 
     try {
-        showStatus('Enviando correo...', 'info');
+        showToast('Enviando correo...', 'info');
 
         const data = getRemisionData();
 
@@ -431,22 +431,11 @@ async function enviarCorreo() {
             CONFIG.emailjs.publicKey
         );
 
-        showStatus('Correo enviado exitosamente', 'success');
+        showToast('Correo enviado exitosamente', 'success');
     } catch (error) {
         console.error('Error sending email:', error);
-        showStatus('Error al enviar el correo: ' + error.message, 'error');
+        showToast('Error al enviar el correo: ' + error.message, 'error');
     }
-}
-
-// Utility Functions
-function showStatus(message, type) {
-    const statusEl = document.getElementById('status');
-    statusEl.textContent = message;
-    statusEl.className = `status-message ${type}`;
-
-    setTimeout(() => {
-        statusEl.className = 'status-message';
-    }, 5000);
 }
 
 // Screen Navigation
@@ -708,9 +697,159 @@ function closeModalOnBackdrop(event) {
     }
 }
 
-function toggleDeleteRemision(remisionNumber, deleted) {
-    alert(`Función de ${deleted ? 'eliminar' : 'restaurar'} en desarrollo`);
-    // TODO: Implement delete/restore functionality
+function toggleDeleteRemision(remisionNumber, setDeleted) {
+    if (setDeleted) {
+        // Delete confirmation
+        showConfirm({
+            title: 'Eliminar Remisión',
+            message: `¿Estás seguro de eliminar la remisión #${remisionNumber}? Esta acción marcará la nota como eliminada.`,
+            type: 'danger',
+            confirmText: 'Eliminar',
+            onConfirm: () => {
+                performDeleteToggle(remisionNumber, true);
+            }
+        });
+    } else {
+        // Restore confirmation
+        showConfirm({
+            title: 'Restaurar Remisión',
+            message: `¿Deseas restaurar la remisión #${remisionNumber}?`,
+            type: 'success',
+            confirmText: 'Restaurar',
+            onConfirm: () => {
+                performDeleteToggle(remisionNumber, false);
+            }
+        });
+    }
+}
+
+async function performDeleteToggle(remisionNumber, setDeleted) {
+    try {
+        showToast(setDeleted ? 'Eliminando remisión...' : 'Restaurando remisión...', 'info');
+
+        // Update local data
+        const item = historyData.find(h => h.remision === remisionNumber);
+        if (!item) {
+            showToast('No se encontró la remisión', 'error');
+            return;
+        }
+
+        item.deleted = setDeleted;
+
+        // TODO: Send update to GitHub workflow to update historial.json
+        // For now, just update locally
+        showToast(
+            setDeleted
+                ? `Remisión #${remisionNumber} eliminada`
+                : `Remisión #${remisionNumber} restaurada`,
+            'success'
+        );
+
+        // Close detail modal and refresh history view
+        closeModal();
+        renderHistory();
+
+        // Note: In production, you would trigger a workflow to update the JSON file
+        // For now, changes are only in memory and will be lost on refresh
+
+    } catch (error) {
+        console.error('Error toggling delete:', error);
+        showToast('Error al actualizar la remisión', 'error');
+    }
+}
+
+// Confirmation Modal
+function showConfirm({ title, message, type = 'danger', confirmText = 'Confirmar', onConfirm }) {
+    const modal = document.getElementById('confirmModal');
+    const iconEl = document.getElementById('confirmIcon');
+    const titleEl = document.getElementById('confirmTitle');
+    const messageEl = document.getElementById('confirmMessage');
+    const actionBtn = document.getElementById('confirmActionBtn');
+
+    // Set content
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+    actionBtn.textContent = confirmText;
+
+    // Set icon
+    iconEl.className = `confirm-icon icon-${type}`;
+    if (type === 'danger') {
+        iconEl.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+        `;
+        actionBtn.className = 'btn-confirm-action danger';
+    } else {
+        iconEl.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+        `;
+        actionBtn.className = 'btn-confirm-action success';
+    }
+
+    // Set action
+    actionBtn.onclick = () => {
+        closeConfirmModal();
+        if (onConfirm) onConfirm();
+    };
+
+    modal.style.display = 'flex';
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirmModal').style.display = 'none';
+}
+
+// Toast Notifications
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+
+    let icon = '';
+    if (type === 'success') {
+        icon = `
+            <svg class="toast-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+        `;
+    } else if (type === 'error') {
+        icon = `
+            <svg class="toast-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+        `;
+    } else {
+        icon = `
+            <svg class="toast-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+        `;
+    }
+
+    toast.innerHTML = `
+        ${icon}
+        <div class="toast-message">${message}</div>
+    `;
+
+    container.appendChild(toast);
+
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-20px)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
 }
 
 // Configuration helper (to be called from console if needed)
@@ -734,3 +873,7 @@ window.showDetailModal = showDetailModal;
 window.closeModal = closeModal;
 window.closeModalOnBackdrop = closeModalOnBackdrop;
 window.toggleDeleteRemision = toggleDeleteRemision;
+window.performDeleteToggle = performDeleteToggle;
+window.showConfirm = showConfirm;
+window.closeConfirmModal = closeConfirmModal;
+window.showToast = showToast;
