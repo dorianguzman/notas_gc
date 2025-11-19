@@ -57,29 +57,34 @@
             </div>
         </div>
 
-        <div class="table-section">
+        <div class="conceptos-section">
             <h2>Conceptos</h2>
-            <table id="conceptosTable">
-                <thead>
-                    <tr>
-                        <th>Cantidad</th>
-                        <th>Concepto</th>
-                        <th>Precio<br>Unitario</th>
-                        <th>Importe</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="conceptosBody">
-                    <tr class="concepto-row">
-                        <td><input type="number" class="cantidad" min="0" step="0.01" placeholder="0" required></td>
-                        <td><input type="text" class="descripcion" placeholder="Descripción" required></td>
-                        <td><input type="number" class="precio-unitario" min="0" step="0.01" placeholder="0.00" required></td>
-                        <td class="importe">$0.00</td>
-                        <td><button type="button" class="btn-remove" onclick="removeRow(this)">✕</button></td>
-                    </tr>
-                </tbody>
-            </table>
-            <button type="button" class="btn-add" onclick="addRow()">+ Agregar línea</button>
+            <div id="conceptosContainer">
+                <div class="concepto-card">
+                    <button type="button" class="btn-remove-card" onclick="removeCard(this)">✕</button>
+                    <div class="card-row">
+                        <div class="card-field">
+                            <label>Cantidad</label>
+                            <input type="number" class="cantidad" min="0" step="0.01" placeholder="0" required>
+                        </div>
+                        <div class="card-field">
+                            <label>Precio Unitario</label>
+                            <input type="number" class="precio-unitario" min="0" step="0.01" placeholder="0.00" required>
+                        </div>
+                    </div>
+                    <div class="card-row">
+                        <div class="card-field full-width">
+                            <label>Descripción</label>
+                            <input type="text" class="descripcion" placeholder="Descripción del concepto" required>
+                        </div>
+                    </div>
+                    <div class="card-total">
+                        <span class="importe-label">Importe:</span>
+                        <span class="importe">$0.00</span>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn-add" onclick="addCard()">+ Agregar Concepto</button>
         </div>
 
         <div class="totals-section">

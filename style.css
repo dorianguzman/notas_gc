@@ -277,54 +277,120 @@ input[readonly] {
     cursor: not-allowed;
 }
 
-.table-section {
+/* Conceptos Section - Card Layout */
+.conceptos-section {
     margin-bottom: 30px;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 15px;
+#conceptosContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 20px;
 }
 
-th {
-    background-color: #2d2d2d;
-    color: white;
-    padding: 12px;
-    text-align: left;
-    font-weight: 600;
+.concepto-card {
+    background-color: white;
+    border: 2px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    transition: all 0.2s;
 }
 
-td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+.concepto-card:hover {
+    border-color: #2d2d2d;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-td input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-.importe {
-    font-weight: 600;
-    color: #333;
-}
-
-.btn-remove {
+.btn-remove-card {
+    position: absolute;
+    top: 15px;
+    right: 15px;
     background-color: #ff4757;
     color: white;
     border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.btn-remove:hover {
+.btn-remove-card:hover {
     background-color: #e84118;
+    transform: scale(1.1);
+}
+
+.btn-remove-card:active {
+    transform: scale(0.95);
+}
+
+.card-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.card-row:last-of-type {
+    margin-bottom: 20px;
+}
+
+.card-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.card-field.full-width {
+    flex: 1 1 100%;
+}
+
+.card-field label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #555;
+}
+
+.card-field input {
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.2s;
+}
+
+.card-field input:focus {
+    outline: none;
+    border-color: #2d2d2d;
+}
+
+.card-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 5px;
+}
+
+.importe-label {
+    font-weight: 600;
+    color: #555;
+    font-size: 14px;
+}
+
+.importe {
+    font-weight: 700;
+    color: #2d2d2d;
+    font-size: 20px;
 }
 
 .btn-add {
@@ -1236,29 +1302,20 @@ td input {
         font-size: 15px;
     }
 
-    /* Make table scrollable on mobile */
-    .table-section {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+    /* Card layout mobile optimization */
+    .concepto-card {
+        padding: 15px;
     }
 
-    table {
-        font-size: 11px;
-        min-width: 600px;
+    .card-field input {
+        padding: 14px;
+        font-size: 16px;
     }
 
-    th, td {
-        padding: 6px 4px;
-    }
-
-    td input {
-        padding: 6px;
-        font-size: 12px;
-    }
-
-    .btn-remove {
-        padding: 4px 8px;
-        font-size: 14px;
+    .btn-remove-card {
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
     }
 
     .btn-add {

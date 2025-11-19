@@ -60,30 +60,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Table Management
-function addRow() {
-    const tbody = document.getElementById('conceptosBody');
-    const newRow = document.createElement('tr');
-    newRow.className = 'concepto-row';
-    newRow.innerHTML = `
-        <td><input type="number" class="cantidad" min="0" step="0.01" placeholder="0" required></td>
-        <td><input type="text" class="descripcion" placeholder="Descripción" required></td>
-        <td><input type="number" class="precio-unitario" min="0" step="0.01" placeholder="0.00" required></td>
-        <td class="importe">$0.00</td>
-        <td><button type="button" class="btn-remove" onclick="removeRow(this)">✕</button></td>
+// Card Management
+function addCard() {
+    const container = document.getElementById('conceptosContainer');
+    const newCard = document.createElement('div');
+    newCard.className = 'concepto-card';
+    newCard.innerHTML = `
+        <button type="button" class="btn-remove-card" onclick="removeCard(this)">✕</button>
+        <div class="card-row">
+            <div class="card-field">
+                <label>Cantidad</label>
+                <input type="number" class="cantidad" min="0" step="0.01" placeholder="0" required>
+            </div>
+            <div class="card-field">
+                <label>Precio Unitario</label>
+                <input type="number" class="precio-unitario" min="0" step="0.01" placeholder="0.00" required>
+            </div>
+        </div>
+        <div class="card-row">
+            <div class="card-field full-width">
+                <label>Descripción</label>
+                <input type="text" class="descripcion" placeholder="Descripción del concepto" required>
+            </div>
+        </div>
+        <div class="card-total">
+            <span class="importe-label">Importe:</span>
+            <span class="importe">$0.00</span>
+        </div>
     `;
-    tbody.appendChild(newRow);
+    container.appendChild(newCard);
     setupCalculationListeners();
 }
 
-function removeRow(button) {
-    const row = button.closest('tr');
-    const tbody = document.getElementById('conceptosBody');
-    if (tbody.children.length > 1) {
-        row.remove();
+function removeCard(button) {
+    const card = button.closest('.concepto-card');
+    const container = document.getElementById('conceptosContainer');
+
+    if (container.children.length > 1) {
+        card.remove();
         calculateTotals();
     } else {
-        showToast('Debe haber al menos una línea de concepto', 'error');
+        showToast('Debe haber al menos un concepto', 'error');
     }
 }
 
@@ -101,25 +118,31 @@ function setupCalculationListeners() {
 }
 
 function handleInputChange(event) {
-    const row = event.target.closest('tr');
-    updateRowImporte(row);
+    const card = event.target.closest('.concepto-card');
+    updateCardImporte(card);
     calculateTotals();
 }
 
-function updateRowImporte(row) {
-    const cantidad = parseFloat(row.querySelector('.cantidad').value) || 0;
-    const precioUnitario = parseFloat(row.querySelector('.precio-unitario').value) || 0;
+function updateCardImporte(card) {
+    if (!card) return;
+
+    const cantidad = parseFloat(card.querySelector('.cantidad')?.value) || 0;
+    const precioUnitario = parseFloat(card.querySelector('.precio-unitario')?.value) || 0;
     const importe = cantidad * precioUnitario;
-    row.querySelector('.importe').textContent = `$${formatNumber(importe)}`;
+
+    const importeElement = card.querySelector('.importe');
+    if (importeElement) {
+        importeElement.textContent = `$${formatNumber(importe)}`;
+    }
 }
 
 function calculateTotals() {
-    const rows = document.querySelectorAll('.concepto-row');
+    const cards = document.querySelectorAll('.concepto-card');
     let subtotal = 0;
 
-    rows.forEach(row => {
-        const cantidad = parseFloat(row.querySelector('.cantidad').value) || 0;
-        const precioUnitario = parseFloat(row.querySelector('.precio-unitario').value) || 0;
+    cards.forEach(card => {
+        const cantidad = parseFloat(card.querySelector('.cantidad')?.value) || 0;
+        const precioUnitario = parseFloat(card.querySelector('.precio-unitario')?.value) || 0;
         subtotal += cantidad * precioUnitario;
     });
 
@@ -140,11 +163,11 @@ function getRemisionData() {
     const ciudad = document.getElementById('ciudad').value;
 
     const conceptos = [];
-    const rows = document.querySelectorAll('.concepto-row');
-    rows.forEach(row => {
-        const cantidad = parseFloat(row.querySelector('.cantidad').value) || 0;
-        const descripcion = row.querySelector('.descripcion').value;
-        const pu = parseFloat(row.querySelector('.precio-unitario').value) || 0;
+    const cards = document.querySelectorAll('.concepto-card');
+    cards.forEach(card => {
+        const cantidad = parseFloat(card.querySelector('.cantidad')?.value) || 0;
+        const descripcion = card.querySelector('.descripcion')?.value || '';
+        const pu = parseFloat(card.querySelector('.precio-unitario')?.value) || 0;
         const importe = cantidad * pu;
 
         if (cantidad > 0 && descripcion) {
@@ -181,21 +204,21 @@ function validateForm() {
         return false;
     }
 
-    const rows = document.querySelectorAll('.concepto-row');
-    let hasValidRow = false;
+    const cards = document.querySelectorAll('.concepto-card');
+    let hasValidCard = false;
 
-    for (const row of rows) {
-        const cantidad = parseFloat(row.querySelector('.cantidad').value) || 0;
-        const descripcion = row.querySelector('.descripcion').value.trim();
-        const pu = parseFloat(row.querySelector('.precio-unitario').value) || 0;
+    for (const card of cards) {
+        const cantidad = parseFloat(card.querySelector('.cantidad').value) || 0;
+        const descripcion = card.querySelector('.descripcion').value.trim();
+        const pu = parseFloat(card.querySelector('.precio-unitario').value) || 0;
 
         if (cantidad > 0 && descripcion && pu > 0) {
-            hasValidRow = true;
+            hasValidCard = true;
             break;
         }
     }
 
-    if (!hasValidRow) {
+    if (!hasValidCard) {
         showToast('Debe agregar al menos un concepto válido', 'error');
         return false;
     }
@@ -349,16 +372,32 @@ function nuevaNota() {
     document.getElementById('fecha').value = getMexicoDate();
     document.getElementById('remision').value = generateRemisionNumber();
 
-    // Clear all concept rows and add one empty row
-    const tbody = document.getElementById('conceptosBody');
-    tbody.innerHTML = `
-        <tr class="concepto-row">
-            <td><input type="number" class="cantidad" min="0" step="0.01" placeholder="0" required></td>
-            <td><input type="text" class="descripcion" placeholder="Descripción" required></td>
-            <td><input type="number" class="precio-unitario" min="0" step="0.01" placeholder="0.00" required></td>
-            <td class="importe">$0.00</td>
-            <td><button type="button" class="btn-remove" onclick="removeRow(this)">✕</button></td>
-        </tr>
+    // Clear all concept cards and add one empty card
+    const container = document.getElementById('conceptosContainer');
+    container.innerHTML = `
+        <div class="concepto-card">
+            <button type="button" class="btn-remove-card" onclick="removeCard(this)">✕</button>
+            <div class="card-row">
+                <div class="card-field">
+                    <label>Cantidad</label>
+                    <input type="number" class="cantidad" min="0" step="0.01" placeholder="0" required>
+                </div>
+                <div class="card-field">
+                    <label>Precio Unitario</label>
+                    <input type="number" class="precio-unitario" min="0" step="0.01" placeholder="0.00" required>
+                </div>
+            </div>
+            <div class="card-row">
+                <div class="card-field full-width">
+                    <label>Descripción</label>
+                    <input type="text" class="descripcion" placeholder="Descripción del concepto" required>
+                </div>
+            </div>
+            <div class="card-total">
+                <span class="importe-label">Importe:</span>
+                <span class="importe">$0.00</span>
+            </div>
+        </div>
     `;
 
     // Reset IVA to default
@@ -420,8 +459,8 @@ function showToast(message, type = 'success') {
 }
 
 // Expose functions globally
-window.addRow = addRow;
-window.removeRow = removeRow;
+window.addCard = addCard;
+window.removeCard = removeCard;
 window.generarPDF = generarPDF;
 window.enviarCorreo = enviarCorreo;
 window.nuevaNota = nuevaNota;
