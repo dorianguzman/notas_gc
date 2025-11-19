@@ -154,8 +154,34 @@
                 Volver
             </button>
             <h2>Historial de Remisiones</h2>
+
+            <!-- Filter Buttons -->
+            <div class="filter-buttons">
+                <button type="button" class="filter-btn active" data-filter="all" onclick="filterHistory('all')">Todas</button>
+                <button type="button" class="filter-btn" data-filter="active" onclick="filterHistory('active')">Activas</button>
+                <button type="button" class="filter-btn" data-filter="deleted" onclick="filterHistory('deleted')">Eliminadas</button>
+            </div>
+
             <div id="historyContent" class="history-content">
                 <p class="loading">Cargando historial...</p>
+            </div>
+        </div>
+
+        <!-- Detail Modal -->
+        <div id="detailModal" class="modal" style="display: none;" onclick="closeModalOnBackdrop(event)">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Remisión</h3>
+                    <button type="button" class="modal-close" onclick="closeModal()">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div id="modalBody" class="modal-body">
+                    <!-- Content will be dynamically loaded -->
+                </div>
             </div>
         </div>
 

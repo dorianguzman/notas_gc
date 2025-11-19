@@ -446,6 +446,10 @@ function showScreen(screenId) {
     }
 }
 
+// Global variable to store history data
+let historyData = [];
+let currentFilter = 'all';
+
 // History Management
 async function loadHistory() {
     const historyContent = document.getElementById('historyContent');
@@ -460,56 +464,192 @@ async function loadHistory() {
             return;
         }
 
-        // Sort by remision number (newest first) - show all notes
-        const history = result.content.sort((a, b) => {
+        // Store and sort by remision number (newest first)
+        historyData = result.content.sort((a, b) => {
             return b.remision.localeCompare(a.remision);
         });
 
-        if (history.length === 0) {
-            historyContent.innerHTML = '<p class="history-empty">No hay remisiones en el historial.</p>';
-            return;
-        }
-
-        // Generate history items
-        let html = '';
-        history.forEach(item => {
-            const statusClass = item.deleted ? 'status-deleted' : 'status-active';
-            const statusText = item.deleted ? 'Eliminada' : 'Activa';
-
-            html += `
-                <div class="history-item">
-                    <div class="history-item-header">
-                        <div class="history-item-title-row">
-                            <div class="history-item-remision">Remisión #${item.remision}</div>
-                            <span class="status-badge ${statusClass}">${statusText}</span>
-                        </div>
-                        <div class="history-item-date">${item.fecha}</div>
-                    </div>
-                    <div class="history-item-info">
-                        <span class="history-item-label">Cliente:</span>
-                        <span class="history-item-value">${item.cliente}</span>
-                    </div>
-                    <div class="history-item-info">
-                        <span class="history-item-label">Ciudad:</span>
-                        <span class="history-item-value">${item.ciudad}</span>
-                    </div>
-                    <div class="history-item-info">
-                        <span class="history-item-label">Conceptos:</span>
-                        <span class="history-item-value">${item.conceptos.length} item(s)</span>
-                    </div>
-                    <div class="history-item-total">
-                        Total: $${item.total.toFixed(2)}
-                    </div>
-                </div>
-            `;
-        });
-
-        historyContent.innerHTML = html;
+        // Render with current filter
+        renderHistory();
 
     } catch (error) {
         console.error('Error loading history:', error);
         historyContent.innerHTML = '<p class="history-empty">Error al cargar el historial.</p>';
     }
+}
+
+function filterHistory(filter) {
+    currentFilter = filter;
+
+    // Update active button
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+
+    // Re-render history
+    renderHistory();
+}
+
+function renderHistory() {
+    const historyContent = document.getElementById('historyContent');
+
+    // Filter data based on current filter
+    let filteredData = historyData;
+    if (currentFilter === 'active') {
+        filteredData = historyData.filter(item => !item.deleted);
+    } else if (currentFilter === 'deleted') {
+        filteredData = historyData.filter(item => item.deleted);
+    }
+
+    if (filteredData.length === 0) {
+        historyContent.innerHTML = '<p class="history-empty">No hay remisiones para mostrar.</p>';
+        return;
+    }
+
+    // Generate history items
+    let html = '';
+    filteredData.forEach(item => {
+        const statusClass = item.deleted ? 'status-deleted' : 'status-active';
+        const statusText = item.deleted ? 'Eliminada' : 'Activa';
+
+        html += `
+            <div class="history-item" onclick="showDetailModal('${item.remision}')">
+                <div class="history-item-header">
+                    <div class="history-item-title-row">
+                        <div class="history-item-remision">Remisión #${item.remision}</div>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="history-item-date">${item.fecha}</div>
+                </div>
+                <div class="history-item-info">
+                    <span class="history-item-label">Cliente:</span>
+                    <span class="history-item-value">${item.cliente}</span>
+                </div>
+                <div class="history-item-total">
+                    Total: $${item.total.toFixed(2)}
+                </div>
+            </div>
+        `;
+    });
+
+    historyContent.innerHTML = html;
+}
+
+// Modal Management
+function showDetailModal(remisionNumber) {
+    const item = historyData.find(h => h.remision === remisionNumber);
+    if (!item) return;
+
+    const modal = document.getElementById('detailModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+
+    const statusClass = item.deleted ? 'status-deleted' : 'status-active';
+    const statusText = item.deleted ? 'Eliminada' : 'Activa';
+
+    // Build conceptos table
+    let conceptosHtml = '';
+    item.conceptos.forEach(concepto => {
+        conceptosHtml += `
+            <tr>
+                <td>${concepto.cantidad}</td>
+                <td>${concepto.descripcion}</td>
+                <td>$${concepto.pu.toFixed(2)}</td>
+                <td>$${concepto.importe.toFixed(2)}</td>
+            </tr>
+        `;
+    });
+
+    modalTitle.innerHTML = `
+        Remisión #${item.remision}
+        <span class="status-badge ${statusClass}">${statusText}</span>
+    `;
+
+    modalBody.innerHTML = `
+        <div class="modal-section">
+            <div class="modal-info-row">
+                <span class="modal-label">Fecha:</span>
+                <span class="modal-value">${item.fecha}</span>
+            </div>
+            <div class="modal-info-row">
+                <span class="modal-label">Cliente:</span>
+                <span class="modal-value">${item.cliente}</span>
+            </div>
+            <div class="modal-info-row">
+                <span class="modal-label">Ciudad:</span>
+                <span class="modal-value">${item.ciudad}</span>
+            </div>
+        </div>
+
+        <div class="modal-section">
+            <h4>Conceptos</h4>
+            <table class="modal-table">
+                <thead>
+                    <tr>
+                        <th>Cant.</th>
+                        <th>Descripción</th>
+                        <th>P.U.</th>
+                        <th>Importe</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${conceptosHtml}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="modal-section modal-totals">
+            <div class="modal-total-row">
+                <span>Subtotal:</span>
+                <span>$${item.subtotal.toFixed(2)}</span>
+            </div>
+            <div class="modal-total-row">
+                <span>IVA:</span>
+                <span>$${item.iva.toFixed(2)}</span>
+            </div>
+            <div class="modal-total-row modal-total-final">
+                <span>Total:</span>
+                <span>$${item.total.toFixed(2)}</span>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn-modal btn-edit" onclick="editRemision('${item.remision}')">
+                <svg class="icon-inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Editar
+            </button>
+            ${item.deleted
+                ? `<button type="button" class="btn-modal btn-restore" onclick="toggleDeleteRemision('${item.remision}', false)">Restaurar</button>`
+                : `<button type="button" class="btn-modal btn-delete" onclick="toggleDeleteRemision('${item.remision}', true)">Eliminar</button>`
+            }
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('detailModal').style.display = 'none';
+}
+
+function closeModalOnBackdrop(event) {
+    if (event.target.id === 'detailModal') {
+        closeModal();
+    }
+}
+
+function editRemision(remisionNumber) {
+    alert('Función de editar en desarrollo');
+    // TODO: Implement edit functionality
+}
+
+function toggleDeleteRemision(remisionNumber, deleted) {
+    alert(`Función de ${deleted ? 'eliminar' : 'restaurar'} en desarrollo`);
+    // TODO: Implement delete/restore functionality
 }
 
 // Configuration helper (to be called from console if needed)
@@ -528,3 +668,9 @@ window.generarPDF = generarPDF;
 window.enviarCorreo = enviarCorreo;
 window.setEmailJSConfig = setEmailJSConfig;
 window.showScreen = showScreen;
+window.filterHistory = filterHistory;
+window.showDetailModal = showDetailModal;
+window.closeModal = closeModal;
+window.closeModalOnBackdrop = closeModalOnBackdrop;
+window.editRemision = editRemision;
+window.toggleDeleteRemision = toggleDeleteRemision;
