@@ -304,31 +304,36 @@ input[readonly] {
 }
 
 .btn-remove-card {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background-color: #ff4757;
-    color: white;
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+    width: 100%;
+    background-color: transparent;
+    color: #ff4757;
+    border: 2px solid #ff4757;
+    border-radius: 8px;
+    padding: 12px 20px;
     cursor: pointer;
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 15px;
+    font-weight: 600;
     transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.btn-remove-card svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
 }
 
 .btn-remove-card:hover {
-    background-color: #e84118;
-    transform: scale(1.1);
+    background-color: #ff4757;
+    color: white;
 }
 
 .btn-remove-card:active {
-    transform: scale(0.95);
+    transform: scale(0.98);
 }
 
 .card-row {
@@ -1313,9 +1318,14 @@ input[readonly] {
     }
 
     .btn-remove-card {
-        width: 36px;
-        height: 36px;
-        font-size: 20px;
+        padding: 14px 20px;
+        min-height: 44px;
+        font-size: 16px;
+    }
+
+    .btn-remove-card svg {
+        width: 20px;
+        height: 20px;
     }
 
     .btn-add {
