@@ -308,7 +308,8 @@ async function actualGenerarPDF() {
 
         const data = getRemisionData();
 
-        // Add small logo at the top
+        // TEMPORARILY DISABLED FOR TESTING - Add small logo at the top
+        /*
         try {
             const img = new Image();
             img.src = 'assets/logo.png';
@@ -342,6 +343,7 @@ async function actualGenerarPDF() {
         } catch (e) {
             console.warn('Logo not loaded');
         }
+        */
 
         let currentY = 20;
 
@@ -539,7 +541,8 @@ async function enviarCorreo() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        // Add small logo at the top
+        // TEMPORARILY DISABLED FOR TESTING - Add small logo at the top
+        /*
         try {
             const img = new Image();
             img.src = 'assets/logo.png';
@@ -573,6 +576,7 @@ async function enviarCorreo() {
         } catch (e) {
             console.warn('Logo not loaded for email');
         }
+        */
 
         // Build the same PDF as actualGenerarPDF but get base64
         let currentY = 20;
