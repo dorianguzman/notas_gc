@@ -79,7 +79,8 @@ jobs:
           "conceptos": $CONCEPTOS,
           "subtotal": ${{ inputs.subtotal }},
           "iva": ${{ inputs.iva }},
-          "total": ${{ inputs.total }}
+          "total": ${{ inputs.total }},
+          "deleted": false
         }
         EOF
 

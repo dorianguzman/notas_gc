@@ -220,7 +220,8 @@ function getRemisionData() {
         conceptos,
         subtotal,
         iva,
-        total
+        total,
+        deleted: false
     };
 }
 
@@ -455,10 +456,17 @@ async function loadHistory() {
             return;
         }
 
-        // Sort by remision number (newest first)
-        const history = result.content.sort((a, b) => {
-            return b.remision.localeCompare(a.remision);
-        });
+        // Filter out deleted notes and sort by remision number (newest first)
+        const history = result.content
+            .filter(item => !item.deleted)
+            .sort((a, b) => {
+                return b.remision.localeCompare(a.remision);
+            });
+
+        if (history.length === 0) {
+            historyContent.innerHTML = '<p class="history-empty">No hay remisiones en el historial.</p>';
+            return;
+        }
 
         // Generate history items
         let html = '';

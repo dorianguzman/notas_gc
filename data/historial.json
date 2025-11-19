@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "fecha": "2025-11-19",
+    "remision": "00000001",
+    "cliente": "Juan Pérez García",
+    "ciudad": "Querétaro",
+    "conceptos": [
+      {
+        "cantidad": 10,
+        "descripcion": "Becerros Holstein",
+        "pu": 12500,
+        "importe": 125000
+      },
+      {
+        "cantidad": 5,
+        "descripcion": "Vacas Jersey",
+        "pu": 18000,
+        "importe": 90000
+      }
+    ],
+    "subtotal": 215000,
+    "iva": 34400,
+    "total": 249400,
+    "deleted": false
+  }
+]
