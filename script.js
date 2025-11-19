@@ -190,6 +190,7 @@ function getRemisionData() {
     const fecha = document.getElementById('fecha').value;
     const remision = document.getElementById('remision').value;
     const cliente = document.getElementById('cliente').value;
+    const clienteEmail = document.getElementById('clienteEmail').value;
     const ciudad = document.getElementById('ciudad').value;
 
     const conceptos = [];
@@ -218,6 +219,7 @@ function getRemisionData() {
         fecha,
         remision,
         cliente,
+        clienteEmail,
         ciudad,
         conceptos,
         subtotal: parseFloat(subtotalText),
@@ -290,11 +292,18 @@ async function generarPDF() {
         doc.text(`Fecha: ${data.fecha}`, 15, 60);
         doc.text(`Remisión: ${data.remision}`, 150, 60);
         doc.text(`Cliente: ${data.cliente}`, 15, 70);
-        doc.text(`Ciudad: ${data.ciudad}`, 15, 80);
+
+        // Add email if provided
+        let yPos = 80;
+        if (data.clienteEmail) {
+            doc.text(`Email: ${data.clienteEmail}`, 15, 80);
+            yPos = 90;
+        }
+        doc.text(`Ciudad: ${data.ciudad}`, 15, yPos);
 
         // Table
         doc.setFontSize(10);
-        let y = 95;
+        let y = yPos + 15;
 
         // Table header
         doc.setFillColor(45, 45, 45);
@@ -375,6 +384,7 @@ async function enviarCorreo() {
         const templateParams = {
             remision: data.remision,
             cliente: data.cliente,
+            cliente_email: data.clienteEmail || '',
             fecha: data.fecha,
             total: formatNumber(data.total),
             pdf_attachment: pdfBase64
@@ -402,6 +412,7 @@ async function enviarCorreo() {
 function nuevaNota() {
     // Clear form inputs
     document.getElementById('cliente').value = '';
+    document.getElementById('clienteEmail').value = '';
     document.getElementById('ciudad').value = 'Querétaro';
 
     // Reset date and remision with fresh timestamp
