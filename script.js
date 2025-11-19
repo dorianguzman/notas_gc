@@ -25,30 +25,33 @@ function getMexicoDate() {
     });
 }
 
+// Remision Number Generation (Timestamp-based)
+function generateRemisionNumber() {
+    const now = new Date().toLocaleString('en-US', {
+        timeZone: 'America/Mexico_City'
+    });
+    const mexicoDate = new Date(now);
+
+    const year = mexicoDate.getFullYear();
+    const month = String(mexicoDate.getMonth() + 1).padStart(2, '0');
+    const day = String(mexicoDate.getDate()).padStart(2, '0');
+    const hour = String(mexicoDate.getHours()).padStart(2, '0');
+    const minute = String(mexicoDate.getMinutes()).padStart(2, '0');
+
+    return `${year}${month}${day}-${hour}${minute}`;
+}
+
 // Initialize app on page load
 document.addEventListener('DOMContentLoaded', () => {
     // Set current date in Mexico timezone
     document.getElementById('fecha').value = getMexicoDate();
 
-    // Load next remision number from localStorage
-    loadNextRemision();
+    // Set remision number with current timestamp
+    document.getElementById('remision').value = generateRemisionNumber();
 
     // Add event listeners for calculations
     setupCalculationListeners();
 });
-
-// Sequence Management (localStorage)
-function loadNextRemision() {
-    const lastRemision = localStorage.getItem('lastRemision') || '00000000';
-    const nextRemision = String(parseInt(lastRemision) + 1).padStart(8, '0');
-    document.getElementById('remision').value = nextRemision;
-}
-
-function incrementRemision() {
-    const currentRemision = document.getElementById('remision').value;
-    localStorage.setItem('lastRemision', currentRemision);
-    loadNextRemision();
-}
 
 // Table Management
 function addRow() {
@@ -271,8 +274,8 @@ async function generarPDF() {
         doc.save(`Remision_${data.remision}.pdf`);
         showToast('PDF generado exitosamente', 'success');
 
-        // Increment remision number for next time
-        incrementRemision();
+        // Refresh remision number with new timestamp for next note
+        document.getElementById('remision').value = generateRemisionNumber();
 
     } catch (error) {
         console.error('Error generating PDF:', error);
@@ -326,8 +329,8 @@ async function enviarCorreo() {
 
         showToast('Correo enviado exitosamente', 'success');
 
-        // Increment remision number for next time
-        incrementRemision();
+        // Refresh remision number with new timestamp for next note
+        document.getElementById('remision').value = generateRemisionNumber();
 
     } catch (error) {
         console.error('Error sending email:', error);

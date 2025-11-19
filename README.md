@@ -7,7 +7,7 @@ Aplicación web simple para generar notas de remisión en formato PDF optimizada
 - 📱 **Optimizado para móvil** - Diseño touch-first
 - 📄 **Generación de PDF** - Crea PDFs profesionales con logo
 - ✉️ **Envío por email** - Envía notas directamente por correo (opcional)
-- 🔢 **Numeración automática** - Secuencia automática de remisiones
+- 🔢 **Numeración automática** - Timestamp en formato YYYYMMDD-HHMM
 - 💾 **Sin base de datos** - Todo funciona en el navegador
 - 🎨 **Diseño limpio** - Interfaz minimalista gris/negro/blanco
 - 🇲🇽 **Zona horaria México** - Fechas en America/Mexico_City
@@ -75,7 +75,7 @@ const CONFIG = {
 1. **Abrir la aplicación** en tu navegador móvil o desktop
 2. **Llenar el formulario:**
    - Fecha (auto-completa con fecha actual de México)
-   - Remisión (auto-incrementa automáticamente)
+   - Remisión (timestamp automático YYYYMMDD-HHMM)
    - Cliente y Ciudad
    - Agregar conceptos con "+ Agregar línea":
      - Cantidad
@@ -97,7 +97,6 @@ const CONFIG = {
 - **HTML5, CSS3, Vanilla JavaScript** - Sin frameworks pesados
 - **jsPDF** - Generación de PDFs en el navegador
 - **EmailJS** - Envío de correos (opcional)
-- **localStorage** - Persistencia de secuencia de remisiones
 - **GitHub Pages** - Hosting estático gratuito
 
 ## 📱 Optimización Móvil
@@ -120,10 +119,10 @@ Diseñado específicamente para uso en teléfonos:
 - Formato de moneda con separadores de miles
 
 ### Numeración Automática
-- Inicia en 00000001
-- Se incrementa automáticamente después de generar PDF o enviar email
-- Persiste en localStorage del navegador
-- Cada dispositivo tiene su propia secuencia
+- Basada en timestamp (formato: YYYYMMDD-HHMM)
+- Se genera automáticamente con fecha/hora actual de México
+- Se actualiza después de generar PDF o enviar email
+- Única por minuto, sin necesidad de tracking
 
 ### Cálculos en Tiempo Real
 - Actualización instantánea de importes
@@ -135,8 +134,7 @@ Diseñado específicamente para uso en teléfonos:
 
 - **No requiere conexión** después de cargar (excepto para enviar emails)
 - **No guarda historial** - Solo genera PDFs y envía emails
-- **Secuencia local** - Cada dispositivo/navegador tiene su propia secuencia
-- **Resetear secuencia** - Limpia localStorage del navegador para reiniciar
+- **Numeración automática** - Basada en timestamp, sin necesidad de tracking
 
 ## 🔒 Privacidad
 
