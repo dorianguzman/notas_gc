@@ -8,15 +8,16 @@ Sistema web estático para generar notas de remisión con numeración automátic
 - 📄 Generación de PDF descargable
 - 📧 Envío de remisiones por correo electrónico
 - 💾 Historial completo de remisiones
-- 🔄 Sincronización automática con GitHub
+- 🔄 Sincronización automática con GitHub Actions
 - 🎨 Interfaz moderna y responsive
+- 📱 Optimizado para uso en teléfonos móviles
 
 ## Estructura del Proyecto
 
 ```
 notas_gc/
 ├── index.html              # Página principal
-├── style.css               # Estilos
+├── style.css               # Estilos (optimizado para móvil)
 ├── script.js               # Lógica de la aplicación
 ├── assets/
 │   └── logo.png           # Logo de Ganadería Catorce
@@ -25,23 +26,19 @@ notas_gc/
 │   └── historial.json     # Historial de remisiones
 └── .github/
     └── workflows/
+        ├── save-remision.yml    # Workflow para guardar remisiones
         └── update-remision.yml  # Workflow de validación
 ```
 
 ## Configuración Inicial
 
-### 1. GitHub Token
+### 1. GitHub Actions
 
-Para que la aplicación pueda leer y actualizar archivos en GitHub, necesitas un Personal Access Token:
+El sistema utiliza GitHub Actions para guardar las remisiones de forma segura. El token de GitHub se maneja automáticamente mediante `${{ secrets.GITHUB_TOKEN }}` en el workflow, por lo que **no necesitas configurar ningún token manualmente**.
 
-1. Ve a GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
-2. Genera un nuevo token con permisos de `repo`
-3. Copia el token
-
-En la consola del navegador, ejecuta:
-```javascript
-setGitHubToken('TU_TOKEN_AQUI');
-```
+El workflow `save-remision.yml` se ejecuta automáticamente cuando:
+- Se guarda una remisión desde la interfaz web
+- El workflow actualiza la secuencia y el historial automáticamente
 
 ### 2. EmailJS (Opcional)
 
@@ -91,9 +88,20 @@ setEmailJSConfig('SERVICE_ID', 'TEMPLATE_ID', 'PUBLIC_KEY');
 - **Eliminar línea**: Click en el botón "✕" (debe haber al menos una línea)
 - Los cálculos se actualizan automáticamente
 
-## Workflow de GitHub Actions
+## Workflows de GitHub Actions
 
-El workflow se ejecuta automáticamente cuando se modifican los archivos de datos:
+### save-remision.yml
+Workflow principal para guardar remisiones:
+- Se dispara mediante `workflow_dispatch` desde la interfaz web
+- Incrementa automáticamente el número de secuencia
+- Agrega la remisión al historial
+- Actualiza ambos archivos JSON
+- Realiza commit automático de los cambios
+- Utiliza `${{ secrets.GITHUB_TOKEN }}` automáticamente (no requiere configuración)
+
+### update-remision.yml
+Workflow de validación:
+- Se ejecuta automáticamente cuando se modifican los archivos de datos
 - Valida que los archivos JSON sean correctos
 - No genera backups ni CSV
 - Solo valida, no modifica datos
@@ -138,6 +146,16 @@ El workflow se ejecuta automáticamente cuando se modifican los archivos de dato
 - **Almacenamiento**: GitHub API
 - **CI/CD**: GitHub Actions
 - **Hosting**: GitHub Pages
+
+## Optimización Móvil
+
+El sistema está optimizado para uso en teléfonos:
+- Botones de ancho completo en móvil para facilitar el toque
+- Tabla con scroll horizontal para mostrar todos los datos
+- Tamaño de fuente de 16px en inputs (previene zoom automático en iOS)
+- Padding y espaciado reducido para aprovechar espacio de pantalla
+- Touch targets adecuados para dedos
+- Diseño responsive que se adapta a diferentes tamaños de pantalla
 
 ## Contribuir
 
