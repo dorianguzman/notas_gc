@@ -31,12 +31,12 @@ export async function onRequest(context) {
     try {
         const db = env.DB;
 
-        // Get current sequence
+        // Get the next sequence number from max remision
         const result = await db.prepare(
-            'SELECT ultima FROM secuencia WHERE id = 1'
+            'SELECT MAX(remision) as maxRemision FROM remisiones'
         ).first();
 
-        const currentSequence = result.ultima;
+        const currentSequence = result.maxRemision || '00000000';
         const nextSequence = String(parseInt(currentSequence) + 1).padStart(8, '0');
 
         return new Response(JSON.stringify({

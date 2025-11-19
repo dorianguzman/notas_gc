@@ -16,19 +16,7 @@ CREATE TABLE IF NOT EXISTS remisiones (
     created_at INTEGER NOT NULL  -- Unix timestamp
 );
 
--- Table: secuencia
--- Stores the current sequence number
-CREATE TABLE IF NOT EXISTS secuencia (
-    id INTEGER PRIMARY KEY CHECK (id = 1),  -- Only one row allowed
-    ultima TEXT NOT NULL,  -- e.g., "00000001"
-    updated_at INTEGER NOT NULL  -- Unix timestamp
-);
-
--- Initialize sequence
-INSERT OR IGNORE INTO secuencia (id, ultima, updated_at)
-VALUES (1, '00000000', strftime('%s', 'now'));
-
 -- Indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_remisiones_fecha ON remisiones(fecha DESC);
+CREATE INDEX IF NOT EXISTS idx_remisiones_remision ON remisiones(remision DESC);
 CREATE INDEX IF NOT EXISTS idx_remisiones_deleted ON remisiones(deleted);
-CREATE INDEX IF NOT EXISTS idx_remisiones_remision ON remisiones(remision);
+CREATE INDEX IF NOT EXISTS idx_remisiones_fecha ON remisiones(fecha DESC);

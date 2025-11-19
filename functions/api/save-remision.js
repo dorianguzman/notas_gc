@@ -32,23 +32,17 @@ export async function onRequest(context) {
         // Get remision data from request
         const remisionData = await request.json();
 
-        // Start transaction
         const db = env.DB;
 
-        // 1. Get and increment sequence
-        const sequenceResult = await db.prepare(
-            'SELECT ultima FROM secuencia WHERE id = 1'
+        // 1. Get the next sequence number from max remision
+        const maxResult = await db.prepare(
+            'SELECT MAX(remision) as maxRemision FROM remisiones'
         ).first();
 
-        const currentSequence = sequenceResult.ultima;
+        const currentSequence = maxResult.maxRemision || '00000000';
         const nextSequence = String(parseInt(currentSequence) + 1).padStart(8, '0');
 
-        // 2. Update sequence
-        await db.prepare(
-            'UPDATE secuencia SET ultima = ?, updated_at = ? WHERE id = 1'
-        ).bind(nextSequence, Date.now()).run();
-
-        // 3. Insert new remision
+        // 2. Insert new remision
         await db.prepare(`
             INSERT INTO remisiones (
                 remision, fecha, cliente, ciudad, conceptos,
