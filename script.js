@@ -25,8 +25,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 // GitHub Workflow Functions
 async function getFileContent(path) {
     try {
-        // Fetch file content from raw GitHub URL (no authentication needed)
-        const url = `https://raw.githubusercontent.com/${CONFIG.github.owner}/${CONFIG.github.repo}/${CONFIG.github.branch}/${path}`;
+        // Use local path for localhost, GitHub raw URL for production
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const url = isLocalhost
+            ? `/${path}`
+            : `https://raw.githubusercontent.com/${CONFIG.github.owner}/${CONFIG.github.repo}/${CONFIG.github.branch}/${path}`;
+
         const response = await fetch(url);
 
         if (!response.ok) {
