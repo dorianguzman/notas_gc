@@ -327,9 +327,12 @@ async function actualGenerarPDF() {
                         logoWidth = maxHeight * imgRatio;
                     }
 
-                    // Position logo in top-left
+                    // Position logo centered vertically in header section
+                    // Header section spans from Y=20 (title) to Y=50 (client separator)
                     const xPos = 15;
-                    const yPos = 12;
+                    const headerTop = 20;
+                    const headerBottom = 50;
+                    const yPos = headerTop + (headerBottom - headerTop - logoHeight) / 2;
 
                     doc.addImage(img, 'PNG', xPos, yPos, logoWidth, logoHeight);
                     resolve();
@@ -474,7 +477,7 @@ async function actualGenerarPDF() {
         // Separator line
         doc.setDrawColor(200, 200, 200);
         doc.setLineWidth(0.3);
-        doc.line(40, footerY, 170, footerY);
+        doc.line(15, footerY, 195, footerY);
 
         // Company name
         doc.setFontSize(10);
@@ -555,9 +558,12 @@ async function enviarCorreo() {
                         logoWidth = maxHeight * imgRatio;
                     }
 
-                    // Position logo in top-left
+                    // Position logo centered vertically in header section
+                    // Header section spans from Y=20 (title) to Y=50 (client separator)
                     const xPos = 15;
-                    const yPos = 12;
+                    const headerTop = 20;
+                    const headerBottom = 50;
+                    const yPos = headerTop + (headerBottom - headerTop - logoHeight) / 2;
 
                     doc.addImage(img, 'PNG', xPos, yPos, logoWidth, logoHeight);
                     resolve();
