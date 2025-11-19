@@ -73,6 +73,36 @@ h1 {
     margin: 0;
 }
 
+.title-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #9ca3af;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.status-dot.ready {
+    background-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    animation: pulse-ready 2s ease-in-out infinite;
+}
+
+@keyframes pulse-ready {
+    0%, 100% {
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.1);
+    }
+}
+
 /* Status Indicators */
 .status-indicators {
     display: flex;

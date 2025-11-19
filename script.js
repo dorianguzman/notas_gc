@@ -51,6 +51,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add event listeners for calculations
     setupCalculationListeners();
+
+    // Set status indicator to ready
+    const statusDot = document.getElementById('statusDot');
+    if (statusDot) {
+        statusDot.classList.add('ready');
+        statusDot.setAttribute('title', 'Estado: Lista');
+    }
 });
 
 // Table Management
