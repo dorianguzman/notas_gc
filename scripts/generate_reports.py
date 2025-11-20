@@ -161,6 +161,10 @@ def generate_markdown_report(title, metrics, start_date, end_date):
 
     # Summary metrics
     report.append("## Summary")
+
+    if metrics['total_notas'] == 0:
+        report.append("\n> ⚠️ **No data available for this period**")
+
     report.append(f"\n- **Total Revenue**: {format_currency(metrics['total_revenue'])}")
     report.append(f"- **Total Notas**: {metrics['total_notas']}")
     report.append(f"- **Average Ticket**: {format_currency(metrics['avg_ticket'])}")
@@ -205,8 +209,8 @@ def main():
     all_records = fetch_data(client)
 
     if not all_records:
-        print("No data found in Google Sheets")
-        return
+        print("⚠️  No data found in Google Sheets - generating empty reports")
+        all_records = []  # Continue with empty list
 
     # Define date ranges
     now = datetime.now()

@@ -44,13 +44,15 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          # Add generated reports
-          git add reports/
+          # Add generated reports (create reports/ folder if it doesn't exist)
+          mkdir -p reports
+          git add reports/ || echo "No reports to add"
 
           # Check if there are changes to commit
           if git diff --staged --quiet; then
-            echo "No changes to commit"
+            echo "✅ No changes to commit"
           else
             git commit -m "📊 Update sales reports - $(date +'%Y-%m-%d')"
             git push
+            echo "✅ Reports updated and pushed"
           fi
