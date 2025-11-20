@@ -513,7 +513,42 @@ async function actualGenerarPDF() {
 
         // Save PDF
         doc.save(`Remision_${data.remision}.pdf`);
-        showToast('PDF generado exitosamente', 'success');
+        showToast('PDF generado y enviando copia por correo...', 'success');
+
+        // Also send email to ganaderiacatorce@gmail.com
+        try {
+            // Get PDF as base64
+            const pdfBase64 = doc.output('datauristring').split(',')[1];
+
+            // Send to Google Apps Script
+            const response = await fetch(CONFIG.googleAppsScriptUrl, {
+                method: 'POST',
+                body: JSON.stringify({
+                    remision: data.remision,
+                    cliente: data.cliente,
+                    clienteEmail: 'ganaderiacatorce@gmail.com', // Send to your email
+                    fecha: data.fecha,
+                    total: formatNumber(data.total),
+                    pdfBase64: pdfBase64
+                })
+            });
+
+            // Check HTTP status before parsing JSON
+            if (!response.ok) {
+                throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+            }
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast('PDF descargado y enviado por correo', 'success');
+            } else {
+                showToast('PDF descargado (correo falló)', 'info');
+            }
+        } catch (emailError) {
+            console.error('Error sending email:', emailError);
+            showToast('PDF descargado (correo falló)', 'info');
+        }
 
         // Scroll to top smoothly
         window.scrollTo({ top: 0, behavior: 'smooth' });
