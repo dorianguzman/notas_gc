@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Generate sales reports from Google Sheets data.
+Generate monthly sales report from Google Sheets data.
 
 This script:
-1. Fetches nota data from Google Sheets (last 3 months)
-2. Generates reports for different time ranges
-3. Saves reports as markdown files
+1. Fetches nota data from Google Sheets
+2. Generates report for the current month
+3. Saves report as JSON file
 """
 
 import os
@@ -185,7 +185,7 @@ def save_json_report(filename, data):
 
 def main():
     """Main function."""
-    print("Starting report generation...")
+    print("Starting monthly report generation...")
 
     # Setup Google Sheets client
     client = setup_google_sheets()
@@ -194,66 +194,36 @@ def main():
     all_records = fetch_data(client)
 
     if not all_records:
-        print("⚠️  No data found in Google Sheets - generating empty reports")
+        print("⚠️  No data found in Google Sheets - generating empty report")
         all_records = []  # Continue with empty list
 
-    # Define date ranges
+    # Define current month date range
     now = datetime.now()
     today = datetime(now.year, now.month, now.day)
+    start_date = datetime(now.year, now.month, 1)
 
-    date_ranges = {
-        'yesterday.md': {
-            'title': 'Yesterday Report',
-            'start': today - timedelta(days=1),
-            'end': today - timedelta(days=1)
-        },
-        'last_7_days.md': {
-            'title': 'Last 7 Days Report',
-            'start': today - timedelta(days=7),
-            'end': today
-        },
-        'last_15_days.md': {
-            'title': 'Last 15 Days Report',
-            'start': today - timedelta(days=15),
-            'end': today
-        },
-        'this_month.md': {
-            'title': 'This Month Report',
-            'start': datetime(now.year, now.month, 1),
-            'end': today
-        },
-        'last_3_months.md': {
-            'title': 'Last 3 Months Report',
-            'start': today - timedelta(days=90),
-            'end': today
-        }
-    }
+    print(f"\nGenerating report for {start_date.strftime('%B %Y')}...")
 
-    # Generate reports
-    for filename, config in date_ranges.items():
-        print(f"\nGenerating {filename}...")
+    # Filter data for current month
+    filtered_records = filter_by_date_range(all_records, start_date, today)
+    print(f"  Found {len(filtered_records)} records")
 
-        # Filter data
-        filtered_records = filter_by_date_range(all_records, config['start'], config['end'])
-        print(f"  Found {len(filtered_records)} records")
+    # Calculate metrics
+    metrics = calculate_metrics(filtered_records)
 
-        # Calculate metrics
-        metrics = calculate_metrics(filtered_records)
+    # Generate JSON report
+    report = generate_json_report(
+        'This Month Report',
+        metrics,
+        filtered_records,
+        start_date,
+        today
+    )
 
-        # Generate JSON report
-        json_filename = filename.replace('.md', '.json')
-        report = generate_json_report(
-            config['title'],
-            metrics,
-            filtered_records,
-            config['start'],
-            config['end']
-        )
+    # Save as JSON
+    save_json_report('this_month.json', report)
 
-        # Save as JSON
-        save_json_report(json_filename, report)
-
-    print("\n✓ All reports generated successfully!")
+    print("\n✓ Monthly report generated successfully!")
 
 
 if __name__ == '__main__':

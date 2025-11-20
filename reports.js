@@ -57,7 +57,8 @@ function showToast(message, type = 'info') {
 
 // Load report data
 async function loadReport() {
-    const period = document.getElementById('reportPeriod').value;
+    const period = 'this_month';
+
     const loadingState = document.getElementById('loadingState');
     const reportContent = document.getElementById('reportContent');
     const errorState = document.getElementById('errorState');
@@ -97,9 +98,15 @@ async function loadReport() {
 
 // Display report data
 function displayReport(data) {
-    // Period info
+    // Period info - display as "Reporte del mes de [Month Year]"
+    const startDate = new Date(data.period.start);
+    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const monthName = monthNames[startDate.getMonth()];
+    const year = startDate.getFullYear();
+
     document.getElementById('periodInfo').textContent =
-        `${data.period.start} a ${data.period.end} | Generado: ${data.generated}`;
+        `Reporte del mes de ${monthName} ${year}`;
 
     // Metrics
     document.getElementById('totalRevenue').textContent = formatCurrency(data.metrics.total_revenue);

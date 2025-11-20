@@ -1,5 +1,5 @@
-name: 📊 Generate Sales Reports
-run-name: ${{ github.event_name == 'workflow_dispatch' && '🔄 Manual report generation' || github.event_name == 'schedule' && '📊 Scheduled daily report generation' || '📊 Report generation' }}
+name: 📊 Generate Monthly Report
+run-name: ${{ github.event_name == 'workflow_dispatch' && '🔄 Manual monthly report' || github.event_name == 'schedule' && '📊 Scheduled monthly report' || '📊 Monthly report' }}
 
 on:
   # Run daily at 1 AM (Mexico City time is UTC-6, so 7 AM UTC)
@@ -13,8 +13,8 @@ permissions:
   contents: write
 
 jobs:
-  generate-reports:
-    name: ${{ github.event_name == 'workflow_dispatch' && '🔄 Manual report generation' || github.event_name == 'schedule' && '📊 Scheduled report generation' || '📊 Report generation' }}
+  generate-report:
+    name: ${{ github.event_name == 'workflow_dispatch' && '🔄 Manual monthly report' || github.event_name == 'schedule' && '📊 Scheduled monthly report' || '📊 Monthly report' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -32,7 +32,7 @@ jobs:
         run: |
           pip install gspread google-auth
 
-      - name: 📊 Generate sales reports
+      - name: 📊 Generate monthly report
         env:
           GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
           SHEET_ID: ${{ secrets.SHEET_ID }}
@@ -44,15 +44,14 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          # Add generated data files (create data/ folder if it doesn't exist)
-          mkdir -p data
-          git add data/ || echo "No data to add"
+          # Add generated data file
+          git add data/this_month.json || echo "No data to add"
 
           # Check if there are changes to commit
           if git diff --staged --quiet; then
             echo "✅ No changes to commit"
           else
-            git commit -m "📊 Update sales data - $(date +'%Y-%m-%d')"
+            git commit -m "📊 Update monthly report - $(date +'%Y-%m-%d')"
             git push
-            echo "✅ Data updated and pushed"
+            echo "✅ Monthly report updated"
           fi

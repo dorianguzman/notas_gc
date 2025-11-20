@@ -58,15 +58,161 @@ header {
     gap: 25px;
 }
 
+/* Centered header variant for landing page */
+header.header-centered {
+    border-bottom: none;
+    padding-bottom: 40px;
+    justify-content: center;
+}
+
+header.header-centered .header-left {
+    margin: 0 auto;
+}
+
 .header-left {
     display: flex;
     align-items: center;
     gap: 20px;
 }
 
+/* Header actions container */
+.header-actions {
+    display: flex;
+    gap: 8px;
+}
+
 .logo {
     max-width: 120px;
     height: auto;
+}
+
+/* Landing page specific styles */
+.landing-section {
+    margin-top: 0;
+}
+
+.landing-title {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.cards-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.card-link {
+    text-decoration: none;
+}
+
+.card-interactive {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card-interactive:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.card-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.card-icon {
+    width: 48px;
+    height: 48px;
+    background: #2d2d2d;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.card-icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+.card-text-content {
+    flex: 1;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d2d2d;
+    margin-bottom: 4px;
+}
+
+.card-description {
+    font-size: 14px;
+    color: #666;
+}
+
+.card-arrow {
+    width: 20px;
+    height: 20px;
+}
+
+/* Reports page specific styles */
+.loading-state,
+.error-state {
+    display: none;
+    text-align: center;
+    padding: 40px;
+}
+
+.error-text {
+    color: #d32f2f;
+}
+
+.error-subtext {
+    font-size: 14px;
+    color: #666;
+}
+
+.period-info {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+}
+
+.revenue-amount {
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.report-table thead tr {
+    background: #f5f5f5;
+}
+
+.report-table th {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+}
+
+.report-table th.text-right {
+    text-align: right;
+}
+
+.report-table td {
+    padding: 20px;
+    text-align: center;
+    color: #999;
+}
+
+.table-container {
+    /* Inherits from existing styles */
 }
 
 .btn-new {
@@ -273,9 +419,10 @@ input[type="number"] {
     padding: 12px 14px;
     border: 2px solid #ddd;
     border-radius: 8px;
-    font-size: 15px;
+    font-size: 16px;
     transition: all 0.2s ease;
     line-height: 1.5;
+    background: white;
 }
 
 input[type="text"]:focus,
@@ -1417,7 +1564,7 @@ input[readonly] {
     }
 
     .header-left {
-        justify-content: center;
+        /* justify-content: center;  Removed to keep logo left aligned on mobile */
         gap: 16px;
     }
 
