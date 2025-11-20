@@ -1,4 +1,5 @@
-name: Daily Reports
+name: 📊 Generate Sales Reports
+run-name: ${{ github.event_name == 'workflow_dispatch' && '🔄 Manual report generation' || github.event_name == 'schedule' && '📊 Scheduled daily report generation' || '📊 Report generation' }}
 
 on:
   # Run daily at 1 AM (Mexico City time is UTC-6, so 7 AM UTC)
@@ -8,31 +9,35 @@ on:
   # Allow manual trigger
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   generate-reports:
+    name: ${{ github.event_name == 'workflow_dispatch' && '🔄 Manual report generation' || github.event_name == 'schedule' && '📊 Scheduled report generation' || '📊 Report generation' }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: 🐍 Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: |
           pip install gspread google-auth
 
-      - name: Generate reports
+      - name: 📊 Generate sales reports
         env:
           GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
           SHEET_ID: ${{ secrets.SHEET_ID }}
         run: |
           python scripts/generate_reports.py
 
-      - name: Commit and push reports
+      - name: 💾 Commit and push reports
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -44,6 +49,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Update reports - $(date +'%Y-%m-%d')"
+            git commit -m "📊 Update sales reports - $(date +'%Y-%m-%d')"
             git push
           fi

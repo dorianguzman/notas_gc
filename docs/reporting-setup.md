@@ -75,11 +75,11 @@ The workflow file `.github/workflows/daily-reports.yml` is already in your repos
 
 1. Go to your GitHub repository
 2. Click the **"Actions"** tab
-3. You should see **"Daily Reports"** workflow listed
+3. You should see **"📊 Generate Sales Reports"** workflow listed
 
 ### Step 5: Test the Workflow
 
-1. In GitHub Actions, select **"Daily Reports"** workflow
+1. In GitHub Actions, select **"📊 Generate Sales Reports"** workflow
 2. Click **"Run workflow"** dropdown
 3. Click **"Run workflow"** button
 4. Wait for the workflow to complete (1-2 minutes)
