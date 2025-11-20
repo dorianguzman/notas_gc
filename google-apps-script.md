@@ -4,7 +4,13 @@ This file contains the Google Apps Script code for sending remission notes via G
 
 ## Setup Instructions
 
-### 1. Create Google Apps Script Project
+### 1. Create Google Sheet for Data Storage
+
+1. The sheet is already created at: https://docs.google.com/spreadsheets/d/17zK2IwzvEc1LykPP5_1fBug3_yQaQvV5WtBFa97LDPM/edit
+2. The script will automatically create a "Notas" tab with headers on first use
+3. Columns: Timestamp, Remision, Fecha, Cliente, ClienteEmail, Ciudad, Conceptos_JSON, Subtotal, IVA, Total
+
+### 2. Create Google Apps Script Project
 
 1. Go to https://script.google.com
 2. Click **"New Project"**
@@ -34,6 +40,9 @@ On first deployment, you'll need to:
 ## Google Apps Script Code
 
 ```javascript
+// Configuration
+const SHEET_ID = '17zK2IwzvEc1LykPP5_1fBug3_yQaQvV5WtBFa97LDPM';
+
 function doPost(e) {
   try {
     // Parse incoming data
@@ -101,6 +110,15 @@ Email: ganaderiacatorce@gmail.com
     // If we get here, email was sent successfully
     Logger.log(`Email sent successfully to ${recipient} for remision ${data.remision}`);
 
+    // Append data to Google Sheet
+    try {
+      appendToSheet(data);
+      Logger.log(`Data appended to sheet for remision ${data.remision}`);
+    } catch (sheetError) {
+      Logger.log(`Warning: Email sent but failed to append to sheet: ${sheetError.toString()}`);
+      // Don't fail the request if sheet append fails
+    }
+
     return ContentService.createTextOutput(JSON.stringify({
       success: true,
       message: 'Email enviado exitosamente'
@@ -117,14 +135,70 @@ Email: ganaderiacatorce@gmail.com
     })).setMimeType(ContentService.MimeType.JSON);
   }
 }
+
+// Function to append nota data to Google Sheet
+function appendToSheet(data) {
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  let sheet = ss.getSheetByName('Notas') || ss.insertSheet('Notas');
+
+  // Check if sheet is empty and add headers
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      'Timestamp',
+      'Remision',
+      'Fecha',
+      'Cliente',
+      'ClienteEmail',
+      'Ciudad',
+      'Conceptos_JSON',
+      'Subtotal',
+      'IVA',
+      'Total'
+    ]);
+
+    // Format header row
+    const headerRange = sheet.getRange(1, 1, 1, 10);
+    headerRange.setFontWeight('bold');
+    headerRange.setBackground('#4285f4');
+    headerRange.setFontColor('#ffffff');
+  }
+
+  // Prepare data row
+  const timestamp = new Date();
+  const conceptosJson = JSON.stringify(data.conceptos || []);
+
+  // Parse numbers from formatted strings
+  const subtotal = parseFloat((data.subtotal || '0').toString().replace(/,/g, ''));
+  const iva = parseFloat((data.iva || '0').toString().replace(/,/g, ''));
+  const total = parseFloat((data.total || '0').toString().replace(/,/g, ''));
+
+  // Append data row
+  sheet.appendRow([
+    timestamp,
+    data.remision,
+    data.fecha,
+    data.cliente,
+    data.clienteEmail,
+    data.ciudad || 'Querétaro',
+    conceptosJson,
+    subtotal,
+    iva,
+    total
+  ]);
+
+  // Auto-resize columns for better readability
+  sheet.autoResizeColumns(1, 10);
+}
 ```
 
 ## Features
 
 - ✅ **Automatic CC**: Every email automatically sends a copy to ganaderiacatorce@gmail.com
+- ✅ **Google Sheets Integration**: Automatically appends nota data to Google Sheet for reporting
 - ✅ **Error Handling**: Properly catches and returns Gmail errors (quota limits, size limits, etc.)
 - ✅ **Validation**: Checks for required fields before attempting to send
 - ✅ **Logging**: Logs all sends and errors to Google Apps Script logs
+- ✅ **Data Backup**: All notas stored in structured format for future analysis
 
 ## Gmail Limits
 

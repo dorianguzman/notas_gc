@@ -1,0 +1,49 @@
+name: Daily Reports
+
+on:
+  # Run daily at 1 AM (Mexico City time is UTC-6, so 7 AM UTC)
+  schedule:
+    - cron: '0 7 * * *'
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  generate-reports:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install gspread google-auth
+
+      - name: Generate reports
+        env:
+          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+        run: |
+          python scripts/generate_reports.py
+
+      - name: Commit and push reports
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # Add generated reports
+          git add reports/
+
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update reports - $(date +'%Y-%m-%d')"
+            git push
+          fi

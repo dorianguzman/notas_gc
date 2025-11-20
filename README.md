@@ -8,7 +8,8 @@ Aplicación web simple para generar notas de remisión en formato PDF optimizada
 - 📄 **Generación de PDF** - Crea PDFs profesionales con logo
 - ✉️ **Envío por email** - Envía notas directamente por correo (opcional)
 - 🔢 **Numeración automática** - Timestamp en formato YYYYMMDD-HHMM
-- 💾 **Sin base de datos** - Todo funciona en el navegador
+- 📊 **Reportes automatizados** - Genera reportes diarios, semanales y mensuales
+- 💾 **Backup en Google Sheets** - Almacena todas las notas automáticamente
 - 🎨 **Diseño limpio** - Interfaz minimalista gris/negro/blanco
 - 🇲🇽 **Zona horaria México** - Fechas en America/Mexico_City
 - 💵 **Formato de moneda** - Separador de miles con comas
@@ -17,12 +18,21 @@ Aplicación web simple para generar notas de remisión en formato PDF optimizada
 
 ```
 notas_gc/
-├── index.html          # Aplicación principal
-├── script.js           # Lógica de la aplicación
-├── style.css           # Estilos
+├── index.html                    # Aplicación principal
+├── script.js                     # Lógica de la aplicación
+├── style.css                     # Estilos
 ├── assets/
-│   └── logo.png        # Logo de Ganadería Catorce
-└── README.md           # Este archivo
+│   └── logo.png                  # Logo de Ganadería Catorce
+├── .github/workflows/
+│   └── daily-reports.yml         # GitHub Actions workflow
+├── scripts/
+│   └── generate_reports.py       # Script de generación de reportes
+├── docs/
+│   ├── reporting-setup.md        # Guía de configuración de reportes
+│   └── service-account-setup.md  # Guía de service account
+├── reports/                      # Reportes generados automáticamente
+├── google-apps-script.md         # Código de Google Apps Script
+└── README.md                     # Este archivo
 ```
 
 ## 🚀 Instalación
@@ -59,6 +69,44 @@ El archivo incluye:
 - Límites de Gmail y troubleshooting
 
 **Nota:** El script enviará automáticamente una copia (CC) a ganaderiacatorce@gmail.com de cada email enviado.
+
+## 📊 Reportes Automatizados
+
+El sistema incluye reportes automáticos que se generan diariamente a la 1 AM (hora de México).
+
+### Configuración
+
+Para habilitar los reportes automatizados, sigue la guía completa:
+
+📄 **[docs/reporting-setup.md](docs/reporting-setup.md)**
+
+**Pasos principales:**
+1. Actualizar Google Apps Script para guardar datos en Google Sheets
+2. Crear Service Account de Google (100% gratis)
+3. Configurar secrets en GitHub
+4. El workflow se ejecuta automáticamente
+
+### Reportes Generados
+
+- 📅 **yesterday.md** - Reporte del día anterior
+- 📅 **last_7_days.md** - Últimos 7 días
+- 📅 **last_15_days.md** - Últimos 15 días
+- 📅 **this_month.md** - Mes actual
+- 📅 **last_3_months.md** - Últimos 3 meses
+
+### Métricas Incluidas
+
+Cada reporte incluye:
+- 💰 Total de ingresos
+- 📋 Número de notas generadas
+- 💵 Ticket promedio
+- 📦 Total de items vendidos
+- 👥 Top 5 clientes
+- 🏆 Top 10 productos más vendidos
+
+### Costo
+
+✅ **100% GRATIS** - No requiere tarjeta de crédito
 
 ## 💡 Uso
 
