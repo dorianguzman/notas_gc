@@ -300,171 +300,216 @@ function cancelPDF() {
     modal.style.display = 'none';
 }
 
+// Core PDF Generation Logic
+async function createPDFDocument(data) {
+    // Destructure jsPDF and GState (for transparency)
+    const { jsPDF, GState } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Add watermark logo
+    const watermarkImg = new Image();
+    watermarkImg.src = 'assets/logo_watermark.png';
+
+    // Wait for image to load
+    await new Promise((resolve, reject) => {
+        watermarkImg.onload = resolve;
+        watermarkImg.onerror = reject;
+    });
+
+    // Add watermark in center of page
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    
+    // Reduced size for better aesthetics
+    const imgWidth = 90; 
+    const imgHeight = (watermarkImg.height / watermarkImg.width) * imgWidth;
+    const x = (pageWidth - imgWidth) / 2;
+    const y = (pageHeight - imgHeight) / 2;
+
+    doc.addImage(watermarkImg, 'PNG', x, y, imgWidth, imgHeight);
+
+    let currentY = 20;
+
+    // Main title: Nota de Remisión
+    doc.setFontSize(18);
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(45, 45, 45);
+    doc.text('Nota de Remisión', 105, currentY, { align: 'center' });
+
+    // Remision number and date
+    currentY += 10;
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Remisión: ${data.remision}`, 105, currentY, { align: 'center' });
+
+    currentY += 5;
+    doc.text(`Fecha: ${data.fecha}`, 105, currentY, { align: 'center' });
+
+    // Client information section
+    currentY += 15;
+    doc.setDrawColor(220, 220, 220);
+    doc.line(15, currentY, 195, currentY);
+
+    currentY += 8;
+    doc.setFontSize(11);
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(45, 45, 45);
+    doc.text('CLIENTE', 15, currentY);
+
+    currentY += 7;
+    doc.setFont(undefined, 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    doc.text(data.cliente, 15, currentY);
+
+    currentY += 5;
+    if (data.clienteEmail) {
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Email: ${data.clienteEmail}`, 15, currentY);
+        currentY += 5;
+    }
+
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Ciudad: ${data.ciudad}`, 15, currentY);
+
+    // Conceptos table
+    currentY += 12;
+
+    // Table header
+    doc.setFillColor(45, 45, 45);
+    doc.setDrawColor(45, 45, 45);
+    doc.roundedRect(15, currentY - 6, 180, 10, 2, 2, 'F');
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(9); // Slightly larger
+    doc.setFont(undefined, 'bold');
+    
+    // Adjusted alignment for professional look
+    doc.text('CANTIDAD', 20, currentY);
+    doc.text('DESCRIPCIÓN', 50, currentY);
+    doc.text('P. UNITARIO', 160, currentY, { align: 'right' });
+    doc.text('IMPORTE', 190, currentY, { align: 'right' });
+
+    currentY += 8;
+
+    // Table rows with alternating background and transparency
+    doc.setFont(undefined, 'normal');
+    doc.setTextColor(60, 60, 60);
+
+    let rowIndex = 0;
+    data.conceptos.forEach(concepto => {
+        // Pre-calculate height for the row background
+        const descMaxWidth = 75; // Reduced slightly to account for shift
+        const descLines = doc.splitTextToSize(concepto.descripcion, descMaxWidth);
+        const lineHeight = Math.max(8, descLines.length * 5 + 4); // Min height 8, padding
+
+        // Draw alternating background with transparency
+        if (rowIndex % 2 === 0) {
+            if (GState) {
+                // Set transparency to allow watermark to show through
+                const gState = new GState({ opacity: 0.6 }); 
+                doc.setGState(gState);
+                
+                doc.setFillColor(245, 245, 245); // Light grey
+                doc.rect(15, currentY - 4, 180, lineHeight, 'F');
+                
+                // Reset transparency
+                doc.setGState(new GState({ opacity: 1.0 }));
+            } else {
+                // Fallback if GState not available
+                doc.setFillColor(245, 245, 245);
+                doc.rect(15, currentY - 4, 180, lineHeight, 'F');
+            }
+        }
+
+        // Draw text
+        doc.text(formatNumber(concepto.cantidad, 2), 20, currentY); // Aligned with header
+        
+        doc.text(descLines, 50, currentY);
+
+        doc.text(`$${formatNumber(concepto.pu)}`, 160, currentY, { align: 'right' });
+        doc.text(`$${formatNumber(concepto.importe)}`, 190, currentY, { align: 'right' });
+
+        currentY += lineHeight;
+        rowIndex++;
+    });
+
+    // Bottom line for the table
+    doc.setDrawColor(45, 45, 45);
+    doc.setLineWidth(0.5);
+    doc.line(15, currentY - 2, 195, currentY - 2);
+
+    // Totals section
+    currentY += 5;
+    
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    doc.setTextColor(80, 80, 80);
+
+    // Only show Subtotal and IVA if IVA is greater than 0
+    if (data.iva > 0) {
+        doc.text('Subtotal:', 140, currentY, { align: 'right' });
+        doc.text(`$${formatNumber(data.subtotal)}`, 190, currentY, { align: 'right' });
+
+        currentY += 6;
+        doc.text('IVA:', 140, currentY, { align: 'right' });
+        doc.text(`$${formatNumber(data.iva)}`, 190, currentY, { align: 'right' });
+
+        currentY += 8;
+    } else {
+        // If no IVA, add minimal spacing before total
+        currentY += 2;
+    }
+
+    // Total line
+    doc.setDrawColor(45, 45, 45);
+    doc.setLineWidth(0.5);
+    doc.line(140, currentY - 2, 195, currentY - 2);
+
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(45, 45, 45);
+    doc.text('TOTAL:', 140, currentY + 2, { align: 'right' });
+    doc.text(`$${formatNumber(data.total)}`, 190, currentY + 2, { align: 'right' });
+
+    // Footer
+    const footerY = 270;
+
+    // Separator line
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.3);
+    doc.line(15, footerY, 195, footerY);
+
+    // Company name
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(100, 100, 100);
+    doc.text('GANADERÍA CATORCE', 105, footerY + 5, { align: 'center' });
+
+    // Location
+    doc.setFontSize(8);
+    doc.setFont(undefined, 'normal');
+    doc.setTextColor(130, 130, 130);
+    doc.text('Querétaro, México', 105, footerY + 10, { align: 'center' });
+
+    // Contact info
+    doc.setFontSize(7.5);
+    doc.setTextColor(130, 130, 130);
+    doc.text('Tel: +52 446 106 0320  |  Email: ganaderiacatorce@gmail.com', 105, footerY + 15, { align: 'center' });
+
+    // Thank you message
+    doc.setFontSize(7);
+    doc.setTextColor(150, 150, 150);
+    doc.text('Gracias por su preferencia', 105, footerY + 19, { align: 'center' });
+
+    return doc;
+}
+
 // Actual PDF Generation
 async function actualGenerarPDF() {
     try {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-
         const data = getRemisionData();
-
-        let currentY = 20;
-
-        // Main title: Nota de Remisión
-        doc.setFontSize(18);
-        doc.setFont(undefined, 'bold');
-        doc.setTextColor(45, 45, 45);
-        doc.text('Nota de Remisión', 105, currentY, { align: 'center' });
-
-        // Remision number and date
-        currentY += 10;
-        doc.setFontSize(10);
-        doc.setTextColor(100, 100, 100);
-        doc.text(`Remisión: ${data.remision}`, 105, currentY, { align: 'center' });
-
-        currentY += 5;
-        doc.text(`Fecha: ${data.fecha}`, 105, currentY, { align: 'center' });
-
-        // Client information section
-        currentY += 15;
-        doc.setDrawColor(220, 220, 220);
-        doc.line(15, currentY, 195, currentY);
-
-        currentY += 8;
-        doc.setFontSize(11);
-        doc.setFont(undefined, 'bold');
-        doc.setTextColor(45, 45, 45);
-        doc.text('CLIENTE', 15, currentY);
-
-        currentY += 7;
-        doc.setFont(undefined, 'normal');
-        doc.setFontSize(10);
-        doc.setTextColor(60, 60, 60);
-        doc.text(data.cliente, 15, currentY);
-
-        currentY += 5;
-        if (data.clienteEmail) {
-            doc.setTextColor(100, 100, 100);
-            doc.text(`Email: ${data.clienteEmail}`, 15, currentY);
-            currentY += 5;
-        }
-
-        doc.setTextColor(100, 100, 100);
-        doc.text(`Ciudad: ${data.ciudad}`, 15, currentY);
-
-        // Conceptos table
-        currentY += 12;
-        doc.setDrawColor(220, 220, 220);
-        doc.line(15, currentY, 195, currentY);
-
-        currentY += 10;
-
-        // Table header - no transparency
-        doc.setFillColor(45, 45, 45);
-        doc.setDrawColor(45, 45, 45);
-        doc.roundedRect(15, currentY - 6, 180, 10, 1, 1, 'F');
-
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(8);
-        doc.setFont(undefined, 'bold');
-        doc.text('CANTIDAD', 18, currentY);
-        doc.text('DESCRIPCIÓN', 50, currentY);
-        doc.text('PRECIO UNITARIO', 130, currentY);
-        doc.text('IMPORTE', 170, currentY);
-
-        currentY += 8;
-
-        // Table rows with alternating background
-        doc.setFont(undefined, 'normal');
-        doc.setTextColor(60, 60, 60);
-
-        let rowIndex = 0;
-        data.conceptos.forEach(concepto => {
-            // Alternating row background
-            if (rowIndex % 2 === 0) {
-                doc.setFillColor(250, 250, 250);
-                doc.rect(15, currentY - 5, 180, 8, 'F');
-            }
-
-            doc.text(formatNumber(concepto.cantidad, 2), 18, currentY);
-
-            // Word wrap for long descriptions
-            const descMaxWidth = 75;
-            const descLines = doc.splitTextToSize(concepto.descripcion, descMaxWidth);
-            doc.text(descLines, 50, currentY);
-
-            doc.text(`$${formatNumber(concepto.pu)}`, 130, currentY);
-            doc.text(`$${formatNumber(concepto.importe)}`, 170, currentY);
-
-            const lineHeight = descLines.length > 1 ? descLines.length * 5 : 8;
-            currentY += lineHeight;
-            rowIndex++;
-        });
-
-        // Totals section
-        currentY += 5;
-        doc.setDrawColor(220, 220, 220);
-        doc.line(120, currentY, 195, currentY);
-
-        currentY += 8;
-        doc.setFontSize(10);
-        doc.setFont(undefined, 'normal');
-        doc.setTextColor(80, 80, 80);
-
-        // Only show Subtotal and IVA if IVA is greater than 0
-        if (data.iva > 0) {
-            doc.text('Subtotal:', 130, currentY);
-            doc.text(`$${formatNumber(data.subtotal)}`, 195, currentY, { align: 'right' });
-
-            currentY += 6;
-            doc.text('IVA:', 130, currentY);
-            doc.text(`$${formatNumber(data.iva)}`, 195, currentY, { align: 'right' });
-
-            currentY += 8;
-        } else {
-            // If no IVA, add minimal spacing before total
-            currentY += 2;
-        }
-
-        doc.setDrawColor(45, 45, 45);
-        doc.setLineWidth(0.5);
-        doc.line(120, currentY - 2, 195, currentY - 2);
-
-        doc.setFontSize(12);
-        doc.setFont(undefined, 'bold');
-        doc.setTextColor(45, 45, 45);
-        doc.text('TOTAL:', 130, currentY + 2);
-        doc.text(`$${formatNumber(data.total)}`, 195, currentY + 2, { align: 'right' });
-
-        // Footer
-        const footerY = 270;
-
-        // Separator line
-        doc.setDrawColor(200, 200, 200);
-        doc.setLineWidth(0.3);
-        doc.line(15, footerY, 195, footerY);
-
-        // Company name
-        doc.setFontSize(10);
-        doc.setFont(undefined, 'bold');
-        doc.setTextColor(100, 100, 100);
-        doc.text('GANADERÍA CATORCE', 105, footerY + 5, { align: 'center' });
-
-        // Location
-        doc.setFontSize(8);
-        doc.setFont(undefined, 'normal');
-        doc.setTextColor(130, 130, 130);
-        doc.text('Querétaro, México', 105, footerY + 10, { align: 'center' });
-
-        // Contact info
-        doc.setFontSize(7.5);
-        doc.setTextColor(130, 130, 130);
-        doc.text('Tel: +52 446 106 0320  |  Email: ganaderiacatorce@gmail.com', 105, footerY + 15, { align: 'center' });
-
-        // Thank you message
-        doc.setFontSize(7);
-        doc.setTextColor(150, 150, 150);
-        doc.text('Gracias por su preferencia', 105, footerY + 19, { align: 'center' });
+        const doc = await createPDFDocument(data);
 
         // Save PDF
         doc.save(`Remision_${data.remision}.pdf`);
@@ -499,158 +544,8 @@ async function enviarCorreo() {
         showToast('Generando PDF y enviando correo...', 'info');
 
         const data = getRemisionData();
-
-        // Generate the full PDF (reuse the same code from actualGenerarPDF)
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-
-        // Build the PDF without logo (keeps file size ~8KB vs 28MB with logo)
-        let currentY = 20;
-
-        // Main title: Nota de Remisión
-        doc.setFontSize(18);
-        doc.setFont(undefined, 'bold');
-        doc.setTextColor(45, 45, 45);
-        doc.text('Nota de Remisión', 105, currentY, { align: 'center' });
-
-        currentY += 10;
-        doc.setFontSize(10);
-        doc.setTextColor(100, 100, 100);
-        doc.text(`Remisión: ${data.remision}`, 105, currentY, { align: 'center' });
-
-        currentY += 5;
-        doc.text(`Fecha: ${data.fecha}`, 105, currentY, { align: 'center' });
-
-        // Client section
-        currentY += 15;
-        doc.setDrawColor(220, 220, 220);
-        doc.line(15, currentY, 195, currentY);
-
-        currentY += 8;
-        doc.setFontSize(11);
-        doc.setFont(undefined, 'bold');
-        doc.setTextColor(45, 45, 45);
-        doc.text('CLIENTE', 15, currentY);
-
-        currentY += 7;
-        doc.setFont(undefined, 'normal');
-        doc.setFontSize(10);
-        doc.setTextColor(60, 60, 60);
-        doc.text(data.cliente, 15, currentY);
-
-        currentY += 5;
-        if (data.clienteEmail) {
-            doc.setTextColor(100, 100, 100);
-            doc.text(`Email: ${data.clienteEmail}`, 15, currentY);
-            currentY += 5;
-        }
-
-        doc.setTextColor(100, 100, 100);
-        doc.text(`Ciudad: ${data.ciudad}`, 15, currentY);
-
-        // Table
-        currentY += 12;
-        doc.setDrawColor(220, 220, 220);
-        doc.line(15, currentY, 195, currentY);
-
-        currentY += 10;
-
-        // Table header
-        doc.setFillColor(45, 45, 45);
-        doc.setDrawColor(45, 45, 45);
-        doc.roundedRect(15, currentY - 6, 180, 10, 1, 1, 'F');
-
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(8);
-        doc.setFont(undefined, 'bold');
-        doc.text('CANTIDAD', 18, currentY);
-        doc.text('DESCRIPCIÓN', 50, currentY);
-        doc.text('PRECIO UNITARIO', 130, currentY);
-        doc.text('IMPORTE', 170, currentY);
-
-        currentY += 8;
-
-        // Table rows
-        doc.setFont(undefined, 'normal');
-        doc.setTextColor(60, 60, 60);
-
-        let rowIndex = 0;
-        data.conceptos.forEach(concepto => {
-            if (rowIndex % 2 === 0) {
-                doc.setFillColor(250, 250, 250);
-                doc.rect(15, currentY - 5, 180, 8, 'F');
-            }
-
-            doc.text(formatNumber(concepto.cantidad, 2), 18, currentY);
-
-            const descMaxWidth = 75;
-            const descLines = doc.splitTextToSize(concepto.descripcion, descMaxWidth);
-            doc.text(descLines, 50, currentY);
-
-            doc.text(`$${formatNumber(concepto.pu)}`, 130, currentY);
-            doc.text(`$${formatNumber(concepto.importe)}`, 170, currentY);
-
-            const lineHeight = descLines.length > 1 ? descLines.length * 5 : 8;
-            currentY += lineHeight;
-            rowIndex++;
-        });
-
-        // Totals
-        currentY += 5;
-        doc.setDrawColor(220, 220, 220);
-        doc.line(120, currentY, 195, currentY);
-
-        currentY += 8;
-        doc.setFontSize(10);
-        doc.setFont(undefined, 'normal');
-        doc.setTextColor(80, 80, 80);
-
-        if (data.iva > 0) {
-            doc.text('Subtotal:', 130, currentY);
-            doc.text(`$${formatNumber(data.subtotal)}`, 195, currentY, { align: 'right' });
-
-            currentY += 6;
-            doc.text('IVA:', 130, currentY);
-            doc.text(`$${formatNumber(data.iva)}`, 195, currentY, { align: 'right' });
-
-            currentY += 8;
-        } else {
-            currentY += 2;
-        }
-
-        doc.setDrawColor(45, 45, 45);
-        doc.setLineWidth(0.5);
-        doc.line(120, currentY - 2, 195, currentY - 2);
-
-        doc.setFontSize(12);
-        doc.setFont(undefined, 'bold');
-        doc.setTextColor(45, 45, 45);
-        doc.text('TOTAL:', 130, currentY + 2);
-        doc.text(`$${formatNumber(data.total)}`, 195, currentY + 2, { align: 'right' });
-
-        // Footer
-        const footerY = 270;
-        doc.setDrawColor(200, 200, 200);
-        doc.setLineWidth(0.3);
-        doc.line(40, footerY, 170, footerY);
-
-        doc.setFontSize(10);
-        doc.setFont(undefined, 'bold');
-        doc.setTextColor(100, 100, 100);
-        doc.text('GANADERÍA CATORCE', 105, footerY + 5, { align: 'center' });
-
-        doc.setFontSize(8);
-        doc.setFont(undefined, 'normal');
-        doc.setTextColor(130, 130, 130);
-        doc.text('Querétaro, México', 105, footerY + 10, { align: 'center' });
-
-        doc.setFontSize(7.5);
-        doc.setTextColor(130, 130, 130);
-        doc.text('Tel: +52 446 106 0320  |  Email: ganaderiacatorce@gmail.com', 105, footerY + 15, { align: 'center' });
-
-        doc.setFontSize(7);
-        doc.setTextColor(150, 150, 150);
-        doc.text('Gracias por su preferencia', 105, footerY + 19, { align: 'center' });
+        // Reusing the core PDF generation logic
+        const doc = await createPDFDocument(data);
 
         // Get PDF as base64
         const pdfBase64 = doc.output('datauristring').split(',')[1];
@@ -727,7 +622,7 @@ function nuevaNota() {
             <button type="button" class="btn-remove-card" onclick="removeCard(this)">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                     <line x1="10" y1="11" x2="10" y2="17"></line>
                     <line x1="14" y1="11" x2="14" y2="17"></line>
                 </svg>
