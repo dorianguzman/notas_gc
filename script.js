@@ -505,6 +505,43 @@ async function createPDFDocument(data) {
     return doc;
 }
 
+// Shared Email Sending Function
+async function sendEmailWithPDF(pdfDoc, recipientEmail, data) {
+    try {
+        // Get PDF as base64
+        const pdfBase64 = pdfDoc.output('datauristring').split(',')[1];
+
+        // Send to Google Apps Script
+        const response = await fetch(CONFIG.googleAppsScriptUrl, {
+            method: 'POST',
+            body: JSON.stringify({
+                remision: data.remision,
+                cliente: data.cliente,
+                clienteEmail: recipientEmail,
+                fecha: data.fecha,
+                total: formatNumber(data.total),
+                pdfBase64: pdfBase64
+            })
+        });
+
+        // Check HTTP status before parsing JSON
+        if (!response.ok) {
+            throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.message || 'Error al enviar correo');
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error sending email:', error);
+        throw error;
+    }
+}
+
 // Actual PDF Generation
 async function actualGenerarPDF() {
     try {
@@ -515,38 +552,11 @@ async function actualGenerarPDF() {
         doc.save(`Remision_${data.remision}.pdf`);
         showToast('PDF generado y enviando copia por correo...', 'success');
 
-        // Also send email to ganaderiacatorce@gmail.com
+        // Send email to ganaderiacatorce@gmail.com
         try {
-            // Get PDF as base64
-            const pdfBase64 = doc.output('datauristring').split(',')[1];
-
-            // Send to Google Apps Script
-            const response = await fetch(CONFIG.googleAppsScriptUrl, {
-                method: 'POST',
-                body: JSON.stringify({
-                    remision: data.remision,
-                    cliente: data.cliente,
-                    clienteEmail: 'ganaderiacatorce@gmail.com', // Send to your email
-                    fecha: data.fecha,
-                    total: formatNumber(data.total),
-                    pdfBase64: pdfBase64
-                })
-            });
-
-            // Check HTTP status before parsing JSON
-            if (!response.ok) {
-                throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
-            }
-
-            const result = await response.json();
-
-            if (result.success) {
-                showToast('PDF descargado y enviado por correo', 'success');
-            } else {
-                showToast('PDF descargado (correo falló)', 'info');
-            }
+            await sendEmailWithPDF(doc, 'ganaderiacatorce@gmail.com', data);
+            showToast('PDF descargado y enviado por correo', 'success');
         } catch (emailError) {
-            console.error('Error sending email:', emailError);
             showToast('PDF descargado (correo falló)', 'info');
         }
 
@@ -579,39 +589,16 @@ async function enviarCorreo() {
         showToast('Generando PDF y enviando correo...', 'info');
 
         const data = getRemisionData();
-        // Reusing the core PDF generation logic
+        // Generate PDF document (but don't download)
         const doc = await createPDFDocument(data);
 
-        // Get PDF as base64
-        const pdfBase64 = doc.output('datauristring').split(',')[1];
+        // Send email using shared function
+        await sendEmailWithPDF(doc, clienteEmail, data);
 
-        // Send to Google Apps Script
-        const response = await fetch(CONFIG.googleAppsScriptUrl, {
-            method: 'POST',
-            body: JSON.stringify({
-                remision: data.remision,
-                cliente: data.cliente,
-                clienteEmail: data.clienteEmail,
-                fecha: data.fecha,
-                total: formatNumber(data.total),
-                pdfBase64: pdfBase64
-            })
-        });
+        showToast('Correo enviado exitosamente', 'success');
 
-        // Check HTTP status before parsing JSON
-        if (!response.ok) {
-            throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
-        }
-
-        const result = await response.json();
-
-        if (result.success) {
-            showToast('Correo enviado exitosamente', 'success');
-            // Scroll to top smoothly
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-            throw new Error(result.message || 'Error al enviar correo');
-        }
+        // Scroll to top smoothly
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
     } catch (error) {
         console.error('Error sending email:', error);
