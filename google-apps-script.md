@@ -50,6 +50,18 @@ function doPost(e) {
     const recipient = data.clienteEmail;
     const subject = `Nota de Remisión #${data.remision} - Ganadería Catorce`;
 
+    // Format conceptos list
+    let conceptosList = '';
+    if (data.conceptos && data.conceptos.length > 0) {
+      data.conceptos.forEach((concepto, index) => {
+        conceptosList += `\n${index + 1}. ${concepto.descripcion}
+   Cantidad: ${concepto.cantidad}
+   Precio Unitario: $${concepto.pu.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+   Importe: $${concepto.importe.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+`;
+      });
+    }
+
     const body = `
 Estimado/a ${data.cliente},
 
@@ -57,7 +69,10 @@ Adjunto encontrará la Nota de Remisión #${data.remision}.
 
 Detalles:
 - Fecha: ${data.fecha}
-- Total: $${data.total}
+${conceptosList}
+${data.iva && parseFloat(data.iva.replace(/,/g, '')) > 0 ? `Subtotal: $${data.subtotal}
+IVA: $${data.iva}
+` : ''}Total: $${data.total}
 
 Gracias por su preferencia.
 

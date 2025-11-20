@@ -519,6 +519,9 @@ async function sendEmailWithPDF(pdfDoc, recipientEmail, data) {
                 cliente: data.cliente,
                 clienteEmail: recipientEmail,
                 fecha: data.fecha,
+                conceptos: data.conceptos,
+                subtotal: formatNumber(data.subtotal),
+                iva: formatNumber(data.iva),
                 total: formatNumber(data.total),
                 pdfBase64: pdfBase64
             })
