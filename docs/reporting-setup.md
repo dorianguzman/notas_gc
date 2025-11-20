@@ -90,14 +90,14 @@ The workflow file `.github/workflows/daily-reports.yml` is already in your repos
 
 After the workflow runs successfully:
 
-1. Go to your repository's `reports/` folder
-2. You should see 5 markdown files:
-   - `yesterday.md`
-   - `last_7_days.md`
-   - `last_15_days.md`
-   - `this_month.md`
-   - `last_3_months.md`
-3. Open any report to view sales metrics
+1. Go to your repository's `data/` folder
+2. You should see 5 JSON files:
+   - `yesterday.json`
+   - `last_7_days.json`
+   - `last_15_days.json`
+   - `this_month.json`
+   - `last_3_months.json`
+3. Open your app and click "Reportes" button to view reports
 
 ## Report Contents
 

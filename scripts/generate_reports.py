@@ -20,7 +20,7 @@ SHEET_ID = os.environ.get('SHEET_ID')
 SERVICE_ACCOUNT_JSON = os.environ.get('GOOGLE_SERVICE_ACCOUNT')
 
 # Report configuration
-REPORTS_DIR = 'reports'
+DATA_DIR = 'data'
 DATE_FORMAT = '%Y-%m-%d'
 
 
@@ -133,8 +133,8 @@ def calculate_metrics(records):
     # Get top 5 customers
     top_customers = sorted(customer_totals.items(), key=lambda x: x[1], reverse=True)[:5]
 
-    # Get top 10 products
-    top_products = product_counts.most_common(10)
+    # Get top 5 products
+    top_products = product_counts.most_common(5)
 
     return {
         'total_revenue': total_revenue,
@@ -146,56 +146,41 @@ def calculate_metrics(records):
     }
 
 
-def format_currency(amount):
-    """Format number as currency."""
-    return f"${amount:,.2f}"
+def generate_json_report(title, metrics, records, start_date, end_date):
+    """Generate JSON report with data and metrics."""
+    report = {
+        'title': title,
+        'period': {
+            'start': start_date.strftime(DATE_FORMAT),
+            'end': end_date.strftime(DATE_FORMAT)
+        },
+        'generated': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'metrics': {
+            'total_revenue': metrics['total_revenue'],
+            'total_notas': metrics['total_notas'],
+            'avg_ticket': metrics['avg_ticket'],
+            'total_items': metrics['total_items']
+        },
+        'top_customers': [
+            {'rank': i, 'name': name, 'revenue': revenue}
+            for i, (name, revenue) in enumerate(metrics['top_customers'], 1)
+        ],
+        'top_products': [
+            {'rank': i, 'name': name, 'quantity': qty}
+            for i, (name, qty) in enumerate(metrics['top_products'], 1)
+        ],
+        'records': records
+    }
+    return report
 
 
-def generate_markdown_report(title, metrics, start_date, end_date):
-    """Generate markdown report."""
-    report = []
-    report.append(f"# {title}")
-    report.append(f"\n**Period**: {start_date.strftime(DATE_FORMAT)} to {end_date.strftime(DATE_FORMAT)}")
-    report.append(f"\n**Generated**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    report.append("\n---\n")
-
-    # Summary metrics
-    report.append("## Summary")
-
-    if metrics['total_notas'] == 0:
-        report.append("\n> ⚠️ **No data available for this period**")
-
-    report.append(f"\n- **Total Revenue**: {format_currency(metrics['total_revenue'])}")
-    report.append(f"- **Total Notas**: {metrics['total_notas']}")
-    report.append(f"- **Average Ticket**: {format_currency(metrics['avg_ticket'])}")
-    report.append(f"- **Total Items Sold**: {metrics['total_items']}")
-
-    # Top customers
-    if metrics['top_customers']:
-        report.append("\n## Top Customers")
-        report.append("\n| Rank | Customer | Revenue |")
-        report.append("|------|----------|---------|")
-        for i, (customer, total) in enumerate(metrics['top_customers'], 1):
-            report.append(f"| {i} | {customer} | {format_currency(total)} |")
-
-    # Top products
-    if metrics['top_products']:
-        report.append("\n## Top Products")
-        report.append("\n| Rank | Product | Quantity Sold |")
-        report.append("|------|---------|---------------|")
-        for i, (product, qty) in enumerate(metrics['top_products'], 1):
-            report.append(f"| {i} | {product} | {qty} |")
-
-    return "\n".join(report)
-
-
-def save_report(filename, content):
-    """Save report to file."""
-    os.makedirs(REPORTS_DIR, exist_ok=True)
-    filepath = os.path.join(REPORTS_DIR, filename)
+def save_json_report(filename, data):
+    """Save report as JSON file."""
+    os.makedirs(DATA_DIR, exist_ok=True)
+    filepath = os.path.join(DATA_DIR, filename)
     with open(filepath, 'w', encoding='utf-8') as f:
-        f.write(content)
-    print(f"Report saved: {filepath}")
+        json.dump(data, f, indent=2, ensure_ascii=False)
+    print(f"Data saved: {filepath}")
 
 
 def main():
@@ -255,16 +240,18 @@ def main():
         # Calculate metrics
         metrics = calculate_metrics(filtered_records)
 
-        # Generate report
-        report = generate_markdown_report(
+        # Generate JSON report
+        json_filename = filename.replace('.md', '.json')
+        report = generate_json_report(
             config['title'],
             metrics,
+            filtered_records,
             config['start'],
             config['end']
         )
 
-        # Save report
-        save_report(filename, report)
+        # Save as JSON
+        save_json_report(json_filename, report)
 
     print("\n✓ All reports generated successfully!")
 

@@ -18,19 +18,21 @@ Aplicación web simple para generar notas de remisión en formato PDF optimizada
 
 ```
 notas_gc/
-├── index.html                    # Aplicación principal
+├── index.html                    # Aplicación principal (generar notas)
+├── reports.html                  # Página de reportes
 ├── script.js                     # Lógica de la aplicación
+├── reports.js                    # Lógica de reportes
 ├── style.css                     # Estilos
 ├── assets/
 │   └── logo.png                  # Logo de Ganadería Catorce
 ├── .github/workflows/
 │   └── daily-reports.yml         # GitHub Actions workflow
 ├── scripts/
-│   └── generate_reports.py       # Script de generación de reportes
+│   └── generate_reports.py       # Script de generación de datos
 ├── docs/
 │   ├── reporting-setup.md        # Guía de configuración de reportes
 │   └── service-account-setup.md  # Guía de service account
-├── reports/                      # Reportes generados automáticamente
+├── data/                         # Datos JSON generados automáticamente
 ├── google-apps-script.md         # Código de Google Apps Script
 └── README.md                     # Este archivo
 ```
@@ -86,23 +88,26 @@ Para habilitar los reportes automatizados, sigue la guía completa:
 3. Configurar secrets en GitHub
 4. El workflow se ejecuta automáticamente
 
-### Reportes Generados
+### Reportes Disponibles
 
-- 📅 **yesterday.md** - Reporte del día anterior
-- 📅 **last_7_days.md** - Últimos 7 días
-- 📅 **last_15_days.md** - Últimos 15 días
-- 📅 **this_month.md** - Mes actual
-- 📅 **last_3_months.md** - Últimos 3 meses
+Accede a la página de reportes desde la app (botón "Reportes"):
+- 📅 **Ayer** - Reporte del día anterior
+- 📅 **Últimos 7 días**
+- 📅 **Últimos 15 días**
+- 📅 **Este mes**
+- 📅 **Últimos 3 meses**
 
 ### Métricas Incluidas
 
-Cada reporte incluye:
+Cada reporte muestra:
 - 💰 Total de ingresos
 - 📋 Número de notas generadas
 - 💵 Ticket promedio
 - 📦 Total de items vendidos
-- 👥 Top 5 clientes
-- 🏆 Top 10 productos más vendidos
+- 👥 Top 5 clientes (por ingresos)
+- 🏆 Top 10 productos más vendidos (por cantidad)
+
+**Optimizado para móvil** 📱 - Los reportes se visualizan directamente en la app
 
 ### Costo
 

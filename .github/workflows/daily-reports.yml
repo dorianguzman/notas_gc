@@ -39,20 +39,20 @@ jobs:
         run: |
           python scripts/generate_reports.py
 
-      - name: 💾 Commit and push reports
+      - name: 💾 Commit and push data
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          # Add generated reports (create reports/ folder if it doesn't exist)
-          mkdir -p reports
-          git add reports/ || echo "No reports to add"
+          # Add generated data files (create data/ folder if it doesn't exist)
+          mkdir -p data
+          git add data/ || echo "No data to add"
 
           # Check if there are changes to commit
           if git diff --staged --quiet; then
             echo "✅ No changes to commit"
           else
-            git commit -m "📊 Update sales reports - $(date +'%Y-%m-%d')"
+            git commit -m "📊 Update sales data - $(date +'%Y-%m-%d')"
             git push
-            echo "✅ Reports updated and pushed"
+            echo "✅ Data updated and pushed"
           fi
