@@ -515,6 +515,7 @@ async function sendEmailWithPDF(pdfDoc, recipientEmail, data) {
         const response = await fetch(CONFIG.googleAppsScriptUrl, {
             method: 'POST',
             body: JSON.stringify({
+                recipientEmail: recipientEmail,
                 remision: data.remision,
                 cliente: data.cliente,
                 clienteEmail: data.clienteEmail,

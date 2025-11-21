@@ -1,5 +1,10 @@
 // Reports JavaScript
 
+// Global data storage
+let thisMonthData = null;
+let lastMonthData = null;
+let currentTab = 'this_month';
+
 // Format currency
 function formatCurrency(amount) {
     return `$${amount.toLocaleString('en-US', {
@@ -56,47 +61,80 @@ function showToast(message, type = 'info') {
 }
 
 // Load report data
-async function loadReport() {
-    const period = 'this_month';
-
+async function loadReports() {
     const loadingState = document.getElementById('loadingState');
     const reportContent = document.getElementById('reportContent');
+    const comparisonContent = document.getElementById('comparisonContent');
     const errorState = document.getElementById('errorState');
 
     // Show loading
     loadingState.style.display = 'block';
     reportContent.style.display = 'none';
+    comparisonContent.style.display = 'none';
     errorState.style.display = 'none';
 
     try {
-        // Fetch JSON data
-        const response = await fetch(`data/${period}.json`);
+        // Fetch both reports
+        const [thisMonthResponse, lastMonthResponse] = await Promise.all([
+            fetch('data/this_month.json'),
+            fetch('data/last_month.json')
+        ]);
 
-        if (!response.ok) {
-            throw new Error('No se pudo cargar el reporte');
+        if (!thisMonthResponse.ok || !lastMonthResponse.ok) {
+            throw new Error('No se pudieron cargar los reportes');
         }
 
-        const data = await response.json();
+        thisMonthData = await thisMonthResponse.json();
+        lastMonthData = await lastMonthResponse.json();
 
-        // Display report
-        displayReport(data);
-
-        // Hide loading, show content
+        // Hide loading
         loadingState.style.display = 'none';
-        reportContent.style.display = 'block';
+
+        // Show initial tab
+        switchTab(currentTab);
 
     } catch (error) {
-        console.error('Error loading report:', error);
+        console.error('Error loading reports:', error);
 
         // Show error state
         loadingState.style.display = 'none';
         errorState.style.display = 'block';
 
-        showToast('Error al cargar el reporte', 'error');
+        showToast('Error al cargar los reportes', 'error');
     }
 }
 
-// Display report data
+// Switch between tabs
+function switchTab(tab) {
+    currentTab = tab;
+
+    const reportContent = document.getElementById('reportContent');
+    const comparisonContent = document.getElementById('comparisonContent');
+
+    // Update tab buttons
+    document.getElementById('tabThisMonth').classList.remove('active');
+    document.getElementById('tabLastMonth').classList.remove('active');
+    document.getElementById('tabComparison').classList.remove('active');
+
+    if (tab === 'this_month') {
+        document.getElementById('tabThisMonth').classList.add('active');
+        reportContent.style.display = 'block';
+        comparisonContent.style.display = 'none';
+        displayReport(thisMonthData);
+    } else if (tab === 'last_month') {
+        document.getElementById('tabLastMonth').classList.add('active');
+        reportContent.style.display = 'block';
+        comparisonContent.style.display = 'none';
+        displayReport(lastMonthData);
+    } else if (tab === 'comparison') {
+        document.getElementById('tabComparison').classList.add('active');
+        reportContent.style.display = 'none';
+        comparisonContent.style.display = 'block';
+        displayComparison(thisMonthData, lastMonthData);
+    }
+}
+
+// Display single month report
 function displayReport(data) {
     // Period info - display as "Reporte del mes de [Month Year]"
     const startDate = new Date(data.period.start);
@@ -155,7 +193,181 @@ function displayReport(data) {
     }
 }
 
+// Display comparison view
+function displayComparison(thisMonth, lastMonth) {
+    // Period info
+    const thisMonthDate = new Date(thisMonth.period.start);
+    const lastMonthDate = new Date(lastMonth.period.start);
+    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+    const thisMonthName = monthNames[thisMonthDate.getMonth()];
+    const lastMonthName = monthNames[lastMonthDate.getMonth()];
+    const year = thisMonthDate.getFullYear();
+
+    document.getElementById('comparisonPeriodInfo').textContent =
+        `Comparación: ${lastMonthName} vs ${thisMonthName} ${year}`;
+
+    // Create comparison metrics
+    const metrics = [
+        {
+            label: 'Ingresos Totales',
+            thisMonth: thisMonth.metrics.total_revenue,
+            lastMonth: lastMonth.metrics.total_revenue,
+            formatter: formatCurrency
+        },
+        {
+            label: 'Total de Notas',
+            thisMonth: thisMonth.metrics.total_notas,
+            lastMonth: lastMonth.metrics.total_notas,
+            formatter: (v) => v.toString()
+        },
+        {
+            label: 'Ticket Promedio',
+            thisMonth: thisMonth.metrics.avg_ticket,
+            lastMonth: lastMonth.metrics.avg_ticket,
+            formatter: formatCurrency
+        },
+        {
+            label: 'Items Vendidos',
+            thisMonth: thisMonth.metrics.total_items,
+            lastMonth: lastMonth.metrics.total_items,
+            formatter: (v) => v.toString()
+        }
+    ];
+
+    const metricsContainer = document.getElementById('comparisonMetrics');
+    metricsContainer.innerHTML = metrics.map(metric => {
+        const change = metric.lastMonth === 0 ?
+            (metric.thisMonth > 0 ? 100 : 0) :
+            ((metric.thisMonth - metric.lastMonth) / metric.lastMonth) * 100;
+
+        const changeClass = change > 0 ? 'positive' : (change < 0 ? 'negative' : 'neutral');
+        const arrow = change > 0 ? '↑' : (change < 0 ? '↓' : '−');
+        const changeText = change === 0 ? 'Sin cambio' : `${arrow} ${Math.abs(change).toFixed(1)}%`;
+
+        return `
+            <div class="comparison-metric-card">
+                <div class="comparison-metric-header">${metric.label}</div>
+                <div class="comparison-metric-row">
+                    <div class="comparison-metric-item">
+                        <div class="comparison-metric-label">Este Mes</div>
+                        <div class="comparison-metric-value">${metric.formatter(metric.thisMonth)}</div>
+                    </div>
+                    <div class="comparison-metric-item">
+                        <div class="comparison-metric-change ${changeClass}">
+                            ${changeText}
+                        </div>
+                    </div>
+                    <div class="comparison-metric-item">
+                        <div class="comparison-metric-label">Mes Anterior</div>
+                        <div class="comparison-metric-value">${metric.formatter(metric.lastMonth)}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // Comparison customers
+    const customersMap = new Map();
+    thisMonth.top_customers.forEach(c => {
+        customersMap.set(c.name, { thisMonth: c.revenue, lastMonth: 0 });
+    });
+    lastMonth.top_customers.forEach(c => {
+        if (customersMap.has(c.name)) {
+            customersMap.get(c.name).lastMonth = c.revenue;
+        } else {
+            customersMap.set(c.name, { thisMonth: 0, lastMonth: c.revenue });
+        }
+    });
+
+    const customersArray = Array.from(customersMap.entries())
+        .sort((a, b) => b[1].thisMonth - a[1].thisMonth)
+        .slice(0, 5);
+
+    const customersBody = document.getElementById('comparisonCustomersBody');
+    if (customersArray.length > 0) {
+        customersBody.innerHTML = customersArray.map(([name, data]) => {
+            const change = data.lastMonth === 0 ?
+                (data.thisMonth > 0 ? 100 : 0) :
+                ((data.thisMonth - data.lastMonth) / data.lastMonth) * 100;
+
+            const changeClass = change > 0 ? 'positive' : (change < 0 ? 'negative' : 'neutral');
+            const arrow = change > 0 ? '↑' : (change < 0 ? '↓' : '−');
+            const changeText = `${arrow} ${Math.abs(change).toFixed(1)}%`;
+
+            return `
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px;">${name}</td>
+                    <td style="padding: 10px; text-align: right; font-weight: 500;">${formatCurrency(data.thisMonth)}</td>
+                    <td style="padding: 10px; text-align: right; font-weight: 500;">${formatCurrency(data.lastMonth)}</td>
+                    <td style="padding: 10px; text-align: center;">
+                        <span class="comparison-metric-change ${changeClass}">${changeText}</span>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    } else {
+        customersBody.innerHTML = `
+            <tr>
+                <td colspan="4" style="padding: 20px; text-align: center; color: #999;">
+                    No hay datos disponibles
+                </td>
+            </tr>
+        `;
+    }
+
+    // Comparison products
+    const productsMap = new Map();
+    thisMonth.top_products.forEach(p => {
+        productsMap.set(p.name, { thisMonth: p.quantity, lastMonth: 0 });
+    });
+    lastMonth.top_products.forEach(p => {
+        if (productsMap.has(p.name)) {
+            productsMap.get(p.name).lastMonth = p.quantity;
+        } else {
+            productsMap.set(p.name, { thisMonth: 0, lastMonth: p.quantity });
+        }
+    });
+
+    const productsArray = Array.from(productsMap.entries())
+        .sort((a, b) => b[1].thisMonth - a[1].thisMonth)
+        .slice(0, 5);
+
+    const productsBody = document.getElementById('comparisonProductsBody');
+    if (productsArray.length > 0) {
+        productsBody.innerHTML = productsArray.map(([name, data]) => {
+            const change = data.lastMonth === 0 ?
+                (data.thisMonth > 0 ? 100 : 0) :
+                ((data.thisMonth - data.lastMonth) / data.lastMonth) * 100;
+
+            const changeClass = change > 0 ? 'positive' : (change < 0 ? 'negative' : 'neutral');
+            const arrow = change > 0 ? '↑' : (change < 0 ? '↓' : '−');
+            const changeText = `${arrow} ${Math.abs(change).toFixed(1)}%`;
+
+            return `
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px;">${name}</td>
+                    <td style="padding: 10px; text-align: right; font-weight: 500;">${data.thisMonth}</td>
+                    <td style="padding: 10px; text-align: right; font-weight: 500;">${data.lastMonth}</td>
+                    <td style="padding: 10px; text-align: center;">
+                        <span class="comparison-metric-change ${changeClass}">${changeText}</span>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    } else {
+        productsBody.innerHTML = `
+            <tr>
+                <td colspan="4" style="padding: 20px; text-align: center; color: #999;">
+                    No hay datos disponibles
+                </td>
+            </tr>
+        `;
+    }
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    loadReport();
+    loadReports();
 });

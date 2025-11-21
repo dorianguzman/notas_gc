@@ -1,0 +1,17 @@
+{
+  "title": "Last Month Report",
+  "period": {
+    "start": "2025-10-01",
+    "end": "2025-10-31"
+  },
+  "generated": "2025-11-21 17:15:00",
+  "metrics": {
+    "total_revenue": 0,
+    "total_notas": 0,
+    "avg_ticket": 0,
+    "total_items": 0
+  },
+  "top_customers": [],
+  "top_products": [],
+  "records": []
+}

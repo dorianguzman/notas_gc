@@ -194,36 +194,64 @@ def main():
     all_records = fetch_data(client)
 
     if not all_records:
-        print("⚠️  No data found in Google Sheets - generating empty report")
+        print("⚠️  No data found in Google Sheets - generating empty reports")
         all_records = []  # Continue with empty list
 
-    # Define current month date range
     now = datetime.now()
     today = datetime(now.year, now.month, now.day)
-    start_date = datetime(now.year, now.month, 1)
 
-    print(f"\nGenerating report for {start_date.strftime('%B %Y')}...")
+    # === THIS MONTH REPORT ===
+    this_month_start = datetime(now.year, now.month, 1)
+
+    print(f"\nGenerating report for {this_month_start.strftime('%B %Y')}...")
 
     # Filter data for current month
-    filtered_records = filter_by_date_range(all_records, start_date, today)
-    print(f"  Found {len(filtered_records)} records")
+    this_month_records = filter_by_date_range(all_records, this_month_start, today)
+    print(f"  Found {len(this_month_records)} records")
 
     # Calculate metrics
-    metrics = calculate_metrics(filtered_records)
+    this_month_metrics = calculate_metrics(this_month_records)
 
     # Generate JSON report
-    report = generate_json_report(
+    this_month_report = generate_json_report(
         'This Month Report',
-        metrics,
-        filtered_records,
-        start_date,
+        this_month_metrics,
+        this_month_records,
+        this_month_start,
         today
     )
 
     # Save as JSON
-    save_json_report('this_month.json', report)
+    save_json_report('this_month.json', this_month_report)
 
-    print("\n✓ Monthly report generated successfully!")
+    # === LAST MONTH REPORT ===
+    # Calculate last month's date range
+    first_day_this_month = datetime(now.year, now.month, 1)
+    last_day_last_month = first_day_this_month - timedelta(days=1)
+    last_month_start = datetime(last_day_last_month.year, last_day_last_month.month, 1)
+
+    print(f"\nGenerating report for {last_month_start.strftime('%B %Y')}...")
+
+    # Filter data for last month
+    last_month_records = filter_by_date_range(all_records, last_month_start, last_day_last_month)
+    print(f"  Found {len(last_month_records)} records")
+
+    # Calculate metrics
+    last_month_metrics = calculate_metrics(last_month_records)
+
+    # Generate JSON report
+    last_month_report = generate_json_report(
+        'Last Month Report',
+        last_month_metrics,
+        last_month_records,
+        last_month_start,
+        last_day_last_month
+    )
+
+    # Save as JSON
+    save_json_report('last_month.json', last_month_report)
+
+    print("\n✓ Monthly reports generated successfully!")
 
 
 if __name__ == '__main__':

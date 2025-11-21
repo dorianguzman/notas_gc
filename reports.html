@@ -26,6 +26,15 @@
             </div>
         </header>
 
+        <!-- Tab Navigation -->
+        <div class="form-section" style="margin-bottom: 20px;">
+            <div style="display: flex; gap: 8px; border-bottom: 2px solid #e0e0e0;">
+                <button id="tabThisMonth" class="tab-button active" onclick="switchTab('this_month')">Este Mes</button>
+                <button id="tabLastMonth" class="tab-button" onclick="switchTab('last_month')">Mes Anterior</button>
+                <button id="tabComparison" class="tab-button" onclick="switchTab('comparison')">Ambos</button>
+            </div>
+        </div>
+
         <!-- Loading State -->
         <div id="loadingState" style="display: none; text-align: center; padding: 40px;">
             <p>Cargando reporte...</p>
@@ -97,6 +106,66 @@
                         <tbody id="topProductsBody">
                             <tr>
                                 <td colspan="3" style="padding: 20px; text-align: center; color: #999;">
+                                    No hay datos disponibles
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Comparison Content -->
+        <div id="comparisonContent" style="display: none;">
+
+            <!-- Period Info -->
+            <div class="form-section">
+                <p id="comparisonPeriodInfo" style="text-align: center; color: #666; font-size: 14px;"></p>
+            </div>
+
+            <!-- Comparison Metrics -->
+            <div id="comparisonMetrics"></div>
+
+            <!-- Comparison Tables -->
+            <div class="conceptos-section">
+                <h2>Comparación de Clientes</h2>
+                <div class="table-container">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f5f5f5;">
+                                <th style="padding: 10px; text-align: left; border-bottom: 2px solid #ddd;">Cliente</th>
+                                <th style="padding: 10px; text-align: right; border-bottom: 2px solid #ddd;">Este Mes</th>
+                                <th style="padding: 10px; text-align: right; border-bottom: 2px solid #ddd;">Mes Anterior</th>
+                                <th style="padding: 10px; text-align: center; border-bottom: 2px solid #ddd;">Cambio</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparisonCustomersBody">
+                            <tr>
+                                <td colspan="4" style="padding: 20px; text-align: center; color: #999;">
+                                    No hay datos disponibles
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="conceptos-section">
+                <h2>Comparación de Productos</h2>
+                <div class="table-container">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f5f5f5;">
+                                <th style="padding: 10px; text-align: left; border-bottom: 2px solid #ddd;">Producto</th>
+                                <th style="padding: 10px; text-align: right; border-bottom: 2px solid #ddd;">Este Mes</th>
+                                <th style="padding: 10px; text-align: right; border-bottom: 2px solid #ddd;">Mes Anterior</th>
+                                <th style="padding: 10px; text-align: center; border-bottom: 2px solid #ddd;">Cambio</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparisonProductsBody">
+                            <tr>
+                                <td colspan="4" style="padding: 20px; text-align: center; color: #999;">
                                     No hay datos disponibles
                                 </td>
                             </tr>
