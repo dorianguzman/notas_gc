@@ -517,7 +517,7 @@ async function sendEmailWithPDF(pdfDoc, recipientEmail, data) {
             body: JSON.stringify({
                 remision: data.remision,
                 cliente: data.cliente,
-                clienteEmail: recipientEmail,
+                clienteEmail: data.clienteEmail,
                 fecha: data.fecha,
                 conceptos: data.conceptos,
                 subtotal: formatNumber(data.subtotal),
