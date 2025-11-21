@@ -4,14 +4,134 @@
     "start": "2025-11-01",
     "end": "2025-11-21"
   },
-  "generated": "2025-11-21 07:25:51",
+  "generated": "2025-11-21 16:08:43",
   "metrics": {
-    "total_revenue": 0,
-    "total_notas": 0,
-    "avg_ticket": 0,
-    "total_items": 0
+    "total_revenue": 11183.0,
+    "total_notas": 6,
+    "avg_ticket": 1863.8333333333333,
+    "total_items": 15
   },
-  "top_customers": [],
-  "top_products": [],
-  "records": []
+  "top_customers": [
+    {
+      "rank": 1,
+      "name": "Los papis",
+      "revenue": 4346.0
+    },
+    {
+      "rank": 2,
+      "name": "Alejandro",
+      "revenue": 4050.0
+    },
+    {
+      "rank": 3,
+      "name": "Jonathan",
+      "revenue": 2695.0
+    },
+    {
+      "rank": 4,
+      "name": "Lo papis",
+      "revenue": 92.0
+    }
+  ],
+  "top_products": [
+    {
+      "rank": 1,
+      "name": "Arrachera marinada",
+      "quantity": 94
+    },
+    {
+      "rank": 2,
+      "name": "Bistec de cerdo entero",
+      "quantity": 9
+    },
+    {
+      "rank": 3,
+      "name": "Aguja marinada",
+      "quantity": 5
+    },
+    {
+      "rank": 4,
+      "name": "Trozo al pastor",
+      "quantity": 4
+    },
+    {
+      "rank": 5,
+      "name": "Bistec picado",
+      "quantity": 4
+    }
+  ],
+  "records": [
+    {
+      "Timestamp": "11/19/2025 18:13:00",
+      "Remision": "20251119-1813",
+      "Fecha": "2025-11-19",
+      "Cliente": "Los papis",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"descripcion\":\"Trozo al pastor\",\"cantidad\":4,\"pu\":90,\"importe\":360},{\"descripcion\":\"Arrachera marinada\",\"cantidad\":20,\"pu\":90,\"importe\":1800},{\"descripcion\":\"Bistec de cerdo entero\",\"cantidad\":9,\"pu\":92,\"importe\":828}]",
+      "Subtotal": 2988,
+      "IVA": 0,
+      "Total": 2988
+    },
+    {
+      "Timestamp": "11/19/2025 18:21:00",
+      "Remision": "20251119-1821",
+      "Fecha": "2025-11-19",
+      "Cliente": "Los papis",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"descripcion\":\"Arrachera marinada\",\"cantidad\":6,\"pu\":90,\"importe\":540},{\"descripcion\":\"Bistec picado\",\"cantidad\":4,\"pu\":92,\"importe\":368}]",
+      "Subtotal": 908,
+      "IVA": 0,
+      "Total": 908
+    },
+    {
+      "Timestamp": "11/20/2025 15:14:00",
+      "Remision": "20251120-1514",
+      "Fecha": "2025-11-20",
+      "Cliente": "Alejandro",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"descripcion\":\"Arrachera marinada\",\"cantidad\":50,\"pu\":81,\"importe\":4050}]",
+      "Subtotal": 4050,
+      "IVA": 0,
+      "Total": 4050
+    },
+    {
+      "Timestamp": "11/20/2025 16:43:00",
+      "Remision": "20251120-1643",
+      "Fecha": "2025-11-20",
+      "Cliente": "Jonathan",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"descripcion\":\"Arrachera marinada\",\"cantidad\":13,\"pu\":100,\"importe\":1300},{\"descripcion\":\"Aguja marinada\",\"cantidad\":5,\"pu\":120,\"importe\":600},{\"descripcion\":\"Chorizo español\",\"cantidad\":1,\"pu\":100,\"importe\":100},{\"descripcion\":\"Chorizo argentino\",\"cantidad\":3,\"pu\":100,\"importe\":300},{\"descripcion\":\"Papa\",\"cantidad\":3,\"pu\":25,\"importe\":75},{\"descripcion\":\"Queso\",\"cantidad\":1,\"pu\":100,\"importe\":100},{\"descripcion\":\"Salsa de piña\",\"cantidad\":2,\"pu\":110,\"importe\":220}]",
+      "Subtotal": 2695,
+      "IVA": 0,
+      "Total": 2695
+    },
+    {
+      "Timestamp": "11/20/2025 17:03:00",
+      "Remision": "20251120-1703",
+      "Fecha": "2025-11-20",
+      "Cliente": "Lo papis",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"descripcion\":\"Bistec entero\",\"cantidad\":1,\"pu\":92,\"importe\":92}]",
+      "Subtotal": 92,
+      "IVA": 0,
+      "Total": 92
+    },
+    {
+      "Timestamp": "11/20/2025 18:02:00",
+      "Remision": "20251120-1802",
+      "Fecha": "2025-11-20",
+      "Cliente": "Los papis",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"descripcion\":\"Arrachera marinada\",\"cantidad\":5,\"pu\":90,\"importe\":450}]",
+      "Subtotal": 450,
+      "IVA": 0,
+      "Total": 450
+    }
+  ]
 }
