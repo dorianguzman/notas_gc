@@ -298,11 +298,11 @@ function displayComparison(thisMonth, lastMonth) {
 
             return `
                 <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 10px;">${name}</td>
-                    <td style="padding: 10px; text-align: right; font-weight: 500;">${formatCurrency(data.thisMonth)}</td>
-                    <td style="padding: 10px; text-align: right; font-weight: 500;">${formatCurrency(data.lastMonth)}</td>
-                    <td style="padding: 10px; text-align: center;">
-                        <span class="comparison-metric-change ${changeClass}">${changeText}</span>
+                    <td>${name}</td>
+                    <td style="text-align: right; font-weight: 500;">${formatCurrency(data.thisMonth)}</td>
+                    <td style="text-align: right; font-weight: 500;">${formatCurrency(data.lastMonth)}</td>
+                    <td style="text-align: center;">
+                        <span class="comparison-metric-change-small ${changeClass}">${changeText}</span>
                     </td>
                 </tr>
             `;
@@ -347,11 +347,11 @@ function displayComparison(thisMonth, lastMonth) {
 
             return `
                 <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 10px;">${name}</td>
-                    <td style="padding: 10px; text-align: right; font-weight: 500;">${data.thisMonth}</td>
-                    <td style="padding: 10px; text-align: right; font-weight: 500;">${data.lastMonth}</td>
-                    <td style="padding: 10px; text-align: center;">
-                        <span class="comparison-metric-change ${changeClass}">${changeText}</span>
+                    <td>${name}</td>
+                    <td style="text-align: right; font-weight: 500;">${data.thisMonth}</td>
+                    <td style="text-align: right; font-weight: 500;">${data.lastMonth}</td>
+                    <td style="text-align: center;">
+                        <span class="comparison-metric-change-small ${changeClass}">${changeText}</span>
                     </td>
                 </tr>
             `;

@@ -66,6 +66,11 @@ document.addEventListener('DOMContentLoaded', () => {
     loadAutocompleteData();
 });
 
+// Global autocomplete data
+let clientNames = [];
+let productNames = [];
+let clientEmails = [];
+
 // Load historical data for autocomplete
 async function loadAutocompleteData() {
     try {
@@ -90,22 +95,32 @@ async function loadAutocompleteData() {
         ];
 
         // Extract unique client names
-        const clientNames = new Set();
+        const clientNamesSet = new Set();
         allRecords.forEach(record => {
             if (record.Cliente && record.Cliente.trim()) {
-                clientNames.add(record.Cliente.trim());
+                clientNamesSet.add(record.Cliente.trim());
             }
         });
+        clientNames = Array.from(clientNamesSet).sort();
+
+        // Extract unique client emails
+        const clientEmailsSet = new Set();
+        allRecords.forEach(record => {
+            if (record.ClienteEmail && record.ClienteEmail.trim()) {
+                clientEmailsSet.add(record.ClienteEmail.trim());
+            }
+        });
+        clientEmails = Array.from(clientEmailsSet).sort();
 
         // Extract unique product descriptions
-        const productNames = new Set();
+        const productNamesSet = new Set();
         allRecords.forEach(record => {
             if (record.Conceptos_JSON) {
                 try {
                     const conceptos = JSON.parse(record.Conceptos_JSON);
                     conceptos.forEach(concepto => {
                         if (concepto.descripcion && concepto.descripcion.trim()) {
-                            productNames.add(concepto.descripcion.trim());
+                            productNamesSet.add(concepto.descripcion.trim());
                         }
                     });
                 } catch (e) {
@@ -113,34 +128,140 @@ async function loadAutocompleteData() {
                 }
             }
         });
+        productNames = Array.from(productNamesSet).sort();
 
-        // Populate client datalist
-        const clientDatalist = document.getElementById('clientesList');
-        if (clientDatalist) {
-            clientDatalist.innerHTML = '';
-            Array.from(clientNames).sort().forEach(name => {
-                const option = document.createElement('option');
-                option.value = name;
-                clientDatalist.appendChild(option);
-            });
-        }
+        // Setup autocomplete for client field
+        setupAutocomplete(
+            document.getElementById('cliente'),
+            document.getElementById('clienteAutocomplete'),
+            clientNames
+        );
 
-        // Populate products datalist
-        const productsDatalist = document.getElementById('productosList');
-        if (productsDatalist) {
-            productsDatalist.innerHTML = '';
-            Array.from(productNames).sort().forEach(name => {
-                const option = document.createElement('option');
-                option.value = name;
-                productsDatalist.appendChild(option);
-            });
-        }
+        // Setup autocomplete for email field
+        setupAutocomplete(
+            document.getElementById('clienteEmail'),
+            document.getElementById('emailAutocomplete'),
+            clientEmails
+        );
 
-        console.log(`Loaded ${clientNames.size} clients and ${productNames.size} products for autocomplete`);
+        // Setup autocomplete for all description fields
+        setupDescriptionAutocomplete();
+
+        console.log(`Loaded ${clientNames.length} clients, ${clientEmails.length} emails, and ${productNames.length} products for autocomplete`);
 
     } catch (error) {
         console.log('Error loading autocomplete data:', error);
     }
+}
+
+// Setup autocomplete for description fields
+function setupDescriptionAutocomplete() {
+    const descriptionFields = document.querySelectorAll('.descripcion');
+    descriptionFields.forEach(field => {
+        const dropdown = field.parentElement.querySelector('.autocomplete-dropdown');
+        if (dropdown) {
+            setupAutocomplete(field, dropdown, productNames);
+        }
+    });
+}
+
+// Setup autocomplete on an input field
+function setupAutocomplete(input, dropdown, suggestions) {
+    if (!input || !dropdown) return;
+
+    let currentFocus = -1;
+
+    // Input event - filter and show suggestions
+    input.addEventListener('input', function() {
+        const value = this.value.toLowerCase().trim();
+        currentFocus = -1;
+
+        // Clear dropdown
+        dropdown.innerHTML = '';
+        dropdown.classList.remove('show');
+
+        if (!value) return;
+
+        // Filter suggestions
+        const filtered = suggestions.filter(item =>
+            item.toLowerCase().includes(value)
+        ).slice(0, 5); // Limit to 5 results
+
+        if (filtered.length === 0) return;
+
+        // Create dropdown items
+        filtered.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'autocomplete-item';
+            div.textContent = item;
+
+            // Click handler
+            div.addEventListener('click', function() {
+                input.value = item;
+                dropdown.innerHTML = '';
+                dropdown.classList.remove('show');
+                input.focus();
+            });
+
+            dropdown.appendChild(div);
+        });
+
+        dropdown.classList.add('show');
+    });
+
+    // Keyboard navigation
+    input.addEventListener('keydown', function(e) {
+        const items = dropdown.getElementsByClassName('autocomplete-item');
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            currentFocus++;
+            if (currentFocus >= items.length) currentFocus = 0;
+            setActive(items, currentFocus);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            currentFocus--;
+            if (currentFocus < 0) currentFocus = items.length - 1;
+            setActive(items, currentFocus);
+        } else if (e.key === 'Enter') {
+            if (currentFocus > -1 && items[currentFocus]) {
+                e.preventDefault();
+                items[currentFocus].click();
+            }
+        } else if (e.key === 'Escape') {
+            dropdown.innerHTML = '';
+            dropdown.classList.remove('show');
+        }
+    });
+
+    // Close on blur (with small delay for click to register)
+    input.addEventListener('blur', function() {
+        setTimeout(() => {
+            dropdown.innerHTML = '';
+            dropdown.classList.remove('show');
+        }, 200);
+    });
+
+    // Focus - show dropdown if has value
+    input.addEventListener('focus', function() {
+        if (this.value.trim()) {
+            // Trigger input event to show suggestions
+            const event = new Event('input', { bubbles: true });
+            this.dispatchEvent(event);
+        }
+    });
+}
+
+// Set active item in dropdown
+function setActive(items, index) {
+    Array.from(items).forEach((item, i) => {
+        if (i === index) {
+            item.classList.add('active');
+            item.scrollIntoView({ block: 'nearest' });
+        } else {
+            item.classList.remove('active');
+        }
+    });
 }
 
 // Email Button State Management
@@ -180,7 +301,10 @@ function addCard() {
         <div class="card-row">
             <div class="card-field full-width">
                 <label>Descripción</label>
-                <input type="text" class="descripcion" placeholder="Descripción del concepto" list="productosList" required>
+                <div class="autocomplete-wrapper">
+                    <input type="text" class="descripcion" placeholder="Descripción del concepto" autocomplete="off" required>
+                    <div class="autocomplete-dropdown"></div>
+                </div>
             </div>
         </div>
         <div class="card-total">
@@ -199,6 +323,7 @@ function addCard() {
     `;
     container.appendChild(newCard);
     setupCalculationListeners();
+    setupDescriptionAutocomplete();
 }
 
 // Global variable to store card pending deletion
