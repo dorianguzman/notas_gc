@@ -4,7 +4,7 @@
     "start": "2025-11-01",
     "end": "2025-11-21"
   },
-  "generated": "2025-11-21 16:08:43",
+  "generated": "2025-11-21 16:17:32",
   "metrics": {
     "total_revenue": 11183.0,
     "total_notas": 6,
@@ -15,7 +15,7 @@
     {
       "rank": 1,
       "name": "Los papis",
-      "revenue": 4346.0
+      "revenue": 4438.0
     },
     {
       "rank": 2,
@@ -26,11 +26,6 @@
       "rank": 3,
       "name": "Jonathan",
       "revenue": 2695.0
-    },
-    {
-      "rank": 4,
-      "name": "Lo papis",
-      "revenue": 92.0
     }
   ],
   "top_products": [
@@ -113,7 +108,7 @@
       "Timestamp": "11/20/2025 17:03:00",
       "Remision": "20251120-1703",
       "Fecha": "2025-11-20",
-      "Cliente": "Lo papis",
+      "Cliente": "Los papis",
       "ClienteEmail": "",
       "Ciudad": "Querétaro",
       "Conceptos_JSON": "[{\"descripcion\":\"Bistec entero\",\"cantidad\":1,\"pu\":92,\"importe\":92}]",
