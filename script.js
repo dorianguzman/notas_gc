@@ -61,7 +61,87 @@ document.addEventListener('DOMContentLoaded', () => {
         statusDot.classList.add('ready');
         statusDot.setAttribute('title', 'Estado: Lista');
     }
+
+    // Load autocomplete data
+    loadAutocompleteData();
 });
+
+// Load historical data for autocomplete
+async function loadAutocompleteData() {
+    try {
+        // Fetch both monthly reports
+        const [thisMonthResponse, lastMonthResponse] = await Promise.all([
+            fetch('data/this_month.json'),
+            fetch('data/last_month.json')
+        ]);
+
+        if (!thisMonthResponse.ok || !lastMonthResponse.ok) {
+            console.log('Could not load autocomplete data');
+            return;
+        }
+
+        const thisMonthData = await thisMonthResponse.json();
+        const lastMonthData = await lastMonthResponse.json();
+
+        // Combine all records
+        const allRecords = [
+            ...(thisMonthData.records || []),
+            ...(lastMonthData.records || [])
+        ];
+
+        // Extract unique client names
+        const clientNames = new Set();
+        allRecords.forEach(record => {
+            if (record.Cliente && record.Cliente.trim()) {
+                clientNames.add(record.Cliente.trim());
+            }
+        });
+
+        // Extract unique product descriptions
+        const productNames = new Set();
+        allRecords.forEach(record => {
+            if (record.Conceptos_JSON) {
+                try {
+                    const conceptos = JSON.parse(record.Conceptos_JSON);
+                    conceptos.forEach(concepto => {
+                        if (concepto.descripcion && concepto.descripcion.trim()) {
+                            productNames.add(concepto.descripcion.trim());
+                        }
+                    });
+                } catch (e) {
+                    // Skip invalid JSON
+                }
+            }
+        });
+
+        // Populate client datalist
+        const clientDatalist = document.getElementById('clientesList');
+        if (clientDatalist) {
+            clientDatalist.innerHTML = '';
+            Array.from(clientNames).sort().forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                clientDatalist.appendChild(option);
+            });
+        }
+
+        // Populate products datalist
+        const productsDatalist = document.getElementById('productosList');
+        if (productsDatalist) {
+            productsDatalist.innerHTML = '';
+            Array.from(productNames).sort().forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                productsDatalist.appendChild(option);
+            });
+        }
+
+        console.log(`Loaded ${clientNames.size} clients and ${productNames.size} products for autocomplete`);
+
+    } catch (error) {
+        console.log('Error loading autocomplete data:', error);
+    }
+}
 
 // Email Button State Management
 function updateEmailButtonState() {
@@ -100,7 +180,7 @@ function addCard() {
         <div class="card-row">
             <div class="card-field full-width">
                 <label>Descripción</label>
-                <input type="text" class="descripcion" placeholder="Descripción del concepto" required>
+                <input type="text" class="descripcion" placeholder="Descripción del concepto" list="productosList" required>
             </div>
         </div>
         <div class="card-total">

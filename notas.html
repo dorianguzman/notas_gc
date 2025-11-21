@@ -53,7 +53,8 @@
             <div class="form-row">
                 <div class="form-group full-width">
                     <label for="cliente">Cliente:</label>
-                    <input type="text" id="cliente" placeholder="Nombre del cliente" required>
+                    <input type="text" id="cliente" placeholder="Nombre del cliente" list="clientesList" required>
+                    <datalist id="clientesList"></datalist>
                 </div>
             </div>
 
@@ -89,7 +90,8 @@
                     <div class="card-row">
                         <div class="card-field full-width">
                             <label>Descripción</label>
-                            <input type="text" class="descripcion" placeholder="Descripción del concepto" required>
+                            <input type="text" class="descripcion" placeholder="Descripción del concepto" list="productosList" required>
+                            <datalist id="productosList"></datalist>
                         </div>
                     </div>
                     <div class="card-total">
