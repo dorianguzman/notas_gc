@@ -8,7 +8,7 @@ This file contains the Google Apps Script code for sending remission notes via G
 
 1. The sheet is already created at: https://docs.google.com/spreadsheets/d/17zK2IwzvEc1LykPP5_1fBug3_yQaQvV5WtBFa97LDPM/edit
 2. The script will automatically create a "Notas" tab with headers on first use
-3. Columns: Timestamp, Remision, Fecha, Cliente, ClienteEmail, Ciudad, Conceptos_JSON, Subtotal, IVA, Total
+3. Columns: Timestamp, Remision, Fecha, Cliente, ClienteEmail, Ciudad, Conceptos_JSON, Subtotal, IVA, Descuento, Total
 
 ### 2. Create Google Apps Script Project
 
@@ -49,14 +49,14 @@ function doPost(e) {
     const data = JSON.parse(e.postData.contents);
 
     // Validate required fields
-    if (!data.clienteEmail || !data.pdfBase64) {
+    if (!data.recipientEmail || !data.pdfBase64) {
       return ContentService.createTextOutput(JSON.stringify({
         success: false,
-        message: 'Faltan campos requeridos: clienteEmail o pdfBase64'
+        message: 'Faltan campos requeridos: recipientEmail o pdfBase64'
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    const recipient = data.clienteEmail;
+    const recipient = data.recipientEmail;
     const subject = `Nota de Remisión #${data.remision} - Ganadería Catorce`;
 
     // Format conceptos list
@@ -71,6 +71,22 @@ function doPost(e) {
       });
     }
 
+    // Build totals section with conditional display
+    const ivaAmount = data.iva ? parseFloat(data.iva.replace(/,/g, '')) : 0;
+    const descuentoAmount = data.descuento ? parseFloat(data.descuento.replace(/,/g, '')) : 0;
+
+    let totalsText = '';
+    if (ivaAmount > 0 || descuentoAmount > 0) {
+      totalsText += `Subtotal: $${data.subtotal}\n`;
+      if (ivaAmount > 0) {
+        totalsText += `IVA: $${data.iva}\n`;
+      }
+      if (descuentoAmount > 0) {
+        totalsText += `Descuento: -$${data.descuento}\n`;
+      }
+    }
+    totalsText += `Total: $${data.total}`;
+
     const body = `
 Estimado/a ${data.cliente},
 
@@ -79,9 +95,7 @@ Adjunto encontrará la Nota de Remisión #${data.remision}.
 Detalles:
 - Fecha: ${data.fecha}
 ${conceptosList}
-${data.iva && parseFloat(data.iva.replace(/,/g, '')) > 0 ? `Subtotal: $${data.subtotal}
-IVA: $${data.iva}
-` : ''}Total: $${data.total}
+${totalsText}
 
 Gracias por su preferencia.
 
@@ -153,11 +167,12 @@ function appendToSheet(data) {
       'Conceptos_JSON',
       'Subtotal',
       'IVA',
+      'Descuento',
       'Total'
     ]);
 
     // Format header row
-    const headerRange = sheet.getRange(1, 1, 1, 10);
+    const headerRange = sheet.getRange(1, 1, 1, 11);
     headerRange.setFontWeight('bold');
     headerRange.setBackground('#4285f4');
     headerRange.setFontColor('#ffffff');
@@ -170,6 +185,7 @@ function appendToSheet(data) {
   // Parse numbers from formatted strings
   const subtotal = parseFloat((data.subtotal || '0').toString().replace(/,/g, ''));
   const iva = parseFloat((data.iva || '0').toString().replace(/,/g, ''));
+  const descuento = parseFloat((data.descuento || '0').toString().replace(/,/g, ''));
   const total = parseFloat((data.total || '0').toString().replace(/,/g, ''));
 
   // Append data row
@@ -183,11 +199,12 @@ function appendToSheet(data) {
     conceptosJson,
     subtotal,
     iva,
+    descuento,
     total
   ]);
 
   // Auto-resize columns for better readability
-  sheet.autoResizeColumns(1, 10);
+  sheet.autoResizeColumns(1, 11);
 }
 ```
 

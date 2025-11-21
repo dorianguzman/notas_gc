@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notas de Remisión - Ganadería Catorce</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -128,6 +129,10 @@
                 <label>IVA (%):</label>
                 <input type="number" id="iva" value="0" min="0" max="100" step="0.01">
                 <span id="ivaAmount">$0.00</span>
+            </div>
+            <div class="total-row">
+                <label>Descuento ($):</label>
+                <input type="number" id="descuento" value="0" min="0" step="0.01" placeholder="0.00">
             </div>
             <div class="total-row total-final">
                 <label>Total:</label>

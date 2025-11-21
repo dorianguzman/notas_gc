@@ -371,6 +371,10 @@ function setupCalculationListeners() {
     const ivaInput = document.getElementById('iva');
     ivaInput.removeEventListener('input', calculateTotals);
     ivaInput.addEventListener('input', calculateTotals);
+
+    const descuentoInput = document.getElementById('descuento');
+    descuentoInput.removeEventListener('input', calculateTotals);
+    descuentoInput.addEventListener('input', calculateTotals);
 }
 
 function handleInputChange(event) {
@@ -404,7 +408,8 @@ function calculateTotals() {
 
     const ivaPercent = parseFloat(document.getElementById('iva').value) || 0;
     const ivaAmount = subtotal * (ivaPercent / 100);
-    const total = subtotal + ivaAmount;
+    const descuento = parseFloat(document.getElementById('descuento').value) || 0;
+    const total = subtotal + ivaAmount - descuento;
 
     document.getElementById('subtotal').textContent = `$${formatNumber(subtotal)}`;
     document.getElementById('ivaAmount').textContent = `$${formatNumber(ivaAmount)}`;
@@ -439,6 +444,7 @@ function getRemisionData() {
 
     const subtotalText = document.getElementById('subtotal').textContent.replace(/[$,]/g, '');
     const ivaText = document.getElementById('ivaAmount').textContent.replace(/[$,]/g, '');
+    const descuentoValue = parseFloat(document.getElementById('descuento').value) || 0;
     const totalText = document.getElementById('total').textContent.replace(/[$,]/g, '');
 
     return {
@@ -450,6 +456,7 @@ function getRemisionData() {
         conceptos,
         subtotal: parseFloat(subtotalText),
         iva: parseFloat(ivaText),
+        descuento: descuentoValue,
         total: parseFloat(totalText)
     };
 }
@@ -651,18 +658,28 @@ async function createPDFDocument(data) {
     doc.setFont(undefined, 'normal');
     doc.setTextColor(80, 80, 80);
 
-    // Only show Subtotal and IVA if IVA is greater than 0
-    if (data.iva > 0) {
+    // Only show Subtotal if IVA or Descuento is greater than 0
+    if (data.iva > 0 || data.descuento > 0) {
         doc.text('Subtotal:', 140, currentY, { align: 'right' });
         doc.text(`$${formatNumber(data.subtotal)}`, 190, currentY, { align: 'right' });
 
         currentY += 6;
-        doc.text('IVA:', 140, currentY, { align: 'right' });
-        doc.text(`$${formatNumber(data.iva)}`, 190, currentY, { align: 'right' });
 
-        currentY += 8;
+        if (data.iva > 0) {
+            doc.text('IVA:', 140, currentY, { align: 'right' });
+            doc.text(`$${formatNumber(data.iva)}`, 190, currentY, { align: 'right' });
+            currentY += 6;
+        }
+
+        if (data.descuento > 0) {
+            doc.text('Descuento:', 140, currentY, { align: 'right' });
+            doc.text(`-$${formatNumber(data.descuento)}`, 190, currentY, { align: 'right' });
+            currentY += 6;
+        }
+
+        currentY += 2;
     } else {
-        // If no IVA, add minimal spacing before total
+        // If no IVA or descuento, add minimal spacing before total
         currentY += 2;
     }
 
@@ -728,6 +745,7 @@ async function sendEmailWithPDF(pdfDoc, recipientEmail, data) {
                 conceptos: data.conceptos,
                 subtotal: formatNumber(data.subtotal),
                 iva: formatNumber(data.iva),
+                descuento: formatNumber(data.descuento),
                 total: formatNumber(data.total),
                 pdfBase64: pdfBase64
             })
@@ -862,8 +880,9 @@ function nuevaNota() {
         </div>
     `;
 
-    // Reset IVA to default
+    // Reset IVA and Descuento to default
     document.getElementById('iva').value = '0';
+    document.getElementById('descuento').value = '0';
 
     // Recalculate totals (will show $0.00)
     setupCalculationListeners();
