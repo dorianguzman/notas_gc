@@ -2,9 +2,9 @@
   "title": "This Month Report",
   "period": {
     "start": "2025-11-01",
-    "end": "2025-11-21"
+    "end": "2025-11-22"
   },
-  "generated": "2025-11-21 16:17:32",
+  "generated": "2025-11-22 07:22:27",
   "metrics": {
     "total_revenue": 11183.0,
     "total_notas": 6,
@@ -66,6 +66,7 @@
       "Conceptos_JSON": "[{\"descripcion\":\"Trozo al pastor\",\"cantidad\":4,\"pu\":90,\"importe\":360},{\"descripcion\":\"Arrachera marinada\",\"cantidad\":20,\"pu\":90,\"importe\":1800},{\"descripcion\":\"Bistec de cerdo entero\",\"cantidad\":9,\"pu\":92,\"importe\":828}]",
       "Subtotal": 2988,
       "IVA": 0,
+      "Descuento": 0,
       "Total": 2988
     },
     {
@@ -78,6 +79,7 @@
       "Conceptos_JSON": "[{\"descripcion\":\"Arrachera marinada\",\"cantidad\":6,\"pu\":90,\"importe\":540},{\"descripcion\":\"Bistec picado\",\"cantidad\":4,\"pu\":92,\"importe\":368}]",
       "Subtotal": 908,
       "IVA": 0,
+      "Descuento": 0,
       "Total": 908
     },
     {
@@ -90,6 +92,7 @@
       "Conceptos_JSON": "[{\"descripcion\":\"Arrachera marinada\",\"cantidad\":50,\"pu\":81,\"importe\":4050}]",
       "Subtotal": 4050,
       "IVA": 0,
+      "Descuento": 0,
       "Total": 4050
     },
     {
@@ -102,6 +105,7 @@
       "Conceptos_JSON": "[{\"descripcion\":\"Arrachera marinada\",\"cantidad\":13,\"pu\":100,\"importe\":1300},{\"descripcion\":\"Aguja marinada\",\"cantidad\":5,\"pu\":120,\"importe\":600},{\"descripcion\":\"Chorizo español\",\"cantidad\":1,\"pu\":100,\"importe\":100},{\"descripcion\":\"Chorizo argentino\",\"cantidad\":3,\"pu\":100,\"importe\":300},{\"descripcion\":\"Papa\",\"cantidad\":3,\"pu\":25,\"importe\":75},{\"descripcion\":\"Queso\",\"cantidad\":1,\"pu\":100,\"importe\":100},{\"descripcion\":\"Salsa de piña\",\"cantidad\":2,\"pu\":110,\"importe\":220}]",
       "Subtotal": 2695,
       "IVA": 0,
+      "Descuento": 0,
       "Total": 2695
     },
     {
@@ -114,6 +118,7 @@
       "Conceptos_JSON": "[{\"descripcion\":\"Bistec entero\",\"cantidad\":1,\"pu\":92,\"importe\":92}]",
       "Subtotal": 92,
       "IVA": 0,
+      "Descuento": 0,
       "Total": 92
     },
     {
@@ -126,6 +131,7 @@
       "Conceptos_JSON": "[{\"descripcion\":\"Arrachera marinada\",\"cantidad\":5,\"pu\":90,\"importe\":450}]",
       "Subtotal": 450,
       "IVA": 0,
+      "Descuento": 0,
       "Total": 450
     }
   ]
