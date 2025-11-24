@@ -2,20 +2,20 @@
   "title": "This Month Report",
   "period": {
     "start": "2025-11-01",
-    "end": "2025-11-23"
+    "end": "2025-11-24"
   },
-  "generated": "2025-11-23 07:23:44",
+  "generated": "2025-11-24 07:25:51",
   "metrics": {
-    "total_revenue": 11183.0,
-    "total_notas": 6,
-    "avg_ticket": 1863.8333333333333,
-    "total_items": 15
+    "total_revenue": 14333.0,
+    "total_notas": 7,
+    "avg_ticket": 2047.5714285714287,
+    "total_items": 16
   },
   "top_customers": [
     {
       "rank": 1,
       "name": "Los papis",
-      "revenue": 4438.0
+      "revenue": 7588.0
     },
     {
       "rank": 2,
@@ -32,7 +32,7 @@
     {
       "rank": 1,
       "name": "Arrachera marinada",
-      "quantity": 94
+      "quantity": 129
     },
     {
       "rank": 2,
@@ -133,6 +133,19 @@
       "IVA": 0,
       "Descuento": 0,
       "Total": 450
+    },
+    {
+      "Timestamp": "11/23/2025 15:58:26",
+      "Remision": "20251123-0857",
+      "Fecha": "2025-11-22",
+      "Cliente": "Los papis",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":35,\"descripcion\":\"Arrachera marinada\",\"pu\":90,\"importe\":3150}]",
+      "Subtotal": 3150,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 3150
     }
   ]
 }
