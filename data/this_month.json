@@ -2,20 +2,20 @@
   "title": "This Month Report",
   "period": {
     "start": "2025-11-01",
-    "end": "2025-11-24"
+    "end": "2025-11-25"
   },
-  "generated": "2025-11-24 07:25:51",
+  "generated": "2025-11-25 07:25:47",
   "metrics": {
-    "total_revenue": 14333.0,
-    "total_notas": 7,
-    "avg_ticket": 2047.5714285714287,
-    "total_items": 16
+    "total_revenue": 17073.0,
+    "total_notas": 8,
+    "avg_ticket": 2134.125,
+    "total_items": 19
   },
   "top_customers": [
     {
       "rank": 1,
       "name": "Los papis",
-      "revenue": 7588.0
+      "revenue": 10328.0
     },
     {
       "rank": 2,
@@ -36,23 +36,23 @@
     },
     {
       "rank": 2,
-      "name": "Bistec de cerdo entero",
-      "quantity": 9
+      "name": "Trozo al pastor",
+      "quantity": 14
     },
     {
       "rank": 3,
-      "name": "Aguja marinada",
-      "quantity": 5
+      "name": "Bistec picado",
+      "quantity": 14
     },
     {
       "rank": 4,
-      "name": "Trozo al pastor",
-      "quantity": 4
+      "name": "Bistec entero",
+      "quantity": 11
     },
     {
       "rank": 5,
-      "name": "Bistec picado",
-      "quantity": 4
+      "name": "Bistec de cerdo entero",
+      "quantity": 9
     }
   ],
   "records": [
@@ -146,6 +146,19 @@
       "IVA": 0,
       "Descuento": 0,
       "Total": 3150
+    },
+    {
+      "Timestamp": "11/25/2025 2:49:52",
+      "Remision": "20251124-1948",
+      "Fecha": "2025-11-24",
+      "Cliente": "Los papis",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":10,\"descripcion\":\"Bistec entero\",\"pu\":92,\"importe\":920},{\"cantidad\":10,\"descripcion\":\"Trozo al pastor\",\"pu\":90,\"importe\":900},{\"cantidad\":10,\"descripcion\":\"Bistec picado\",\"pu\":92,\"importe\":920}]",
+      "Subtotal": 2740,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 2740
     }
   ]
 }
