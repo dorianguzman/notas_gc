@@ -44,8 +44,8 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          # Add generated data file
-          git add data/this_month.json || echo "No data to add"
+          # Add generated data files
+          git add data/this_month.json data/last_month.json || echo "No data to add"
 
           # Check if there are changes to commit
           if git diff --staged --quiet; then
