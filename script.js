@@ -775,17 +775,17 @@ async function actualGenerarPDF() {
         const data = getRemisionData();
         const doc = await createPDFDocument(data);
 
-        // Save PDF
-        doc.save(`Remision_${data.remision}.pdf`);
-        showToast('PDF generado y enviando copia por correo...', 'success');
-
-        // Send email to ganaderiacatorce@gmail.com
+        // Send email FIRST (before PDF download interrupts on mobile)
+        showToast('Enviando datos...', 'info');
         try {
             await sendEmailWithPDF(doc, 'ganaderiacatorce@gmail.com', data);
-            showToast('PDF descargado y enviado por correo', 'success');
+            showToast('Datos guardados. Descargando PDF...', 'success');
         } catch (emailError) {
-            showToast('PDF descargado (correo falló)', 'info');
+            showToast('Error al guardar (PDF se descargará)', 'error');
         }
+
+        // Save PDF AFTER email sent (mobile-safe)
+        doc.save(`Remision_${data.remision}.pdf`);
 
         // Scroll to top smoothly
         window.scrollTo({ top: 0, behavior: 'smooth' });
