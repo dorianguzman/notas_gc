@@ -2,16 +2,75 @@
   "title": "This Month Report",
   "period": {
     "start": "2025-12-01",
-    "end": "2025-12-07"
+    "end": "2025-12-08"
   },
-  "generated": "2025-12-07 07:23:40",
+  "generated": "2025-12-08 07:29:25",
   "metrics": {
-    "total_revenue": 0,
-    "total_notas": 0,
-    "avg_ticket": 0,
-    "total_items": 0
+    "total_revenue": 635.0,
+    "total_notas": 2,
+    "avg_ticket": 317.5,
+    "total_items": 7
   },
-  "top_customers": [],
-  "top_products": [],
-  "records": []
+  "top_customers": [
+    {
+      "rank": 1,
+      "name": "Alberto",
+      "revenue": 635.0
+    }
+  ],
+  "top_products": [
+    {
+      "rank": 1,
+      "name": "Arrachera marinada",
+      "quantity": 3
+    },
+    {
+      "rank": 2,
+      "name": "Trozo de pierna ",
+      "quantity": 1
+    },
+    {
+      "rank": 3,
+      "name": "Trozo al pastor",
+      "quantity": 1
+    },
+    {
+      "rank": 4,
+      "name": "Trozo de pierna",
+      "quantity": 1
+    },
+    {
+      "rank": 5,
+      "name": "Chorizo español",
+      "quantity": 0.5
+    }
+  ],
+  "records": [
+    {
+      "Timestamp": "12/7/2025 17:22:48",
+      "Remision": "20251207-1020",
+      "Fecha": "2025-12-07",
+      "Cliente": "Alberto",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":1,\"descripcion\":\"Arrachera marinada\",\"pu\":90,\"importe\":90},{\"cantidad\":1,\"descripcion\":\"Trozo de pierna \",\"pu\":92,\"importe\":92},{\"cantidad\":0.5,\"descripcion\":\"Chorizo español\",\"pu\":90,\"importe\":45},{\"cantidad\":0.5,\"descripcion\":\"Bistec de cerdo entero\",\"pu\":92,\"importe\":46},{\"cantidad\":1,\"descripcion\":\"Trozo al pastor\",\"pu\":90,\"importe\":90}]",
+      "Subtotal": 363,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 363
+    },
+    {
+      "Timestamp": "12/7/2025 17:25:33",
+      "Remision": "20251207-1024",
+      "Fecha": "2025-12-07",
+      "Cliente": "Alberto",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":2,\"descripcion\":\"Arrachera marinada\",\"pu\":90,\"importe\":180},{\"cantidad\":1,\"descripcion\":\"Trozo de pierna\",\"pu\":92,\"importe\":92}]",
+      "Subtotal": 272,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 272
+    }
+  ]
 }
