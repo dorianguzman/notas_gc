@@ -2,18 +2,23 @@
   "title": "This Month Report",
   "period": {
     "start": "2025-12-01",
-    "end": "2025-12-08"
+    "end": "2025-12-09"
   },
-  "generated": "2025-12-08 07:29:25",
+  "generated": "2025-12-09 07:27:33",
   "metrics": {
-    "total_revenue": 635.0,
-    "total_notas": 2,
-    "avg_ticket": 317.5,
-    "total_items": 7
+    "total_revenue": 1615.0,
+    "total_notas": 3,
+    "avg_ticket": 538.3333333333334,
+    "total_items": 9
   },
   "top_customers": [
     {
       "rank": 1,
+      "name": "Tacos memo",
+      "revenue": 980.0
+    },
+    {
+      "rank": 2,
       "name": "Alberto",
       "revenue": 635.0
     }
@@ -22,7 +27,7 @@
     {
       "rank": 1,
       "name": "Arrachera marinada",
-      "quantity": 3
+      "quantity": 11
     },
     {
       "rank": 2,
@@ -41,8 +46,8 @@
     },
     {
       "rank": 5,
-      "name": "Chorizo español",
-      "quantity": 0.5
+      "name": "Bistec de res ",
+      "quantity": 1
     }
   ],
   "records": [
@@ -71,6 +76,19 @@
       "IVA": 0,
       "Descuento": 0,
       "Total": 272
+    },
+    {
+      "Timestamp": "12/9/2025 1:36:11",
+      "Remision": "20251208-1835",
+      "Fecha": "2025-12-08",
+      "Cliente": "Tacos memo",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":8,\"descripcion\":\"Arrachera marinada\",\"pu\":100,\"importe\":800},{\"cantidad\":1,\"descripcion\":\"Bistec de res \",\"pu\":180,\"importe\":180}]",
+      "Subtotal": 980,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 980
     }
   ]
 }
