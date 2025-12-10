@@ -2,23 +2,28 @@
   "title": "This Month Report",
   "period": {
     "start": "2025-12-01",
-    "end": "2025-12-09"
+    "end": "2025-12-10"
   },
-  "generated": "2025-12-09 07:27:33",
+  "generated": "2025-12-10 07:28:24",
   "metrics": {
-    "total_revenue": 1615.0,
-    "total_notas": 3,
-    "avg_ticket": 538.3333333333334,
-    "total_items": 9
+    "total_revenue": 4375.0,
+    "total_notas": 5,
+    "avg_ticket": 875.0,
+    "total_items": 19
   },
   "top_customers": [
     {
       "rank": 1,
+      "name": "Arqui",
+      "revenue": 2760.0
+    },
+    {
+      "rank": 2,
       "name": "Tacos memo",
       "revenue": 980.0
     },
     {
-      "rank": 2,
+      "rank": 3,
       "name": "Alberto",
       "revenue": 635.0
     }
@@ -27,27 +32,27 @@
     {
       "rank": 1,
       "name": "Arrachera marinada",
-      "quantity": 11
+      "quantity": 21
     },
     {
       "rank": 2,
-      "name": "Trozo de pierna ",
-      "quantity": 1
+      "name": "Chorizo argentino",
+      "quantity": 6
     },
     {
       "rank": 3,
-      "name": "Trozo al pastor",
-      "quantity": 1
+      "name": "Bistec adobado taquero",
+      "quantity": 4
     },
     {
       "rank": 4,
-      "name": "Trozo de pierna",
-      "quantity": 1
+      "name": "Aguja marinada",
+      "quantity": 4
     },
     {
       "rank": 5,
-      "name": "Bistec de res ",
-      "quantity": 1
+      "name": "Trozo al pastor",
+      "quantity": 3
     }
   ],
   "records": [
@@ -89,6 +94,32 @@
       "IVA": 0,
       "Descuento": 0,
       "Total": 980
+    },
+    {
+      "Timestamp": "12/9/2025 22:37:55",
+      "Remision": "20251209-1536",
+      "Fecha": "2025-12-09",
+      "Cliente": "Arqui",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":3,\"descripcion\":\"Chorizo argentino\",\"pu\":99,\"importe\":297},{\"cantidad\":5,\"descripcion\":\"Arrachera marinada\",\"pu\":108,\"importe\":540},{\"cantidad\":2,\"descripcion\":\"Bistec adobado taquero\",\"pu\":99,\"importe\":198},{\"cantidad\":2,\"descripcion\":\"Aguja marinada\",\"pu\":126,\"importe\":252},{\"cantidad\":1,\"descripcion\":\"Trozo al pastor\",\"pu\":99,\"importe\":99}]",
+      "Subtotal": 1386,
+      "IVA": 0,
+      "Descuento": 6,
+      "Total": 1380
+    },
+    {
+      "Timestamp": "12/9/2025 22:40:22",
+      "Remision": "20251209-1538",
+      "Fecha": "2025-12-09",
+      "Cliente": "Arqui",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":3,\"descripcion\":\"Chorizo argentino\",\"pu\":110,\"importe\":330},{\"cantidad\":5,\"descripcion\":\"Arrachera marinada\",\"pu\":120,\"importe\":600},{\"cantidad\":2,\"descripcion\":\"Bistec adobado taquero\",\"pu\":110,\"importe\":220},{\"cantidad\":2,\"descripcion\":\"Aguja marinada\",\"pu\":140,\"importe\":280},{\"cantidad\":1,\"descripcion\":\"Trozo al pastor\",\"pu\":110,\"importe\":110}]",
+      "Subtotal": 1540,
+      "IVA": 0,
+      "Descuento": 160,
+      "Total": 1380
     }
   ]
 }
