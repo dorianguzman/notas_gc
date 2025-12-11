@@ -2,57 +2,67 @@
   "title": "This Month Report",
   "period": {
     "start": "2025-12-01",
-    "end": "2025-12-10"
+    "end": "2025-12-11"
   },
-  "generated": "2025-12-10 07:28:24",
+  "generated": "2025-12-11 07:29:24",
   "metrics": {
-    "total_revenue": 4375.0,
-    "total_notas": 5,
-    "avg_ticket": 875.0,
-    "total_items": 19
+    "total_revenue": 9607.0,
+    "total_notas": 9,
+    "avg_ticket": 1067.4444444444443,
+    "total_items": 24
   },
   "top_customers": [
     {
       "rank": 1,
+      "name": "Alejandro",
+      "revenue": 4050.0
+    },
+    {
+      "rank": 2,
       "name": "Arqui",
       "revenue": 2760.0
     },
     {
-      "rank": 2,
+      "rank": 3,
       "name": "Tacos memo",
       "revenue": 980.0
     },
     {
-      "rank": 3,
+      "rank": 4,
       "name": "Alberto",
-      "revenue": 635.0
+      "revenue": 819.0
+    },
+    {
+      "rank": 5,
+      "name": "Grammer",
+      "revenue": 800.0
     }
   ],
   "top_products": [
     {
       "rank": 1,
       "name": "Arrachera marinada",
-      "quantity": 21
+      "quantity": 71
     },
     {
       "rank": 2,
+      "name": "Bistec de cerdo entero",
+      "quantity": 11.5
+    },
+    {
+      "rank": 3,
       "name": "Chorizo argentino",
       "quantity": 6
     },
     {
-      "rank": 3,
+      "rank": 4,
       "name": "Bistec adobado taquero",
       "quantity": 4
     },
     {
-      "rank": 4,
+      "rank": 5,
       "name": "Aguja marinada",
       "quantity": 4
-    },
-    {
-      "rank": 5,
-      "name": "Trozo al pastor",
-      "quantity": 3
     }
   ],
   "records": [
@@ -120,6 +130,58 @@
       "IVA": 0,
       "Descuento": 160,
       "Total": 1380
+    },
+    {
+      "Timestamp": "12/10/2025 17:42:15",
+      "Remision": "20251210-1041",
+      "Fecha": "2025-12-10",
+      "Cliente": "Carnes el rey",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":2,\"descripcion\":\"Chorizo español\",\"pu\":110,\"importe\":220}]",
+      "Subtotal": 220,
+      "IVA": 0,
+      "Descuento": 22,
+      "Total": 198
+    },
+    {
+      "Timestamp": "12/10/2025 19:07:59",
+      "Remision": "20251210-1207",
+      "Fecha": "2025-12-10",
+      "Cliente": "Alberto",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":1,\"descripcion\":\"Bistec de cerdo entero\",\"pu\":92,\"importe\":92},{\"cantidad\":1,\"descripcion\":\"Pulpa/ trozo de cerdo \",\"pu\":92,\"importe\":92}]",
+      "Subtotal": 184,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 184
+    },
+    {
+      "Timestamp": "12/10/2025 21:33:18",
+      "Remision": "20251210-1432",
+      "Fecha": "2025-12-10",
+      "Cliente": "Alejandro",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":50,\"descripcion\":\"Arrachera marinada\",\"pu\":81,\"importe\":4050}]",
+      "Subtotal": 4050,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 4050
+    },
+    {
+      "Timestamp": "12/11/2025 2:18:40",
+      "Remision": "20251210-1918",
+      "Fecha": "2025-12-10",
+      "Cliente": "Grammer",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":10,\"descripcion\":\"Bistec de cerdo entero\",\"pu\":80,\"importe\":800}]",
+      "Subtotal": 800,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 800
     }
   ]
 }
