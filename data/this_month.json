@@ -2,9 +2,9 @@
   "title": "This Month Report",
   "period": {
     "start": "2025-12-01",
-    "end": "2025-12-16"
+    "end": "2025-12-17"
   },
-  "generated": "2025-12-16 07:28:48",
+  "generated": "2025-12-17 07:28:40",
   "metrics": {
     "total_revenue": 26472.0,
     "total_notas": 15,
