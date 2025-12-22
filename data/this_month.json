@@ -2,14 +2,14 @@
   "title": "This Month Report",
   "period": {
     "start": "2025-12-01",
-    "end": "2025-12-21"
+    "end": "2025-12-22"
   },
-  "generated": "2025-12-21 07:24:47",
+  "generated": "2025-12-22 07:29:45",
   "metrics": {
-    "total_revenue": 83612.0,
-    "total_notas": 28,
-    "avg_ticket": 2986.1428571428573,
-    "total_items": 80
+    "total_revenue": 85088.0,
+    "total_notas": 29,
+    "avg_ticket": 2934.0689655172414,
+    "total_items": 84
   },
   "top_customers": [
     {
@@ -42,7 +42,7 @@
     {
       "rank": 1,
       "name": "Arrachera marinada",
-      "quantity": 532
+      "quantity": 536
     },
     {
       "rank": 2,
@@ -429,6 +429,19 @@
       "IVA": 0,
       "Descuento": 0,
       "Total": 710
+    },
+    {
+      "Timestamp": "12/22/2025 4:01:03",
+      "Remision": "20251221-2100",
+      "Fecha": "2025-12-21",
+      "Cliente": "Tacos el rey",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":4,\"descripcion\":\"Arrachera marinada\",\"pu\":120,\"importe\":480},{\"cantidad\":2,\"descripcion\":\"Aguja marinada\",\"pu\":140,\"importe\":280},{\"cantidad\":4,\"descripcion\":\"Chorizo argentino\",\"pu\":110,\"importe\":440},{\"cantidad\":4,\"descripcion\":\"Chorizo español\",\"pu\":110,\"importe\":440}]",
+      "Subtotal": 1640,
+      "IVA": 0,
+      "Descuento": 164,
+      "Total": 1476
     }
   ]
 }
