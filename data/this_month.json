@@ -2,14 +2,14 @@
   "title": "This Month Report",
   "period": {
     "start": "2025-12-01",
-    "end": "2025-12-22"
+    "end": "2025-12-23"
   },
-  "generated": "2025-12-22 07:29:45",
+  "generated": "2025-12-23 07:29:18",
   "metrics": {
-    "total_revenue": 85088.0,
-    "total_notas": 29,
-    "avg_ticket": 2934.0689655172414,
-    "total_items": 84
+    "total_revenue": 86363.0,
+    "total_notas": 30,
+    "avg_ticket": 2878.766666666667,
+    "total_items": 87
   },
   "top_customers": [
     {
@@ -42,7 +42,7 @@
     {
       "rank": 1,
       "name": "Arrachera marinada",
-      "quantity": 536
+      "quantity": 546
     },
     {
       "rank": 2,
@@ -57,7 +57,7 @@
     {
       "rank": 4,
       "name": "Bistec de cerdo entero",
-      "quantity": 41.5
+      "quantity": 43.5
     },
     {
       "rank": 5,
@@ -442,6 +442,19 @@
       "IVA": 0,
       "Descuento": 164,
       "Total": 1476
+    },
+    {
+      "Timestamp": "12/23/2025 6:41:43",
+      "Remision": "20251222-2340",
+      "Fecha": "2025-12-22",
+      "Cliente": "Tacos memo",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":10,\"descripcion\":\"Arrachera marinada\",\"pu\":100,\"importe\":1000},{\"cantidad\":2,\"descripcion\":\"Bistec de cerdo entero\",\"pu\":90,\"importe\":180},{\"cantidad\":1,\"descripcion\":\"Chuleta ahumada\",\"pu\":95,\"importe\":95}]",
+      "Subtotal": 1275,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 1275
     }
   ]
 }
