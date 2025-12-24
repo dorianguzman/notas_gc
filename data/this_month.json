@@ -2,14 +2,14 @@
   "title": "This Month Report",
   "period": {
     "start": "2025-12-01",
-    "end": "2025-12-23"
+    "end": "2025-12-24"
   },
-  "generated": "2025-12-23 07:29:18",
+  "generated": "2025-12-24 07:29:21",
   "metrics": {
-    "total_revenue": 86363.0,
-    "total_notas": 30,
-    "avg_ticket": 2878.766666666667,
-    "total_items": 87
+    "total_revenue": 93023.0,
+    "total_notas": 33,
+    "avg_ticket": 2818.878787878788,
+    "total_items": 90
   },
   "top_customers": [
     {
@@ -24,25 +24,25 @@
     },
     {
       "rank": 3,
+      "name": "Guaches",
+      "revenue": 9020.0
+    },
+    {
+      "rank": 4,
       "name": "Oscar vazquez",
       "revenue": 6730.0
     },
     {
-      "rank": 4,
-      "name": "Oscar vazquwz",
-      "revenue": 5796.0
-    },
-    {
       "rank": 5,
       "name": "Los papis",
-      "revenue": 5088.0
+      "revenue": 6008.0
     }
   ],
   "top_products": [
     {
       "rank": 1,
       "name": "Arrachera marinada",
-      "quantity": 546
+      "quantity": 616
     },
     {
       "rank": 2,
@@ -455,6 +455,45 @@
       "IVA": 0,
       "Descuento": 0,
       "Total": 1275
+    },
+    {
+      "Timestamp": "12/23/2025 23:37:44",
+      "Remision": "20251223-1637",
+      "Fecha": "2025-12-23",
+      "Cliente": "Guches",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":20,\"descripcion\":\"Arrachera marinada\",\"pu\":82,\"importe\":1640}]",
+      "Subtotal": 1640,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 1640
+    },
+    {
+      "Timestamp": "12/23/2025 23:38:42",
+      "Remision": "20251223-1637",
+      "Fecha": "2025-12-23",
+      "Cliente": "Guaches",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":50,\"descripcion\":\"Arrachera marinada\",\"pu\":82,\"importe\":4100}]",
+      "Subtotal": 4100,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 4100
+    },
+    {
+      "Timestamp": "12/23/2025 23:39:47",
+      "Remision": "20251223-1639",
+      "Fecha": "2025-12-23",
+      "Cliente": "Los papis",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":10,\"descripcion\":\"Bistec picado\",\"pu\":92,\"importe\":920}]",
+      "Subtotal": 920,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 920
     }
   ]
 }
