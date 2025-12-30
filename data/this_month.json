@@ -2,14 +2,14 @@
   "title": "This Month Report",
   "period": {
     "start": "2025-12-01",
-    "end": "2025-12-29"
+    "end": "2025-12-30"
   },
-  "generated": "2025-12-29 07:32:21",
+  "generated": "2025-12-30 07:28:24",
   "metrics": {
-    "total_revenue": 106593.0,
-    "total_notas": 39,
-    "avg_ticket": 2733.153846153846,
-    "total_items": 102
+    "total_revenue": 109313.0,
+    "total_notas": 40,
+    "avg_ticket": 2732.825,
+    "total_items": 104
   },
   "top_customers": [
     {
@@ -29,20 +29,20 @@
     },
     {
       "rank": 4,
-      "name": "Oscar vazquez",
-      "revenue": 6730.0
+      "name": "Los papis",
+      "revenue": 8728.0
     },
     {
       "rank": 5,
-      "name": "Los papis",
-      "revenue": 6008.0
+      "name": "Oscar vazquez",
+      "revenue": 6730.0
     }
   ],
   "top_products": [
     {
       "rank": 1,
       "name": "Arrachera marinada",
-      "quantity": 671
+      "quantity": 691
     },
     {
       "rank": 2,
@@ -572,6 +572,19 @@
       "IVA": 0,
       "Descuento": 0,
       "Total": 1640
+    },
+    {
+      "Timestamp": "12/29/2025 18:02:59",
+      "Remision": "20251229-1101",
+      "Fecha": "2025-12-29",
+      "Cliente": "Los papis",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":10,\"descripcion\":\"Bistec picado\",\"pu\":92,\"importe\":920},{\"cantidad\":20,\"descripcion\":\"Arrachera marinada\",\"pu\":90,\"importe\":1800}]",
+      "Subtotal": 2720,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 2720
     }
   ]
 }
