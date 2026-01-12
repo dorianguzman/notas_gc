@@ -2,14 +2,14 @@
   "title": "This Month Report",
   "period": {
     "start": "2026-01-01",
-    "end": "2026-01-11"
+    "end": "2026-01-12"
   },
-  "generated": "2026-01-11 07:26:59",
+  "generated": "2026-01-12 07:33:50",
   "metrics": {
-    "total_revenue": 50969.0,
-    "total_notas": 12,
-    "avg_ticket": 4247.416666666667,
-    "total_items": 23
+    "total_revenue": 57629.0,
+    "total_notas": 14,
+    "avg_ticket": 4116.357142857143,
+    "total_items": 27
   },
   "top_customers": [
     {
@@ -24,25 +24,25 @@
     },
     {
       "rank": 3,
+      "name": "Alejandro",
+      "revenue": 6780.0
+    },
+    {
+      "rank": 4,
       "name": "Tacos el rey",
       "revenue": 3654.0
     },
     {
-      "rank": 4,
-      "name": "Parrilla del lobo",
-      "revenue": 3400.0
-    },
-    {
       "rank": 5,
-      "name": "Los papis",
-      "revenue": 2720.0
+      "name": "Tacos memo",
+      "revenue": 3650.0
     }
   ],
   "top_products": [
     {
       "rank": 1,
       "name": "Arrachera marinada",
-      "quantity": 414
+      "quantity": 469
     },
     {
       "rank": 2,
@@ -221,6 +221,32 @@
       "IVA": 0,
       "Descuento": 500,
       "Total": 426
+    },
+    {
+      "Timestamp": "1/11/2026 21:45:03",
+      "Remision": "20260111-1444",
+      "Fecha": "2026-01-11",
+      "Cliente": "Tacos memo",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":15,\"descripcion\":\"Arrachera marinada\",\"pu\":100,\"importe\":1500}]",
+      "Subtotal": 1500,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 1500
+    },
+    {
+      "Timestamp": "1/11/2026 21:51:09",
+      "Remision": "20260111-1450",
+      "Fecha": "2026-01-11",
+      "Cliente": "Alejandro",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":40,\"descripcion\":\"Arrachera marinada\",\"pu\":81,\"importe\":3240},{\"cantidad\":20,\"descripcion\":\"Bistec de cerdo entero\",\"pu\":80,\"importe\":1600},{\"cantidad\":4,\"descripcion\":\"Pulpa/ trozo de cerdo\",\"pu\":80,\"importe\":320}]",
+      "Subtotal": 5160,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 5160
     }
   ]
 }
