@@ -2,14 +2,14 @@
   "title": "This Month Report",
   "period": {
     "start": "2026-01-01",
-    "end": "2026-01-12"
+    "end": "2026-01-13"
   },
-  "generated": "2026-01-12 07:33:50",
+  "generated": "2026-01-13 07:31:00",
   "metrics": {
-    "total_revenue": 57629.0,
-    "total_notas": 14,
-    "avg_ticket": 4116.357142857143,
-    "total_items": 27
+    "total_revenue": 60329.0,
+    "total_notas": 16,
+    "avg_ticket": 3770.5625,
+    "total_items": 31
   },
   "top_customers": [
     {
@@ -29,20 +29,20 @@
     },
     {
       "rank": 4,
-      "name": "Tacos el rey",
-      "revenue": 3654.0
+      "name": "Los papis",
+      "revenue": 5420.0
     },
     {
       "rank": 5,
-      "name": "Tacos memo",
-      "revenue": 3650.0
+      "name": "Tacos el rey",
+      "revenue": 3654.0
     }
   ],
   "top_products": [
     {
       "rank": 1,
       "name": "Arrachera marinada",
-      "quantity": 469
+      "quantity": 494
     },
     {
       "rank": 2,
@@ -247,6 +247,32 @@
       "IVA": 0,
       "Descuento": 0,
       "Total": 5160
+    },
+    {
+      "Timestamp": "1/12/2026 17:55:57",
+      "Remision": "20260112-1055",
+      "Fecha": "2026-01-12",
+      "Cliente": "Los papis",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":15,\"descripcion\":\"Arrachera marinada\",\"pu\":90,\"importe\":1350}]",
+      "Subtotal": 1350,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 1350
+    },
+    {
+      "Timestamp": "1/12/2026 20:42:12",
+      "Remision": "20260112-1340",
+      "Fecha": "2026-01-12",
+      "Cliente": "Los papis",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":10,\"descripcion\":\"Arrachera marinada\",\"pu\":90,\"importe\":900},{\"cantidad\":3,\"descripcion\":\"Trozo al pastor\",\"pu\":90,\"importe\":270},{\"cantidad\":2,\"descripcion\":\"Pulpa/ trozo de cerdo\",\"pu\":90,\"importe\":180}]",
+      "Subtotal": 1350,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 1350
     }
   ]
 }
