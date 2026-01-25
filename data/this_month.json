@@ -2,14 +2,14 @@
   "title": "This Month Report",
   "period": {
     "start": "2026-01-01",
-    "end": "2026-01-24"
+    "end": "2026-01-25"
   },
-  "generated": "2026-01-24 07:25:54",
+  "generated": "2026-01-25 07:27:33",
   "metrics": {
-    "total_revenue": 74023.0,
-    "total_notas": 23,
-    "avg_ticket": 3218.391304347826,
-    "total_items": 53
+    "total_revenue": 83407.0,
+    "total_notas": 26,
+    "avg_ticket": 3207.9615384615386,
+    "total_items": 58
   },
   "top_customers": [
     {
@@ -19,40 +19,40 @@
     },
     {
       "rank": 2,
+      "name": "Guaches",
+      "revenue": 12300.0
+    },
+    {
+      "rank": 3,
+      "name": "Parrilla del lobo",
+      "revenue": 11900.0
+    },
+    {
+      "rank": 4,
       "name": "Tacos el rey",
       "revenue": 9302.0
     },
     {
-      "rank": 3,
-      "name": "Guaches",
-      "revenue": 8200.0
-    },
-    {
-      "rank": 4,
+      "rank": 5,
       "name": "Los papis",
       "revenue": 7516.0
-    },
-    {
-      "rank": 5,
-      "name": "Parrilla del lobo",
-      "revenue": 6800.0
     }
   ],
   "top_products": [
     {
       "rank": 1,
       "name": "Arrachera marinada",
-      "quantity": 574
+      "quantity": 664
     },
     {
       "rank": 2,
-      "name": "Arrachera marinada ",
-      "quantity": 68
+      "name": "Chorizo argentino",
+      "quantity": 72
     },
     {
       "rank": 3,
-      "name": "Chorizo argentino",
-      "quantity": 52
+      "name": "Arrachera marinada ",
+      "quantity": 68
     },
     {
       "rank": 4,
@@ -364,6 +364,45 @@
       "IVA": 0,
       "Descuento": 240,
       "Total": 2160
+    },
+    {
+      "Timestamp": "1/24/2026 18:01:51",
+      "Remision": "20260124-1101",
+      "Fecha": "2026-01-24",
+      "Cliente": "Guaches",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":50,\"descripcion\":\"Arrachera marinada\",\"pu\":82,\"importe\":4100}]",
+      "Subtotal": 4100,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 4100
+    },
+    {
+      "Timestamp": "1/24/2026 18:02:38",
+      "Remision": "20260124-1102",
+      "Fecha": "2026-01-24",
+      "Cliente": "Parrilla del lobo",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":40,\"descripcion\":\"Arrachera marinada\",\"pu\":85,\"importe\":3400},{\"cantidad\":20,\"descripcion\":\"Chorizo argentino\",\"pu\":85,\"importe\":1700}]",
+      "Subtotal": 5100,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 5100
+    },
+    {
+      "Timestamp": "1/25/2026 6:24:03",
+      "Remision": "20260124-2323",
+      "Fecha": "2026-01-24",
+      "Cliente": "Alberto",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":1,\"descripcion\":\"Bistec de cerdo entero\",\"pu\":92,\"importe\":92},{\"cantidad\":1,\"descripcion\":\"Pulpa/ trozo de cerdo\",\"pu\":92,\"importe\":92}]",
+      "Subtotal": 184,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 184
     }
   ]
 }
