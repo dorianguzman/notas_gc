@@ -2,14 +2,14 @@
   "title": "This Month Report",
   "period": {
     "start": "2026-01-01",
-    "end": "2026-01-27"
+    "end": "2026-01-28"
   },
-  "generated": "2026-01-27 07:34:16",
+  "generated": "2026-01-28 07:33:08",
   "metrics": {
-    "total_revenue": 83407.0,
-    "total_notas": 26,
-    "avg_ticket": 3207.9615384615386,
-    "total_items": 58
+    "total_revenue": 85283.4,
+    "total_notas": 28,
+    "avg_ticket": 3045.835714285714,
+    "total_items": 61
   },
   "top_customers": [
     {
@@ -42,27 +42,27 @@
     {
       "rank": 1,
       "name": "Arrachera marinada",
-      "quantity": 664
+      "quantity": 676.8
     },
     {
       "rank": 2,
+      "name": "Bistec de cerdo entero",
+      "quantity": 116
+    },
+    {
+      "rank": 3,
       "name": "Chorizo argentino",
       "quantity": 72
     },
     {
-      "rank": 3,
+      "rank": 4,
       "name": "Arrachera marinada ",
       "quantity": 68
     },
     {
-      "rank": 4,
+      "rank": 5,
       "name": "Chorizo español",
       "quantity": 43
-    },
-    {
-      "rank": 5,
-      "name": "Chistorra",
-      "quantity": 40
     }
   ],
   "records": [
@@ -403,6 +403,32 @@
       "IVA": 0,
       "Descuento": 0,
       "Total": 184
+    },
+    {
+      "Timestamp": "1/27/2026 20:35:48",
+      "Remision": "20260127-1334",
+      "Fecha": "2026-01-27",
+      "Cliente": "Maria bonita",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":2.8,\"descripcion\":\"Arrachera marinada\",\"pu\":88,\"importe\":246.39999999999998}]",
+      "Subtotal": 246.4,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 246.4
+    },
+    {
+      "Timestamp": "1/28/2026 5:14:53",
+      "Remision": "20260127-2213",
+      "Fecha": "2026-01-27",
+      "Cliente": "Tacos memo",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":10,\"descripcion\":\"Arrachera marinada\",\"pu\":100,\"importe\":1000},{\"cantidad\":90,\"descripcion\":\"Bistec de cerdo entero\",\"pu\":7,\"importe\":630}]",
+      "Subtotal": 1630,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 1630
     }
   ]
 }
