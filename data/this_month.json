@@ -2,14 +2,14 @@
   "title": "This Month Report",
   "period": {
     "start": "2026-01-01",
-    "end": "2026-01-30"
+    "end": "2026-01-31"
   },
-  "generated": "2026-01-30 07:44:06",
+  "generated": "2026-01-31 07:35:09",
   "metrics": {
-    "total_revenue": 94593.4,
-    "total_notas": 30,
-    "avg_ticket": 3153.1133333333332,
-    "total_items": 70
+    "total_revenue": 98613.4,
+    "total_notas": 32,
+    "avg_ticket": 3081.66875,
+    "total_items": 75
   },
   "top_customers": [
     {
@@ -24,13 +24,13 @@
     },
     {
       "rank": 3,
-      "name": "Parrilla del lobo",
-      "revenue": 11900.0
+      "name": "Tacos el rey",
+      "revenue": 13322.0
     },
     {
       "rank": 4,
-      "name": "Tacos el rey",
-      "revenue": 9302.0
+      "name": "Parrilla del lobo",
+      "revenue": 11900.0
     },
     {
       "rank": 5,
@@ -42,7 +42,7 @@
     {
       "rank": 1,
       "name": "Arrachera marinada",
-      "quantity": 743.8
+      "quantity": 758.8
     },
     {
       "rank": 2,
@@ -52,7 +52,7 @@
     {
       "rank": 3,
       "name": "Chorizo argentino",
-      "quantity": 79
+      "quantity": 84
     },
     {
       "rank": 4,
@@ -62,7 +62,7 @@
     {
       "rank": 5,
       "name": "Chorizo español",
-      "quantity": 51
+      "quantity": 57.5
     }
   ],
   "records": [
@@ -455,6 +455,32 @@
       "IVA": 0,
       "Descuento": 0,
       "Total": 2460
+    },
+    {
+      "Timestamp": "1/30/2026 16:25:15",
+      "Remision": "20260130-0924",
+      "Fecha": "2026-01-30",
+      "Cliente": "Tacos el rey",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":10,\"descripcion\":\"Arrachera marinada\",\"pu\":120,\"importe\":1200},{\"cantidad\":10,\"descripcion\":\"Aguja marinada\",\"pu\":140,\"importe\":1400},{\"cantidad\":6.5,\"descripcion\":\"Chorizo español\",\"pu\":110,\"importe\":715}]",
+      "Subtotal": 3315,
+      "IVA": 0,
+      "Descuento": 330,
+      "Total": 2985
+    },
+    {
+      "Timestamp": "1/30/2026 21:19:07",
+      "Remision": "20260130-1418",
+      "Fecha": "2026-01-30",
+      "Cliente": "Tacos el rey",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":5,\"descripcion\":\"Arrachera marinada\",\"pu\":120,\"importe\":600},{\"cantidad\":5,\"descripcion\":\"Chorizo argentino\",\"pu\":110,\"importe\":550}]",
+      "Subtotal": 1150,
+      "IVA": 0,
+      "Descuento": 115,
+      "Total": 1035
     }
   ]
 }
