@@ -2,16 +2,98 @@
   "title": "This Month Report",
   "period": {
     "start": "2026-02-01",
-    "end": "2026-02-01"
+    "end": "2026-02-02"
   },
-  "generated": "2026-02-01 07:39:55",
+  "generated": "2026-02-02 07:54:06",
   "metrics": {
-    "total_revenue": 0,
-    "total_notas": 0,
-    "avg_ticket": 0,
-    "total_items": 0
+    "total_revenue": 5868.1,
+    "total_notas": 3,
+    "avg_ticket": 1956.0333333333335,
+    "total_items": 7
   },
-  "top_customers": [],
-  "top_products": [],
-  "records": []
+  "top_customers": [
+    {
+      "rank": 1,
+      "name": "Alejandro",
+      "revenue": 3108.1
+    },
+    {
+      "rank": 2,
+      "name": "Guaches",
+      "revenue": 2460.0
+    },
+    {
+      "rank": 3,
+      "name": "Jochos lokos",
+      "revenue": 300.0
+    }
+  ],
+  "top_products": [
+    {
+      "rank": 1,
+      "name": "Arrachera marinada",
+      "quantity": 62
+    },
+    {
+      "rank": 2,
+      "name": "T-bone",
+      "quantity": 1.03
+    },
+    {
+      "rank": 3,
+      "name": "Trozo al pastor",
+      "quantity": 1
+    },
+    {
+      "rank": 4,
+      "name": "New york",
+      "quantity": 1
+    },
+    {
+      "rank": 5,
+      "name": "Diezmillo",
+      "quantity": 1
+    }
+  ],
+  "records": [
+    {
+      "Timestamp": "2/1/2026 16:43:02",
+      "Remision": "20260201-0942",
+      "Fecha": "2026-02-01",
+      "Cliente": "Jochos lokos",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":2,\"descripcion\":\"Arrachera marinada\",\"pu\":100,\"importe\":200},{\"cantidad\":1,\"descripcion\":\"Trozo al pastor\",\"pu\":100,\"importe\":100}]",
+      "Subtotal": 300,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 300
+    },
+    {
+      "Timestamp": "2/1/2026 16:44:45",
+      "Remision": "20260201-0944",
+      "Fecha": "2026-02-01",
+      "Cliente": "Guaches",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":30,\"descripcion\":\"Arrachera marinada\",\"pu\":82,\"importe\":2460}]",
+      "Subtotal": 2460,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 2460
+    },
+    {
+      "Timestamp": "2/2/2026 1:02:05",
+      "Remision": "20260201-1800",
+      "Fecha": "2026-02-01",
+      "Cliente": "Alejandro",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":30,\"descripcion\":\"Arrachera marinada\",\"pu\":81,\"importe\":2430},{\"cantidad\":1,\"descripcion\":\"New york\",\"pu\":230,\"importe\":230},{\"cantidad\":1,\"descripcion\":\"Diezmillo\",\"pu\":170,\"importe\":170},{\"cantidad\":1.03,\"descripcion\":\"T-bone\",\"pu\":270,\"importe\":278.1}]",
+      "Subtotal": 3108.1,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 3108.1
+    }
+  ]
 }
