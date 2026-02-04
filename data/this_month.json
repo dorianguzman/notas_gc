@@ -2,28 +2,38 @@
   "title": "This Month Report",
   "period": {
     "start": "2026-02-01",
-    "end": "2026-02-03"
+    "end": "2026-02-04"
   },
-  "generated": "2026-02-03 07:46:49",
+  "generated": "2026-02-04 07:48:41",
   "metrics": {
-    "total_revenue": 5868.1,
-    "total_notas": 3,
-    "avg_ticket": 1956.0333333333335,
-    "total_items": 7
+    "total_revenue": 11818.1,
+    "total_notas": 5,
+    "avg_ticket": 2363.62,
+    "total_items": 10
   },
   "top_customers": [
     {
       "rank": 1,
+      "name": "Grammer",
+      "revenue": 4750.0
+    },
+    {
+      "rank": 2,
       "name": "Alejandro",
       "revenue": 3108.1
     },
     {
-      "rank": 2,
+      "rank": 3,
       "name": "Guaches",
       "revenue": 2460.0
     },
     {
-      "rank": 3,
+      "rank": 4,
+      "name": "Servilamina",
+      "revenue": 1200.0
+    },
+    {
+      "rank": 5,
       "name": "Jochos lokos",
       "revenue": 300.0
     }
@@ -36,23 +46,23 @@
     },
     {
       "rank": 2,
-      "name": "T-bone",
-      "quantity": 1.03
+      "name": "Chuleta ahumada ",
+      "quantity": 50
     },
     {
       "rank": 3,
-      "name": "Trozo al pastor",
-      "quantity": 1
+      "name": "Bistec de cerdo entero",
+      "quantity": 9
     },
     {
       "rank": 4,
-      "name": "New york",
-      "quantity": 1
+      "name": "Pulpa/ trozo de cerdo",
+      "quantity": 6
     },
     {
       "rank": 5,
-      "name": "Diezmillo",
-      "quantity": 1
+      "name": "T-bone",
+      "quantity": 1.03
     }
   ],
   "records": [
@@ -94,6 +104,32 @@
       "IVA": 0,
       "Descuento": 0,
       "Total": 3108.1
+    },
+    {
+      "Timestamp": "2/4/2026 3:07:43",
+      "Remision": "20260203-2007",
+      "Fecha": "2026-02-03",
+      "Cliente": "Servilamina",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":9,\"descripcion\":\"Bistec de cerdo entero\",\"pu\":80,\"importe\":720},{\"cantidad\":6,\"descripcion\":\"Pulpa/ trozo de cerdo\",\"pu\":80,\"importe\":480}]",
+      "Subtotal": 1200,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 1200
+    },
+    {
+      "Timestamp": "2/4/2026 3:08:58",
+      "Remision": "20260203-2008",
+      "Fecha": "2026-02-03",
+      "Cliente": "Grammer",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":50,\"descripcion\":\"Chuleta ahumada \",\"pu\":95,\"importe\":4750}]",
+      "Subtotal": 4750,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 4750
     }
   ]
 }
