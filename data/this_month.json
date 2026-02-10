@@ -2,14 +2,14 @@
   "title": "This Month Report",
   "period": {
     "start": "2026-02-01",
-    "end": "2026-02-09"
+    "end": "2026-02-10"
   },
-  "generated": "2026-02-09 07:59:27",
+  "generated": "2026-02-10 08:01:01",
   "metrics": {
-    "total_revenue": 23098.1,
-    "total_notas": 9,
-    "avg_ticket": 2566.4555555555553,
-    "total_items": 16
+    "total_revenue": 28903.1,
+    "total_notas": 11,
+    "avg_ticket": 2627.5545454545454,
+    "total_items": 20
   },
   "top_customers": [
     {
@@ -19,30 +19,30 @@
     },
     {
       "rank": 2,
+      "name": "Alejandro",
+      "revenue": 6348.1
+    },
+    {
+      "rank": 3,
       "name": "Grammer",
       "revenue": 4750.0
     },
     {
-      "rank": 3,
-      "name": "Alejandro",
-      "revenue": 3108.1
-    },
-    {
       "rank": 4,
-      "name": "Los papis",
-      "revenue": 1820.0
+      "name": "Tacos el rey",
+      "revenue": 2565.0
     },
     {
       "rank": 5,
-      "name": "Tacos memo",
-      "revenue": 1260.0
+      "name": "Los papis",
+      "revenue": 1820.0
     }
   ],
   "top_products": [
     {
       "rank": 1,
       "name": "Arrachera marinada",
-      "quantity": 172
+      "quantity": 222
     },
     {
       "rank": 2,
@@ -61,8 +61,8 @@
     },
     {
       "rank": 5,
-      "name": "Pulpa/ trozo de cerdo",
-      "quantity": 6
+      "name": "Chorizo argentino",
+      "quantity": 10
     }
   ],
   "records": [
@@ -182,6 +182,32 @@
       "IVA": 0,
       "Descuento": 0,
       "Total": 4100
+    },
+    {
+      "Timestamp": "2/10/2026 2:07:03",
+      "Remision": "20260209-1905",
+      "Fecha": "2026-02-09",
+      "Cliente": "Tacos el rey",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":10,\"descripcion\":\"Arrachera marinada\",\"pu\":120,\"importe\":1200},{\"cantidad\":10,\"descripcion\":\"Chorizo argentino\",\"pu\":110,\"importe\":1100},{\"cantidad\":5,\"descripcion\":\"Chorizo español\",\"pu\":110,\"importe\":550}]",
+      "Subtotal": 2850,
+      "IVA": 0,
+      "Descuento": 285,
+      "Total": 2565
+    },
+    {
+      "Timestamp": "2/10/2026 4:36:40",
+      "Remision": "20260209-2136",
+      "Fecha": "2026-02-09",
+      "Cliente": "Alejandro",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":40,\"descripcion\":\"Arrachera marinada\",\"pu\":81,\"importe\":3240}]",
+      "Subtotal": 3240,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 3240
     }
   ]
 }
