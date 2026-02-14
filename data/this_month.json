@@ -2,14 +2,14 @@
   "title": "This Month Report",
   "period": {
     "start": "2026-02-01",
-    "end": "2026-02-13"
+    "end": "2026-02-14"
   },
-  "generated": "2026-02-13 07:54:08",
+  "generated": "2026-02-14 07:38:39",
   "metrics": {
-    "total_revenue": 28903.1,
-    "total_notas": 11,
-    "avg_ticket": 2627.5545454545454,
-    "total_items": 20
+    "total_revenue": 33912.1,
+    "total_notas": 13,
+    "avg_ticket": 2608.623076923077,
+    "total_items": 30
   },
   "top_customers": [
     {
@@ -24,13 +24,13 @@
     },
     {
       "rank": 3,
-      "name": "Grammer",
-      "revenue": 4750.0
+      "name": "Tacos el rey",
+      "revenue": 5994.0
     },
     {
       "rank": 4,
-      "name": "Tacos el rey",
-      "revenue": 2565.0
+      "name": "Grammer",
+      "revenue": 4750.0
     },
     {
       "rank": 5,
@@ -42,7 +42,7 @@
     {
       "rank": 1,
       "name": "Arrachera marinada",
-      "quantity": 222
+      "quantity": 239
     },
     {
       "rank": 2,
@@ -51,18 +51,18 @@
     },
     {
       "rank": 3,
+      "name": "Chorizo español",
+      "quantity": 16
+    },
+    {
+      "rank": 4,
       "name": "Bistec de cerdo entero",
       "quantity": 15
     },
     {
-      "rank": 4,
-      "name": "Bistec picado",
-      "quantity": 10
-    },
-    {
       "rank": 5,
-      "name": "Chorizo argentino",
-      "quantity": 10
+      "name": "Aguja marinada",
+      "quantity": 13
     }
   ],
   "records": [
@@ -208,6 +208,32 @@
       "IVA": 0,
       "Descuento": 0,
       "Total": 3240
+    },
+    {
+      "Timestamp": "2/13/2026 21:14:44",
+      "Remision": "20260213-1412",
+      "Fecha": "2026-02-13",
+      "Cliente": "Tacos el rey",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":10,\"descripcion\":\"Arrachera marinada\",\"pu\":120,\"importe\":1200},{\"cantidad\":10,\"descripcion\":\"Aguja marinada\",\"pu\":140,\"importe\":1400},{\"cantidad\":10,\"descripcion\":\"Chorizo español\",\"pu\":110,\"importe\":1100},{\"cantidad\":1,\"descripcion\":\"Queso\",\"pu\":110,\"importe\":110}]",
+      "Subtotal": 3810,
+      "IVA": 0,
+      "Descuento": 381,
+      "Total": 3429
+    },
+    {
+      "Timestamp": "2/14/2026 2:42:46",
+      "Remision": "20260213-1940",
+      "Fecha": "2026-02-13",
+      "Cliente": "Jonathan",
+      "ClienteEmail": "",
+      "Ciudad": "Querétaro",
+      "Conceptos_JSON": "[{\"cantidad\":7,\"descripcion\":\"Arrachera marinada\",\"pu\":100,\"importe\":700},{\"cantidad\":1,\"descripcion\":\"Chorizo argentino\",\"pu\":100,\"importe\":100},{\"cantidad\":1,\"descripcion\":\"Chorizo español\",\"pu\":100,\"importe\":100},{\"cantidad\":3,\"descripcion\":\"Aguja marinada\",\"pu\":120,\"importe\":360},{\"cantidad\":1,\"descripcion\":\"Queso\",\"pu\":100,\"importe\":100},{\"cantidad\":2,\"descripcion\":\"Salsa de piña\",\"pu\":110,\"importe\":220}]",
+      "Subtotal": 1580,
+      "IVA": 0,
+      "Descuento": 0,
+      "Total": 1580
     }
   ]
 }
